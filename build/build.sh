@@ -20,12 +20,12 @@ mkdir -p "$BP_DIR"/plugins
 mkdir -p "$ML_DIR"/Mods
 
 # BepInEx
-cp bin/plugin/release-bepinex/net472/*.dll \
+cp bin/plugin/release-bepinex/net472/FastReset.dll \
     "$BP_DIR/plugins/"
 cp build/README-BepInEx.txt "$BP_DIR/README.txt"
 
 # MelonLoader
-cp bin/plugin/release-melonloader/net472/*.dll \
+cp bin/plugin/release-melonloader/net472/FastReset.dll \
     "$ML_DIR/Mods/"
 cp build/README-MelonLoader.txt "$ML_DIR/README.txt"
 
