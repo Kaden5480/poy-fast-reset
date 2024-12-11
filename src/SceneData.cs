@@ -94,6 +94,10 @@ namespace FastReset {
         public static SceneData GetScene(string name) {
             SceneData data = null;
 
+            if (name == null) {
+                return null;
+            }
+
             if (scenes.TryGetValue(name, out data) == false) {
                 return null;
             }
