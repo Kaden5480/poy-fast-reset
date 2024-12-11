@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastReset", "FastReset.csproj", "{9103B1DF-D919-4BC6-B74C-D1F7D77A95D3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug-BepInEx|Any CPU = Debug-BepInEx|Any CPU
+		Release-BepInEx|Any CPU = Release-BepInEx|Any CPU
+		Debug-MelonLoader|Any CPU = Debug-MelonLoader|Any CPU
+		Release-MelonLoader|Any CPU = Release-MelonLoader|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9103B1DF-D919-4BC6-B74C-D1F7D77A95D3}.Debug-BepInEx|Any CPU.ActiveCfg = Debug-BepInEx|Any CPU
+		{9103B1DF-D919-4BC6-B74C-D1F7D77A95D3}.Debug-BepInEx|Any CPU.Build.0 = Debug-BepInEx|Any CPU
+		{9103B1DF-D919-4BC6-B74C-D1F7D77A95D3}.Release-BepInEx|Any CPU.ActiveCfg = Release-BepInEx|Any CPU
+		{9103B1DF-D919-4BC6-B74C-D1F7D77A95D3}.Release-BepInEx|Any CPU.Build.0 = Release-BepInEx|Any CPU
+		{9103B1DF-D919-4BC6-B74C-D1F7D77A95D3}.Debug-MelonLoader|Any CPU.ActiveCfg = Debug-MelonLoader|Any CPU
+		{9103B1DF-D919-4BC6-B74C-D1F7D77A95D3}.Debug-MelonLoader|Any CPU.Build.0 = Debug-MelonLoader|Any CPU
+		{9103B1DF-D919-4BC6-B74C-D1F7D77A95D3}.Release-MelonLoader|Any CPU.ActiveCfg = Release-MelonLoader|Any CPU
+		{9103B1DF-D919-4BC6-B74C-D1F7D77A95D3}.Release-MelonLoader|Any CPU.Build.0 = Release-MelonLoader|Any CPU
+	EndGlobalSection
+EndGlobal
