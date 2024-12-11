@@ -210,6 +210,11 @@ namespace FastReset {
         }
 
         private bool CanTeleport() {
+            // Only allowed in normal mode
+            if (GameManager.control.permaDeathEnabled || GameManager.control.freesoloEnabled) {
+                return false;
+            }
+
             // Invalid scenes
             if (Scenes.GetScene(sceneName) == null) {
                 return false;
