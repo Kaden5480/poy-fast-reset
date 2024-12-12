@@ -35,7 +35,6 @@
   <ItemGroup Condition="$(Configuration.EndsWith('-BepInEx'))">
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all"/>
     <PackageReference Include="BepInEx.Core" Version="5.*"/>
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*"/>
   </ItemGroup>
 
   <ItemGroup Condition="$(Configuration.EndsWith('-MelonLoader'))">
@@ -78,8 +77,7 @@
 
   <Target
     Name="GeneratePluginVersion"
-    BeforeTargets="BeforeCompile"
-    Condition="$(Configuration.EndsWith('-MelonLoader'))">
+    BeforeTargets="BeforeCompile">
     <WriteLinesToFile
       File="$(IntermediateOutputPath)/PluginInfo.cs"
       Lines="public static class PluginInfo { public const string PLUGIN_VERSION=&quot;$(Version)&quot;%3B }"
