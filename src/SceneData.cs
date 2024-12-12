@@ -59,7 +59,7 @@ namespace FastReset {
 
         // Expert
         { "Category4_1_FrozenWaterfall", new SceneData(new Vector3(-3.322456f, -64.39492f, 28.99156f), new Quaternion(0f, 0.5213398f, 0f, -0.8533493f), -0.522419f) },
-        { "Category4_2_SolemnTempest",   new SceneData(new Vector3(-168.6246f, -154.064f, -16.92793f), new Quaternion(0f, 0.6488209f, 0f, -0.7609411f), -10.1f)     },
+        { "Category4_2_SolemnTempest",   new SceneData(new Vector3(-54.0f, 1.1f, 14.1f),               new Quaternion(0f, 0.6488209f, 0f, -0.7609411f), -10.1f)     },
 
         // Essentials
         { "Alps_1_TrainingTower",    new SceneData(new Vector3(4.030309f, -11.42724f, -7.280912f),  new Quaternion(0f, 0.9999999f, 0f, -0.0004620027f), -6.79138f)  },

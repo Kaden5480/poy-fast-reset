@@ -138,6 +138,7 @@ namespace FastReset {
         private Transform playerTransform;
         private Transform playerCameraHolder;
 
+        private LeavePeakScene leavePeakScene;
         private bool isSolemnTempest;
         private DistanceActivator distanceActivator;
 
@@ -161,6 +162,7 @@ namespace FastReset {
             playerTransform = null;
             playerCameraHolder = null;
 
+            leavePeakScene = null;
             isSolemnTempest = false;
             distanceActivator = null;
         }
@@ -171,6 +173,7 @@ namespace FastReset {
 
         private void CommonSceneLoad(int buildIndex, string sceneName) {
             InGameMenu[] menus = GameObject.FindObjectsOfType<InGameMenu>();
+            LeavePeakScene[] leavePeakScenes = GameObject.FindObjectsOfType<LeavePeakScene>();
             RoutingFlag[] flags = GameObject.FindObjectsOfType<RoutingFlag>();
             RoutingFlag flag;
 
@@ -181,6 +184,10 @@ namespace FastReset {
 
             if (menus.Length >= 1) {
                 menuClick = menus[0].menuClick;
+            }
+
+            if (leavePeakScenes.Length >= 1) {
+                leavePeakScene = leavePeakScenes[0];
             }
 
             if (flags.Length < 1) {
@@ -232,8 +239,10 @@ namespace FastReset {
             }
 
             // Check if something strange happened (shouldn't happen)
-            if (isSolemnTempest == true && distanceActivator == null) {
-                return false;
+            if (isSolemnTempest == true) {
+                if (distanceActivator == null || leavePeakScene == null) {
+                    return false;
+                }
             }
 
             // Make sure things needed for teleporting exist
@@ -262,7 +271,12 @@ namespace FastReset {
 
             playerRB.velocity = Vector3.zero;
 
-            playerTransform.position = data.position;
+            if (isSolemnTempest == true) {
+                playerTransform.position = leavePeakScene.transform.position + data.position;
+            } else {
+                playerTransform.position = data.position;
+            }
+
             playerCameraHolder.rotation = data.rotation;
             camY.rotationY = data.rotationY;
 
