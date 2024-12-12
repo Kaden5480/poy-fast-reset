@@ -134,6 +134,7 @@ namespace FastReset {
         private Climbing climbing;
         private IceAxe iceAxes;
         private Rigidbody playerRB;
+        private RopeAnchor ropeAnchor;
         private Transform playerTransform;
         private Transform playerCameraHolder;
 
@@ -156,6 +157,7 @@ namespace FastReset {
             iceAxes = null;
             climbing = null;
             playerRB = null;
+            ropeAnchor = null;
             playerTransform = null;
             playerCameraHolder = null;
 
@@ -192,6 +194,7 @@ namespace FastReset {
             iceAxes = GetField<IceAxe>(flag, "iceAxes");
             climbing = GetField<Climbing>(flag, "climbing");
             playerRB = GetField<Rigidbody>(flag, "playerRB");
+            ropeAnchor = GetField<RopeAnchor>(flag, "ropeanchor");
             playerTransform = GetField<Transform>(flag, "playerTransform");
             playerCameraHolder = GameObject.Find("PlayerCameraHolder").transform;
 
@@ -212,6 +215,14 @@ namespace FastReset {
         private bool CanTeleport() {
             // Only allowed in normal mode
             if (GameManager.control.permaDeathEnabled || GameManager.control.freesoloEnabled) {
+                return false;
+            }
+
+            // Cannot teleport while crampons are in a wall, roped, or in a bivouac
+            if (Crampons.cramponsActivated || Bivouac.currentlyUsingBivouac) {
+                return false;
+            }
+            if (ropeAnchor != null && ropeAnchor.attached == true) {
                 return false;
             }
 
