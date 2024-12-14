@@ -225,6 +225,11 @@ namespace FastReset {
                 return false;
             }
 
+            // Other conditions where the routing flag can't be used
+            if (InGameMenu.isCurrentlyNavigationMenu || EnterPeakScene.enteringPeakScene || ResetPosition.resettingPosition) {
+                return false;
+            }
+
             // Cannot teleport while crampons are in a wall, roped, or in a bivouac
             if (Crampons.cramponsActivated || Bivouac.currentlyUsingBivouac) {
                 return false;
