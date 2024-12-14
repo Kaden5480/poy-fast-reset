@@ -225,21 +225,32 @@ namespace FastReset {
                 return false;
             }
 
-            // Other conditions where the routing flag can't be used
-            if (InGameMenu.isCurrentlyNavigationMenu || EnterPeakScene.enteringPeakScene || ResetPosition.resettingPosition) {
+            // Invalid scenes
+            if (Scenes.GetScene(sceneName) == null) {
+                return false;
+            }
+
+            // Can't use while getting a score
+            if (TimeAttack.receivingScore || TimeAttack.aboutToReceiveScore) {
                 return false;
             }
 
             // Cannot teleport while crampons are in a wall, roped, or in a bivouac
-            if (Crampons.cramponsActivated || Bivouac.currentlyUsingBivouac) {
+            if (Crampons.cramponsActivated || Bivouac.currentlyUsingBivouac || Bivouac.movingToBivouac) {
                 return false;
             }
             if (ropeAnchor != null && ropeAnchor.attached == true) {
                 return false;
             }
 
-            // Invalid scenes
-            if (Scenes.GetScene(sceneName) == null) {
+            // Other conditions where the routing flag can't be used
+            if (
+                InGameMenu.isCurrentlyNavigationMenu
+                || EnterPeakScene.enteringPeakScene
+                || ResetPosition.resettingPosition
+                || StamperPeakSummit.currentlyStampingPeakJournal
+                || SummitFlag.placingEvent
+            ) {
                 return false;
             }
 
