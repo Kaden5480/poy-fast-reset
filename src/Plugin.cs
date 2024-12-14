@@ -210,13 +210,15 @@ namespace FastReset {
         }
 
         private void CommonUpdate() {
+            if (Input.GetKeyDown(keybind) == false) {
+                return;
+            }
+
             if (CanTeleport() == false) {
                 return;
             }
 
-            if (Input.GetKeyDown(keybind) == true) {
-                Teleport();
-            }
+            Teleport();
         }
 
         private bool CanTeleport() {
