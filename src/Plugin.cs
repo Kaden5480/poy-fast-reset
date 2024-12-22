@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 using UnityEngine;
@@ -7,23 +8,43 @@ using UnityEngine.SceneManagement;
 #if BEPINEX
 
 using BepInEx;
-using BepInEx.Configuration;
 
 namespace FastReset {
     [BepInPlugin("com.github.Kaden5480.poy-fast-reset", "FastReset", PluginInfo.PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin {
-        private ConfigEntry<string> configKeybind;
-
         /**
          * <summary>
          * Executes when the plugin is being loaded.
          * </summary>
          */
         public void Awake() {
-            configKeybind = Config.Bind("General", "keybind", defaultKeybind, "Keybind to teleport");
-            SceneManager.sceneLoaded += OnSceneLoaded;
+            config = new Cfg(
+                Config.Bind(
+                    "Keybinds", "teleport", defaultTeleportKeybind,
+                    "Keybind to teleport to saved position"
+                ),
+                Config.Bind(
+                    "Keybinds", "save", defaultSaveKeybind,
+                    "Keybind to save the current position and rotation"
+                )
+            );
 
-            CommonAwake();
+            foreach (KeyValuePair<string, float[]> entry in Scenes.defaultPoints) {
+                SceneData data = new SceneData(
+                    Config.Bind(entry.Key, "posX", entry.Value[0]),
+                    Config.Bind(entry.Key, "posY", entry.Value[1]),
+                    Config.Bind(entry.Key, "posZ", entry.Value[2]),
+                    Config.Bind(entry.Key, "rotX", entry.Value[3]),
+                    Config.Bind(entry.Key, "rotY", entry.Value[4]),
+                    Config.Bind(entry.Key, "rotZ", entry.Value[5]),
+                    Config.Bind(entry.Key, "rotW", entry.Value[6]),
+                    Config.Bind(entry.Key, "rotationY", entry.Value[7])
+                );
+
+                config.AddSceneData(entry.Key, data);
+            }
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
         /**
@@ -74,19 +95,36 @@ using MelonLoader;
 
 namespace FastReset {
     public class Plugin: MelonMod {
-        private MelonPreferences_Category configCategory;
-        private MelonPreferences_Entry<string> configKeybind;
-
         /**
          * <summary>
          * Executes when the mod is being loaded.
          * </summary>
          */
         public override void OnInitializeMelon() {
-            configCategory = MelonPreferences.CreateCategory("FastReset");
-            configKeybind = configCategory.CreateEntry("keybind", defaultKeybind);
+            MelonPreferences_Category keybinds = MelonPreferences.CreateCategory("Keybinds");
+            keybinds.SetFilePath("com.github.Kaden5480.poy-fast-reset.cfg");
 
-            CommonAwake();
+            config = new Cfg(
+                keybinds.CreateEntry<string>("teleport", defaultTeleportKeybind),
+                keybinds.CreateEntry<string>("save", defaultSaveKeybind)
+            );
+
+            foreach (KeyValuePair<string, float[]> entry in Scenes.defaultPoints) {
+                MelonPreferences_Category scene = MelonPreferences.CreateCategory(entry.Key);
+
+                SceneData data = new SceneData(
+                    scene.CreateEntry<float>("posX", entry.Value[0]),
+                    scene.CreateEntry<float>("posY", entry.Value[1]),
+                    scene.CreateEntry<float>("posZ", entry.Value[2]),
+                    scene.CreateEntry<float>("rotX", entry.Value[3]),
+                    scene.CreateEntry<float>("rotY", entry.Value[4]),
+                    scene.CreateEntry<float>("rotZ", entry.Value[5]),
+                    scene.CreateEntry<float>("rotW", entry.Value[6]),
+                    scene.CreateEntry<float>("rotationY", entry.Value[7])
+                );
+
+                config.AddSceneData(entry.Key, data);
+            }
         }
 
         /*
@@ -120,10 +158,10 @@ namespace FastReset {
         }
 
 #endif
+        private string defaultTeleportKeybind = KeyCode.F4.ToString();
+        private string defaultSaveKeybind = KeyCode.F8.ToString();
 
-        private string defaultKeybind = KeyCode.F4.ToString();
-        private KeyCode keybind;
-
+        private Cfg config;
 
         private int sceneIndex;
         private string sceneName;
@@ -142,12 +180,24 @@ namespace FastReset {
         private bool isSolemnTempest;
         private DistanceActivator distanceActivator;
 
+        /**
+         * <summary>
+         * Gets a private instance field from the routing flag.
+         * </summary>
+         * <param name="flag">An instance of the routing flag</param>
+         * <param name="fieldName">The name of the field to get</param>
+         */
         private T GetField<T>(RoutingFlag flag, string fieldName) {
             return (T) typeof(RoutingFlag).GetField(fieldName,
                 BindingFlags.NonPublic | BindingFlags.Instance
             ).GetValue(flag);
         }
 
+        /**
+         * <summary>
+         * Resets fields to default states.
+         * </summary>
+         */
         private void Reset() {
             sceneIndex = -1;
             sceneName = null;
@@ -167,10 +217,13 @@ namespace FastReset {
             distanceActivator = null;
         }
 
-        private void CommonAwake() {
-            keybind = (KeyCode) System.Enum.Parse(typeof(KeyCode), configKeybind.Value);
-        }
-
+        /**
+         * <summary>
+         * Common code to run on a scene load.
+         * </summary>
+         * <param name="buildIndex">The build index of the scene</param>
+         * <param name="sceneName">The name of the scene</param>
+         */
         private void CommonSceneLoad(int buildIndex, string sceneName) {
             InGameMenu[] menus = GameObject.FindObjectsOfType<InGameMenu>();
             LeavePeakScene[] leavePeakScenes = GameObject.FindObjectsOfType<LeavePeakScene>();
@@ -209,18 +262,31 @@ namespace FastReset {
             distanceActivator = flag.distanceActivatorST;
         }
 
+        /**
+         * <summary>
+         * Common code to run on each update.
+         * </summary>
+         */
         private void CommonUpdate() {
-            if (Input.GetKeyDown(keybind) == false) {
-                return;
+            if (Input.GetKeyDown(config.saveKeybind) == true
+                && CanTeleport() == true
+            ) {
+                Save();
             }
 
-            if (CanTeleport() == false) {
-                return;
+            if (Input.GetKeyDown(config.teleportKeybind) == true
+                && CanTeleport() == true
+            ) {
+                Teleport();
             }
-
-            Teleport();
         }
 
+        /**
+         * <summary>
+         * Checks whether teleporting is enabled on the current scene.
+         * </summary>
+         * <return>True if teleporting is enabled, false otherwise</return>
+         */
         private bool CanTeleport() {
             // Only allowed in normal mode
             if (GameManager.control.permaDeathEnabled || GameManager.control.freesoloEnabled) {
@@ -228,7 +294,7 @@ namespace FastReset {
             }
 
             // Invalid scenes
-            if (Scenes.GetScene(sceneName) == null) {
+            if (config.IsValidScene(sceneName) == false) {
                 return false;
             }
 
@@ -270,8 +336,39 @@ namespace FastReset {
                 && playerTransform != null;
         }
 
+        /**
+         * <summary>
+         * Saves the current player position and rotation.
+         * </summary>
+         */
+        private void Save() {
+            SceneData data = config.GetSceneData(sceneName);
+
+            if (data == null) {
+                return;
+            }
+
+            if (menuClick != null) {
+                menuClick.Play();
+            }
+
+            if (isSolemnTempest == true) {
+                data.position = playerTransform.position - leavePeakScene.transform.position;
+            } else {
+                data.position = playerTransform.position;
+            }
+
+            data.rotation = playerCameraHolder.rotation;
+            data.rotationY = camY.rotationY;
+        }
+
+        /**
+         * <summary>
+         * Teleports to the saved position for the current scene.
+         * </summary>
+         */
         private void Teleport() {
-            SceneData data = Scenes.GetScene(sceneName);
+            SceneData data = config.GetSceneData(sceneName);
 
             if (data == null) {
                 return;
