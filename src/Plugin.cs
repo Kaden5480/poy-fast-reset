@@ -177,6 +177,7 @@ namespace FastReset {
         private IceAxe iceAxes;
         private Rigidbody playerRB;
         private RopeAnchor ropeAnchor;
+        private RoutingFlag routingFlag;
         private Transform playerTransform;
         private Transform playerCameraHolder;
 
@@ -214,6 +215,7 @@ namespace FastReset {
             fallingEvent = null;
             playerRB = null;
             ropeAnchor = null;
+            routingFlag = null;
             playerTransform = null;
             playerCameraHolder = null;
 
@@ -261,6 +263,7 @@ namespace FastReset {
             climbing = GetField<Climbing>(flag, "climbing");
             playerRB = GetField<Rigidbody>(flag, "playerRB");
             ropeAnchor = GetField<RopeAnchor>(flag, "ropeanchor");
+            routingFlag = flag;
             playerTransform = GetField<Transform>(flag, "playerTransform");
             playerCameraHolder = GameObject.Find("PlayerCameraHolder").transform;
 
@@ -396,6 +399,8 @@ namespace FastReset {
             fallingEvent.fellShortDistance = false;
             fallingEvent.fellLongDistance = false;
             fallingEvent.fellToDeath = false;
+
+            routingFlag.usedFlagTeleport = false;
 
             if (isSolemnTempest == true) {
                 playerTransform.position = leavePeakScene.transform.position + data.position;
