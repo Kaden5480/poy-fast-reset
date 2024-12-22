@@ -89,6 +89,7 @@ namespace FastReset {
 #elif MELONLOADER
 
 using MelonLoader;
+using MelonLoader.Utils;
 
 [assembly: MelonInfo(typeof(FastReset.Plugin), "FastReset", PluginInfo.PLUGIN_VERSION, "Kaden5480")]
 [assembly: MelonGame("TraipseWare", "Peaks of Yore")]
@@ -101,8 +102,9 @@ namespace FastReset {
          * </summary>
          */
         public override void OnInitializeMelon() {
+            string filePath = $"{MelonEnvironment.UserDataDirectory}/com.github.Kaden5480.poy-fast-reset.cfg";
             MelonPreferences_Category keybinds = MelonPreferences.CreateCategory("Keybinds");
-            keybinds.SetFilePath("com.github.Kaden5480.poy-fast-reset.cfg");
+            keybinds.SetFilePath(filePath);
 
             config = new Cfg(
                 keybinds.CreateEntry<string>("teleport", defaultTeleportKeybind),
@@ -111,7 +113,7 @@ namespace FastReset {
 
             foreach (KeyValuePair<string, float[]> entry in Scenes.defaultPoints) {
                 MelonPreferences_Category scene = MelonPreferences.CreateCategory(entry.Key);
-                scene.SetFilePath("com.github.Kaden5480.poy-fast-reset.cfg");
+                scene.SetFilePath(filePath);
 
                 SceneData data = new SceneData(
                     scene.CreateEntry<float>("posX", entry.Value[0]),
