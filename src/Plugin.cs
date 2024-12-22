@@ -171,6 +171,7 @@ namespace FastReset {
 
         private AudioSource menuClick;
 
+        private Barometer barometer;
         private CameraLook camY;
         private Climbing climbing;
         private FallingEvent fallingEvent;
@@ -178,6 +179,7 @@ namespace FastReset {
         private Rigidbody playerRB;
         private RopeAnchor ropeAnchor;
         private RoutingFlag routingFlag;
+        private PlayerMove playerMove;
         private Transform playerTransform;
         private Transform playerCameraHolder;
 
@@ -209,6 +211,7 @@ namespace FastReset {
 
             menuClick = null;
 
+            barometer = null;
             camY = null;
             iceAxes = null;
             climbing = null;
@@ -216,6 +219,7 @@ namespace FastReset {
             playerRB = null;
             ropeAnchor = null;
             routingFlag = null;
+            playerMove = null;
             playerTransform = null;
             playerCameraHolder = null;
 
@@ -232,6 +236,7 @@ namespace FastReset {
          * <param name="sceneName">The name of the scene</param>
          */
         private void CommonSceneLoad(int buildIndex, string sceneName) {
+            Barometer[] barometers = GameObject.FindObjectsOfType<Barometer>();
             InGameMenu[] menus = GameObject.FindObjectsOfType<InGameMenu>();
             LeavePeakScene[] leavePeakScenes = GameObject.FindObjectsOfType<LeavePeakScene>();
             RoutingFlag[] flags = GameObject.FindObjectsOfType<RoutingFlag>();
@@ -241,6 +246,10 @@ namespace FastReset {
 
             this.sceneIndex = buildIndex;
             this.sceneName = sceneName;
+
+            if (barometers.Length >= 1) {
+                barometer = barometers[0];
+            }
 
             if (menus.Length >= 1) {
                 menuClick = menus[0].menuClick;
@@ -264,6 +273,7 @@ namespace FastReset {
             playerRB = GetField<Rigidbody>(flag, "playerRB");
             ropeAnchor = GetField<RopeAnchor>(flag, "ropeanchor");
             routingFlag = flag;
+            playerMove = GetField<PlayerMove>(flag, "playermove");
             playerTransform = GetField<Transform>(flag, "playerTransform");
             playerCameraHolder = GameObject.Find("PlayerCameraHolder").transform;
 
@@ -342,6 +352,7 @@ namespace FastReset {
             return climbing != null
                 && fallingEvent != null
                 && iceAxes != null
+                && playerMove != null
                 && playerRB != null
                 && playerTransform != null;
         }
@@ -354,7 +365,11 @@ namespace FastReset {
         private void Save() {
             SceneData data = config.GetSceneData(sceneName);
 
-            if (data == null) {
+            if (data == null || barometer == null) {
+                return;
+            }
+
+            if (playerMove.IsGrounded() == false || Mathf.Abs(barometer.currentMetresUp) >= 3f) {
                 return;
             }
 
