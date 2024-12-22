@@ -111,6 +111,7 @@ namespace FastReset {
 
             foreach (KeyValuePair<string, float[]> entry in Scenes.defaultPoints) {
                 MelonPreferences_Category scene = MelonPreferences.CreateCategory(entry.Key);
+                scene.SetFilePath("com.github.Kaden5480.poy-fast-reset.cfg");
 
                 SceneData data = new SceneData(
                     scene.CreateEntry<float>("posX", entry.Value[0]),
