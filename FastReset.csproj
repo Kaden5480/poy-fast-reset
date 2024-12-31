@@ -4,7 +4,7 @@
     <Platform>Any CPU</Platform>
     <AssemblyName>FastReset</AssemblyName>
     <Description>A Peaks of Yore mod which quickly teleports you to the start of a level</Description>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <RootNamespace>FastReset</RootNamespace>
     <Configurations>Debug-BepInEx;Release-BepInEx;Debug-MelonLoader;Release-MelonLoader</Configurations>
     <Configuration Condition="'$(Configuration)' == ''">Debug-BepInEx</Configuration>
@@ -39,6 +39,7 @@
 
   <ItemGroup Condition="$(Configuration.EndsWith('-MelonLoader'))">
     <PackageReference Include="LavaGang.MelonLoader" Version="0.6.6"/>
+    <PackageReference Include="Lib.Harmony" Version="2.3.3"/>
   </ItemGroup>
 
   <ItemGroup>

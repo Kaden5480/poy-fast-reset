@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -44,7 +45,11 @@ namespace FastReset {
                 config.AddSceneData(entry.Key, data);
             }
 
+            Harmony.CreateAndPatchAll(typeof(Plugin.PatchResetPosition));
+
             SceneManager.sceneLoaded += OnSceneLoaded;
+
+            CommonAwake();
         }
 
         /**
@@ -128,6 +133,8 @@ namespace FastReset {
 
                 config.AddSceneData(entry.Key, data);
             }
+
+            CommonAwake();
         }
 
         /*
@@ -283,6 +290,15 @@ namespace FastReset {
 
         /**
          * <summary>
+         * Common code to run on awake.
+         * </summary>
+         */
+        private void CommonAwake() {
+            PatchResetPosition.plugin = this;
+        }
+
+        /**
+         * <summary>
          * Common code to run on each update.
          * </summary>
          */
@@ -428,6 +444,37 @@ namespace FastReset {
 
             if (isSolemnTempest == true) {
                 distanceActivator.ForceCheck();
+            }
+        }
+
+        /**
+         * <summary>
+         * Patches ResetPosition to use fast reset instead.
+         * </summary>
+         */
+        [HarmonyPatch(typeof(ResetPosition), "OnTriggerEnter")]
+        static class PatchResetPosition {
+            public static Plugin plugin = null;
+
+            static bool Prefix(Collider other) {
+                if (plugin == null) {
+                    return true;
+                }
+
+                if (ResetPosition.resettingPosition == true) {
+                    return true;
+                }
+
+                if (other.CompareTag("PlayerTrigger") == false) {
+                    return true;
+                }
+
+                if (plugin.CanTeleport() == false) {
+                    return true;
+                }
+
+                plugin.Teleport();
+                return false;
             }
         }
     }
