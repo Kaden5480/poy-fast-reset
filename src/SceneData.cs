@@ -20,11 +20,9 @@ namespace FastReset {
         }
 
         public Quaternion rotation {
-            get => new Quaternion(rotX.Value, rotY.Value, rotZ.Value, rotW.Value);
+            get => new Quaternion(0f, rotY.Value, 0f, rotW.Value);
             set {
-                rotX.Value = value.x;
                 rotY.Value = value.y;
-                rotZ.Value = value.z;
                 rotW.Value = value.w;
             }
         }
@@ -40,9 +38,7 @@ namespace FastReset {
         private ConfigEntry<float> posX;
         private ConfigEntry<float> posY;
         private ConfigEntry<float> posZ;
-        private ConfigEntry<float> rotX;
         private ConfigEntry<float> rotY;
-        private ConfigEntry<float> rotZ;
         private ConfigEntry<float> rotW;
         private ConfigEntry<float> _rotationY;
 
@@ -53,16 +49,13 @@ namespace FastReset {
          */
         public SceneData(
             ConfigEntry<float> posX, ConfigEntry<float> posY, ConfigEntry<float> posZ,
-            ConfigEntry<float> rotX, ConfigEntry<float> rotY, ConfigEntry<float> rotZ,
-            ConfigEntry<float> rotW,
+            ConfigEntry<float> rotY, ConfigEntry<float> rotW,
             ConfigEntry<float> rotationY
         ) {
             this.posX = posX;
             this.posY = posY;
             this.posZ = posZ;
-            this.rotX = rotX;
             this.rotY = rotY;
-            this.rotZ = rotZ;
             this.rotW = rotW;
             this._rotationY = rotationY;
         }
@@ -71,9 +64,7 @@ namespace FastReset {
         private MelonPreferences_Entry<float> posX;
         private MelonPreferences_Entry<float> posY;
         private MelonPreferences_Entry<float> posZ;
-        private MelonPreferences_Entry<float> rotX;
         private MelonPreferences_Entry<float> rotY;
-        private MelonPreferences_Entry<float> rotZ;
         private MelonPreferences_Entry<float> rotW;
         private MelonPreferences_Entry<float> _rotationY;
 
@@ -85,16 +76,13 @@ namespace FastReset {
         public SceneData(
             MelonPreferences_Entry<float> posX, MelonPreferences_Entry<float> posY,
             MelonPreferences_Entry<float> posZ,
-            MelonPreferences_Entry<float> rotX, MelonPreferences_Entry<float> rotY,
-            MelonPreferences_Entry<float> rotZ, MelonPreferences_Entry<float> rotW,
+            MelonPreferences_Entry<float> rotY, MelonPreferences_Entry<float> rotW,
             MelonPreferences_Entry<float> rotationY
         ) {
             this.posX = posX;
             this.posY = posY;
             this.posZ = posZ;
-            this.rotX = rotX;
             this.rotY = rotY;
-            this.rotZ = rotZ;
             this.rotW = rotW;
             this._rotationY = rotationY;
         }

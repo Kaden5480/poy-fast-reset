@@ -35,11 +35,9 @@ namespace FastReset {
                     Config.Bind(entry.Key, "posX", entry.Value[0]),
                     Config.Bind(entry.Key, "posY", entry.Value[1]),
                     Config.Bind(entry.Key, "posZ", entry.Value[2]),
-                    Config.Bind(entry.Key, "rotX", entry.Value[3]),
-                    Config.Bind(entry.Key, "rotY", entry.Value[4]),
-                    Config.Bind(entry.Key, "rotZ", entry.Value[5]),
-                    Config.Bind(entry.Key, "rotW", entry.Value[6]),
-                    Config.Bind(entry.Key, "rotationY", entry.Value[7])
+                    Config.Bind(entry.Key, "rotY", entry.Value[3]),
+                    Config.Bind(entry.Key, "rotW", entry.Value[4]),
+                    Config.Bind(entry.Key, "rotationY", entry.Value[5])
                 );
 
                 config.AddSceneData(entry.Key, data);
@@ -108,7 +106,7 @@ namespace FastReset {
          */
         public override void OnInitializeMelon() {
             string filePath = $"{MelonEnvironment.UserDataDirectory}/com.github.Kaden5480.poy-fast-reset.cfg";
-            MelonPreferences_Category keybinds = MelonPreferences.CreateCategory("Keybinds");
+            MelonPreferences_Category keybinds = MelonPreferences.CreateCategory("FastReset_Keybinds");
             keybinds.SetFilePath(filePath);
 
             config = new Cfg(
@@ -117,18 +115,16 @@ namespace FastReset {
             );
 
             foreach (KeyValuePair<string, float[]> entry in Scenes.defaultPoints) {
-                MelonPreferences_Category scene = MelonPreferences.CreateCategory(entry.Key);
+                MelonPreferences_Category scene = MelonPreferences.CreateCategory($"FastReset_{entry.Key}");
                 scene.SetFilePath(filePath);
 
                 SceneData data = new SceneData(
                     scene.CreateEntry<float>("posX", entry.Value[0]),
                     scene.CreateEntry<float>("posY", entry.Value[1]),
                     scene.CreateEntry<float>("posZ", entry.Value[2]),
-                    scene.CreateEntry<float>("rotX", entry.Value[3]),
-                    scene.CreateEntry<float>("rotY", entry.Value[4]),
-                    scene.CreateEntry<float>("rotZ", entry.Value[5]),
-                    scene.CreateEntry<float>("rotW", entry.Value[6]),
-                    scene.CreateEntry<float>("rotationY", entry.Value[7])
+                    scene.CreateEntry<float>("rotY", entry.Value[3]),
+                    scene.CreateEntry<float>("rotW", entry.Value[4]),
+                    scene.CreateEntry<float>("rotationY", entry.Value[5])
                 );
 
                 config.AddSceneData(entry.Key, data);
@@ -385,7 +381,7 @@ namespace FastReset {
                 return;
             }
 
-            if (playerMove.IsGrounded() == false || Mathf.Abs(barometer.currentMetresUp) >= 3f) {
+            if (playerMove.IsGrounded() == false || Math.Abs(barometer.currentMetresUp) >= 3f) {
                 return;
             }
 
