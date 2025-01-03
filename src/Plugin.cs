@@ -375,13 +375,26 @@ namespace FastReset {
          * </summary>
          */
         private void Save() {
+            double currentMetresUp;
             SceneData data = config.GetSceneData(sceneName);
 
             if (data == null || barometer == null) {
                 return;
             }
 
-            if (playerMove.IsGrounded() == false || Math.Abs(barometer.currentMetresUp) >= 3f) {
+            currentMetresUp = barometer.currentMetresUp;
+
+            if (barometer.isGreatBulwark) {
+                currentMetresUp /= 3.12f;
+            }
+            else if (barometer.isSolemnTempest) {
+                currentMetresUp /= 3.125f;
+            }
+            else if (barometer.alp0) {
+                currentMetresUp /= 1.355f;
+            }
+
+            if (playerMove.IsGrounded() == false || Math.Abs(currentMetresUp) >= 3f) {
                 return;
             }
 
