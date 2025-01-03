@@ -76,11 +76,7 @@ namespace FastReset {
          * <param name="data">The data for this scene</param>
          */
         public void AddSceneData(string name, SceneData data) {
-#if BEPINEX
             points.Add(name, data);
-#elif MELONLOADER
-            points.Add($"FastReset_{name}", data);
-#endif
         }
 
         /**
@@ -95,11 +91,7 @@ namespace FastReset {
                 return false;
             }
 
-#if BEPINEX
             return points.ContainsKey(name);
-#elif MELONLOADER
-            return points.ContainsKey($"FastReset_{name}");
-#endif
         }
 
         /**
@@ -116,11 +108,7 @@ namespace FastReset {
                 return null;
             }
 
-#if BEPINEX
             if (points.TryGetValue(name, out data) == false) {
-#elif MELONLOADER
-            if (points.TryGetValue($"FastReset_{name}", out data) == false) {
-#endif
                 return null;
             }
 
