@@ -282,6 +282,12 @@ namespace FastReset {
                 return;
             }
 
+            if (sceneObjects.playerMove.IsGrounded() == false
+                || sceneObjects.timeAttack.isInColliderActivationRange == false
+            ) {
+                return;
+            }
+
             if (sceneObjects.menuClick != null) {
                 sceneObjects.menuClick.Play();
             }
