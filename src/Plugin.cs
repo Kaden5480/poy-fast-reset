@@ -195,6 +195,10 @@ namespace FastReset {
         private int sceneIndex;
         private string sceneName;
 
+        private Vector3 tempPosition;
+        private Quaternion tempRotation;
+        private float tempRotationY;
+
         /**
          * <summary>
          * Common code to run on awake.
@@ -215,6 +219,10 @@ namespace FastReset {
         private void CommonSceneLoad(int buildIndex, string sceneName) {
             this.sceneIndex = buildIndex;
             this.sceneName = sceneName;
+
+            tempPosition = Vector3.zero;
+            tempRotation = Quaternion.identity;
+            tempRotationY = 0;
 
             sceneObjects.LoadObjects();
 
@@ -282,8 +290,12 @@ namespace FastReset {
                 return;
             }
 
-            if (sceneObjects.playerMove.IsGrounded() == false
-                || sceneObjects.timeAttack.isInColliderActivationRange == false
+            if (sceneObjects.playerMove.IsGrounded() == false) {
+                return;
+            }
+
+            if (sceneObjects.routingFlag.currentlyUsingFlag == false
+                && sceneObjects.timeAttack.isInColliderActivationRange == false
             ) {
                 return;
             }
@@ -292,14 +304,20 @@ namespace FastReset {
                 sceneObjects.menuClick.Play();
             }
 
+            tempPosition = sceneObjects.playerTransform.position;
+
             if (sceneObjects.isSolemnTempest == true) {
-                data.position = sceneObjects.playerTransform.position - sceneObjects.leavePeakScene.transform.position;
-            } else {
-                data.position = sceneObjects.playerTransform.position;
+                tempPosition -= sceneObjects.leavePeakScene.transform.position;
             }
 
-            data.rotation = sceneObjects.playerCameraHolder.rotation;
-            data.rotationY = sceneObjects.camY.rotationY;
+            tempRotation = sceneObjects.playerCameraHolder.rotation;
+            tempRotationY = sceneObjects.camY.rotationY;
+
+            if (sceneObjects.routingFlag.currentlyUsingFlag == false) {
+                data.position = tempPosition;
+                data.rotation = tempRotation;
+                data.rotationY = tempRotationY;
+            }
         }
 
         /**
@@ -332,14 +350,21 @@ namespace FastReset {
 
             sceneObjects.routingFlag.usedFlagTeleport = false;
 
-            if (sceneObjects.isSolemnTempest == true) {
-                sceneObjects.playerTransform.position = sceneObjects.leavePeakScene.transform.position + data.position;
-            } else {
-                sceneObjects.playerTransform.position = data.position;
+            if (sceneObjects.routingFlag.currentlyUsingFlag == true && tempPosition != Vector3.zero) {
+                sceneObjects.playerTransform.position = tempPosition;
+                sceneObjects.playerCameraHolder.rotation = tempRotation;
+                sceneObjects.camY.rotationY = tempRotationY;
             }
+            else {
+                if (sceneObjects.isSolemnTempest == true) {
+                    sceneObjects.playerTransform.position = sceneObjects.leavePeakScene.transform.position + data.position;
+                } else {
+                    sceneObjects.playerTransform.position = data.position;
+                }
 
-            sceneObjects.playerCameraHolder.rotation = data.rotation;
-            sceneObjects.camY.rotationY = data.rotationY;
+                sceneObjects.playerCameraHolder.rotation = data.rotation;
+                sceneObjects.camY.rotationY = data.rotationY;
+            }
 
             if (sceneObjects.isSolemnTempest == true) {
                 sceneObjects.distanceActivator.ForceCheck();
