@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 
 using HarmonyLib;
@@ -380,7 +381,7 @@ namespace FastReset {
         static class PatchResetPosition {
             public static Plugin plugin = null;
 
-            static bool Prefix(Collider other) {
+            static bool Prefix(ResetPosition __instance, Collider other) {
                 if (plugin == null) {
                     return true;
                 }
@@ -396,6 +397,14 @@ namespace FastReset {
                 if (plugin.CanTeleport() == false) {
                     return true;
                 }
+
+                FallingEvent fallEvent = (FallingEvent) typeof(ResetPosition).GetField("fallEvent",
+                    BindingFlags.NonPublic | BindingFlags.Instance
+                ).GetValue(__instance);
+
+                fallEvent.falls++;
+                GameManager.control.global_stats_falls++;
+                GameManager.control.SaveAllStats();
 
                 plugin.Teleport();
                 return false;
