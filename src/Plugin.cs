@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 using HarmonyLib;
 using UnityEngine;
@@ -46,6 +45,7 @@ namespace FastReset {
             Harmony.CreateAndPatchAll(typeof(Plugin.PatchResetPosition));
 
             SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
 
             CommonAwake();
         }
@@ -57,6 +57,7 @@ namespace FastReset {
          */
         public void OnDestroy() {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
         }
 
         /*
@@ -68,6 +69,16 @@ namespace FastReset {
          */
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
             CommonSceneLoad(scene.buildIndex, scene.name);
+        }
+
+        /**
+         * <summary>
+         * Executes whenever a scene unloads.
+         * </summary>
+         * <param name="scene">The scene which was unloaded</param>
+         */
+        public void OnSceneUnloaded(Scene scene) {
+            CommonSceneUnload();
         }
 
         /*
@@ -155,6 +166,17 @@ namespace FastReset {
 
         /**
          * <summary>
+         * Executes whenever a scene unloads.
+         * </summary>
+         * <param name="buildIndex">The build index of the scene</param>
+         * <param name="sceneName">The name of the scene</param>
+         */
+        public override void OnSceneWasUnloaded(int buildIndex, string sceneName) {
+            CommonSceneUnload();
+        }
+
+        /**
+         * <summary>
          * Logs a message.
          * </summary>
          * <param name="message">The message to log</param>
@@ -168,67 +190,19 @@ namespace FastReset {
         private string defaultSaveKeybind = KeyCode.F8.ToString();
 
         private Cfg config;
+        private SceneObjects sceneObjects;
 
         private int sceneIndex;
         private string sceneName;
 
-        private AudioSource menuClick;
-
-        private Barometer barometer;
-        private CameraLook camY;
-        private Climbing climbing;
-        private FallingEvent fallingEvent;
-        private IceAxe iceAxes;
-        private Rigidbody playerRB;
-        private RopeAnchor ropeAnchor;
-        private RoutingFlag routingFlag;
-        private PlayerMove playerMove;
-        private Transform playerTransform;
-        private Transform playerCameraHolder;
-
-        private LeavePeakScene leavePeakScene;
-        private bool isSolemnTempest;
-        private DistanceActivator distanceActivator;
-
         /**
          * <summary>
-         * Gets a private instance field from the routing flag.
-         * </summary>
-         * <param name="flag">An instance of the routing flag</param>
-         * <param name="fieldName">The name of the field to get</param>
-         */
-        private T GetField<T>(RoutingFlag flag, string fieldName) {
-            return (T) typeof(RoutingFlag).GetField(fieldName,
-                BindingFlags.NonPublic | BindingFlags.Instance
-            ).GetValue(flag);
-        }
-
-        /**
-         * <summary>
-         * Resets fields to default states.
+         * Common code to run on awake.
          * </summary>
          */
-        private void Reset() {
-            sceneIndex = -1;
-            sceneName = null;
-
-            menuClick = null;
-
-            barometer = null;
-            camY = null;
-            iceAxes = null;
-            climbing = null;
-            fallingEvent = null;
-            playerRB = null;
-            ropeAnchor = null;
-            routingFlag = null;
-            playerMove = null;
-            playerTransform = null;
-            playerCameraHolder = null;
-
-            leavePeakScene = null;
-            isSolemnTempest = false;
-            distanceActivator = null;
+        private void CommonAwake() {
+            sceneObjects = new SceneObjects();
+            PatchResetPosition.plugin = this;
         }
 
         /**
@@ -239,58 +213,27 @@ namespace FastReset {
          * <param name="sceneName">The name of the scene</param>
          */
         private void CommonSceneLoad(int buildIndex, string sceneName) {
-            Barometer[] barometers = GameObject.FindObjectsOfType<Barometer>();
-            InGameMenu[] menus = GameObject.FindObjectsOfType<InGameMenu>();
-            LeavePeakScene[] leavePeakScenes = GameObject.FindObjectsOfType<LeavePeakScene>();
-            RoutingFlag[] flags = GameObject.FindObjectsOfType<RoutingFlag>();
-            RoutingFlag flag;
-
-            Reset();
-
             this.sceneIndex = buildIndex;
             this.sceneName = sceneName;
 
-            if (barometers.Length >= 1) {
-                barometer = barometers[0];
-            }
+            sceneObjects.LoadObjects();
 
-            if (menus.Length >= 1) {
-                menuClick = menus[0].menuClick;
-            }
-
-            if (leavePeakScenes.Length >= 1) {
-                leavePeakScene = leavePeakScenes[0];
-            }
-
-            if (flags.Length < 1) {
+            if (sceneObjects.routingFlag == null) {
                 LogInfo("Routing flag doesn't exist in scene, unable to teleport");
                 return;
             }
-
-            flag = flags[0];
-
-            camY = GameObject.Find("CamY").GetComponent<CameraLook>();
-            fallingEvent = GameObject.FindObjectOfType<FallingEvent>();
-            iceAxes = GetField<IceAxe>(flag, "iceAxes");
-            climbing = GetField<Climbing>(flag, "climbing");
-            playerRB = GetField<Rigidbody>(flag, "playerRB");
-            ropeAnchor = GetField<RopeAnchor>(flag, "ropeanchor");
-            routingFlag = flag;
-            playerMove = GetField<PlayerMove>(flag, "playermove");
-            playerTransform = GetField<Transform>(flag, "playerTransform");
-            playerCameraHolder = GameObject.Find("PlayerCameraHolder").transform;
-
-            isSolemnTempest = flag.isSolemnTempest;
-            distanceActivator = flag.distanceActivatorST;
         }
 
         /**
          * <summary>
-         * Common code to run on awake.
+         * Common code to run on a scene unload.
          * </summary>
          */
-        private void CommonAwake() {
-            PatchResetPosition.plugin = this;
+        private void CommonSceneUnload() {
+            sceneIndex = -1;
+            sceneName = null;
+
+            sceneObjects.Reset();
         }
 
         /**
@@ -319,54 +262,12 @@ namespace FastReset {
          * <return>True if teleporting is enabled, false otherwise</return>
          */
         private bool CanTeleport() {
-            // Only allowed in normal mode
-            if (GameManager.control.permaDeathEnabled || GameManager.control.freesoloEnabled) {
-                return false;
-            }
-
             // Invalid scenes
             if (config.IsValidScene(sceneName) == false) {
                 return false;
             }
 
-            // Can't use while getting a score
-            if (TimeAttack.receivingScore || TimeAttack.aboutToReceiveScore) {
-                return false;
-            }
-
-            // Cannot teleport while crampons are in a wall, roped, or in a bivouac
-            if (Crampons.cramponsActivated || Bivouac.currentlyUsingBivouac || Bivouac.movingToBivouac) {
-                return false;
-            }
-            if (ropeAnchor != null && ropeAnchor.attached == true) {
-                return false;
-            }
-
-            // Other conditions where the routing flag can't be used
-            if (
-                InGameMenu.isCurrentlyNavigationMenu
-                || EnterPeakScene.enteringPeakScene
-                || ResetPosition.resettingPosition
-                || StamperPeakSummit.currentlyStampingPeakJournal
-                || SummitFlag.placingEvent
-            ) {
-                return false;
-            }
-
-            // Check if something strange happened (shouldn't happen)
-            if (isSolemnTempest == true) {
-                if (distanceActivator == null || leavePeakScene == null) {
-                    return false;
-                }
-            }
-
-            // Make sure things needed for teleporting exist
-            return climbing != null
-                && fallingEvent != null
-                && iceAxes != null
-                && playerMove != null
-                && playerRB != null
-                && playerTransform != null;
+            return sceneObjects.CanTeleport();
         }
 
         /**
@@ -375,41 +276,24 @@ namespace FastReset {
          * </summary>
          */
         private void Save() {
-            double currentMetresUp;
             SceneData data = config.GetSceneData(sceneName);
 
-            if (data == null || barometer == null) {
+            if (data == null) {
                 return;
             }
 
-            currentMetresUp = barometer.currentMetresUp;
-
-            if (barometer.isGreatBulwark) {
-                currentMetresUp /= 3.12f;
-            }
-            else if (barometer.isSolemnTempest) {
-                currentMetresUp /= 3.125f;
-            }
-            else if (barometer.alp0) {
-                currentMetresUp /= 1.355f;
+            if (sceneObjects.menuClick != null) {
+                sceneObjects.menuClick.Play();
             }
 
-            if (playerMove.IsGrounded() == false || Math.Abs(currentMetresUp) >= 3f) {
-                return;
-            }
-
-            if (menuClick != null) {
-                menuClick.Play();
-            }
-
-            if (isSolemnTempest == true) {
-                data.position = playerTransform.position - leavePeakScene.transform.position;
+            if (sceneObjects.isSolemnTempest == true) {
+                data.position = sceneObjects.playerTransform.position - sceneObjects.leavePeakScene.transform.position;
             } else {
-                data.position = playerTransform.position;
+                data.position = sceneObjects.playerTransform.position;
             }
 
-            data.rotation = playerCameraHolder.rotation;
-            data.rotationY = camY.rotationY;
+            data.rotation = sceneObjects.playerCameraHolder.rotation;
+            data.rotationY = sceneObjects.camY.rotationY;
         }
 
         /**
@@ -424,35 +308,35 @@ namespace FastReset {
                 return;
             }
 
-            if (menuClick != null) {
-                menuClick.Play();
+            if (sceneObjects.menuClick != null) {
+                sceneObjects.menuClick.Play();
             }
 
-            climbing.ReleaseLHand(false);
-            climbing.ReleaseRHand(false);
+            sceneObjects.climbing.ReleaseLHand(false);
+            sceneObjects.climbing.ReleaseRHand(false);
 
-            iceAxes.ReleaseLeft(false);
-            iceAxes.ReleaseRight(false);
+            sceneObjects.iceAxes.ReleaseLeft(false);
+            sceneObjects.iceAxes.ReleaseRight(false);
 
-            playerRB.velocity = Vector3.zero;
+            sceneObjects.playerRB.velocity = Vector3.zero;
 
-            fallingEvent.fellShortDistance = false;
-            fallingEvent.fellLongDistance = false;
-            fallingEvent.fellToDeath = false;
+            sceneObjects.fallingEvent.fellShortDistance = false;
+            sceneObjects.fallingEvent.fellLongDistance = false;
+            sceneObjects.fallingEvent.fellToDeath = false;
 
-            routingFlag.usedFlagTeleport = false;
+            sceneObjects.routingFlag.usedFlagTeleport = false;
 
-            if (isSolemnTempest == true) {
-                playerTransform.position = leavePeakScene.transform.position + data.position;
+            if (sceneObjects.isSolemnTempest == true) {
+                sceneObjects.playerTransform.position = sceneObjects.leavePeakScene.transform.position + data.position;
             } else {
-                playerTransform.position = data.position;
+                sceneObjects.playerTransform.position = data.position;
             }
 
-            playerCameraHolder.rotation = data.rotation;
-            camY.rotationY = data.rotationY;
+            sceneObjects.playerCameraHolder.rotation = data.rotation;
+            sceneObjects.camY.rotationY = data.rotationY;
 
-            if (isSolemnTempest == true) {
-                distanceActivator.ForceCheck();
+            if (sceneObjects.isSolemnTempest == true) {
+                sceneObjects.distanceActivator.ForceCheck();
             }
         }
 
