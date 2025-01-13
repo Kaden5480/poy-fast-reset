@@ -352,14 +352,21 @@ namespace FastReset {
             sceneObjects.routingFlag.usedFlagTeleport = false;
 
             if (sceneObjects.routingFlag.currentlyUsingFlag == true && tempPosition != Vector3.zero) {
-                sceneObjects.playerTransform.position = tempPosition;
+                if (sceneObjects.isSolemnTempest == true) {
+                    sceneObjects.playerTransform.position = tempPosition + sceneObjects.leavePeakScene.transform.position;
+                }
+                else {
+                    sceneObjects.playerTransform.position = tempPosition;
+                }
+
                 sceneObjects.playerCameraHolder.rotation = tempRotation;
                 sceneObjects.camY.rotationY = tempRotationY;
             }
             else {
                 if (sceneObjects.isSolemnTempest == true) {
-                    sceneObjects.playerTransform.position = sceneObjects.leavePeakScene.transform.position + data.position;
-                } else {
+                    sceneObjects.playerTransform.position = data.position + sceneObjects.leavePeakScene.transform.position;
+                }
+                else {
                     sceneObjects.playerTransform.position = data.position;
                 }
 
