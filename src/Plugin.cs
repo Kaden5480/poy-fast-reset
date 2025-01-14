@@ -43,7 +43,8 @@ namespace FastReset {
                 config.AddSceneData(entry.Key, data);
             }
 
-            Harmony.CreateAndPatchAll(typeof(Plugin.PatchResetPosition));
+            Harmony.CreateAndPatchAll(typeof(Plugin.PatchResetPositionEnter));
+            Harmony.CreateAndPatchAll(typeof(Plugin.PatchResetPositionStay));
 
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
@@ -187,6 +188,8 @@ namespace FastReset {
         }
 
 #endif
+        private static Plugin plugin = null;
+
         private string defaultTeleportKeybind = KeyCode.F4.ToString();
         private string defaultSaveKeybind = KeyCode.F8.ToString();
 
@@ -207,7 +210,7 @@ namespace FastReset {
          */
         private void CommonAwake() {
             sceneObjects = new SceneObjects();
-            PatchResetPosition.plugin = this;
+            Plugin.plugin = this;
         }
 
         /**
@@ -385,11 +388,9 @@ namespace FastReset {
          * </summary>
          */
         [HarmonyPatch(typeof(ResetPosition), "OnTriggerEnter")]
-        static class PatchResetPosition {
-            public static Plugin plugin = null;
-
+        static class PatchResetPositionEnter {
             static bool Prefix(ResetPosition __instance, Collider other) {
-                if (plugin == null) {
+                if (Plugin.plugin == null) {
                     return true;
                 }
 
@@ -401,7 +402,7 @@ namespace FastReset {
                     return true;
                 }
 
-                if (plugin.CanTeleport() == false) {
+                if (Plugin.plugin.CanTeleport() == false) {
                     return true;
                 }
 
@@ -413,7 +414,19 @@ namespace FastReset {
                 GameManager.control.global_stats_falls++;
                 GameManager.control.SaveAllStats();
 
-                plugin.Teleport();
+                Plugin.plugin.Teleport();
+                return false;
+            }
+        }
+
+        /**
+         * <summary>
+         * Patches ResetPosition to use fast reset instead.
+         * </summary>
+         */
+        [HarmonyPatch(typeof(ResetPosition), "OnTriggerStay")]
+        static class PatchResetPositionStay {
+            static bool Prefix() {
                 return false;
             }
         }

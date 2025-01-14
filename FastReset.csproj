@@ -4,7 +4,7 @@
     <Platform>Any CPU</Platform>
     <AssemblyName>FastReset</AssemblyName>
     <Description>A Peaks of Yore mod which quickly teleports you to the start of a level</Description>
-    <Version>0.3.2</Version>
+    <Version>0.3.3</Version>
     <RootNamespace>FastReset</RootNamespace>
     <Configurations>Debug-BepInEx;Release-BepInEx;Debug-MelonLoader;Release-MelonLoader</Configurations>
     <Configuration Condition="'$(Configuration)' == ''">Debug-BepInEx</Configuration>
