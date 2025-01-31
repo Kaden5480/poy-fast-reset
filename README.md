@@ -5,7 +5,7 @@
 
 A
 [Peaks of Yore](https://store.steampowered.com/app/2236070/)
-mod which quickly teleports you to the start of a leve.
+mod which quickly teleports you to the start of a level.
 
 # Overview
 - [Features](#features)
