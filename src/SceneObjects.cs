@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 using UnityEngine;
@@ -23,6 +25,8 @@ namespace FastReset {
 
         public bool isSolemnTempest;
         public DistanceActivator distanceActivator;
+
+        public List<JointData> joints;
 
         /**
          * <summary>
@@ -71,6 +75,7 @@ namespace FastReset {
 
             isSolemnTempest = false;
             distanceActivator = null;
+            joints = new List<JointData>();
         }
 
         /**
@@ -115,6 +120,18 @@ namespace FastReset {
 
             isSolemnTempest = routingFlag.isSolemnTempest;
             distanceActivator = routingFlag.distanceActivatorST;
+
+            foreach (ConfigurableJoint joint in GameObject.FindObjectsOfType<ConfigurableJoint>()) {
+                GameObject jointObj = joint.gameObject;
+
+                if (jointObj.name.StartsWith("TrainingBeam") == false
+                    && jointObj.name.StartsWith("wheelJoint") == false
+                ) {
+                    continue;
+                }
+
+                joints.Add(new JointData(jointObj));
+            }
         }
 
         /**

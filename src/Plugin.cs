@@ -380,6 +380,10 @@ namespace FastReset {
             if (sceneObjects.isSolemnTempest == true) {
                 sceneObjects.distanceActivator.ForceCheck();
             }
+
+            foreach (JointData joint in sceneObjects.joints) {
+                joint.Reset();
+            }
         }
 
         /**
