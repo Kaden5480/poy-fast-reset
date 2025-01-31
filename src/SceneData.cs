@@ -34,6 +34,13 @@ namespace FastReset {
             }
         }
 
+        public float oldMillTime {
+            get => _oldMillTime.Value;
+            set {
+                _oldMillTime.Value = value;
+            }
+        }
+
 #if BEPINEX
         private ConfigEntry<float> posX;
         private ConfigEntry<float> posY;
@@ -41,6 +48,7 @@ namespace FastReset {
         private ConfigEntry<float> rotY;
         private ConfigEntry<float> rotW;
         private ConfigEntry<float> _rotationY;
+        private ConfigEntry<float> _oldMillTime;
 
         /**
          * <summary>
@@ -50,7 +58,8 @@ namespace FastReset {
         public SceneData(
             ConfigEntry<float> posX, ConfigEntry<float> posY, ConfigEntry<float> posZ,
             ConfigEntry<float> rotY, ConfigEntry<float> rotW,
-            ConfigEntry<float> rotationY
+            ConfigEntry<float> rotationY,
+            ConfigEntry<float> oldMillTime
         ) {
             this.posX = posX;
             this.posY = posY;
@@ -58,6 +67,7 @@ namespace FastReset {
             this.rotY = rotY;
             this.rotW = rotW;
             this._rotationY = rotationY;
+            this._oldMillTime = oldMillTime;
         }
 
 #elif MELONLOADER
@@ -67,6 +77,7 @@ namespace FastReset {
         private MelonPreferences_Entry<float> rotY;
         private MelonPreferences_Entry<float> rotW;
         private MelonPreferences_Entry<float> _rotationY;
+        private MelonPreferences_Entry<float> _oldMillTime;
 
         /**
          * <summary>
@@ -77,7 +88,8 @@ namespace FastReset {
             MelonPreferences_Entry<float> posX, MelonPreferences_Entry<float> posY,
             MelonPreferences_Entry<float> posZ,
             MelonPreferences_Entry<float> rotY, MelonPreferences_Entry<float> rotW,
-            MelonPreferences_Entry<float> rotationY
+            MelonPreferences_Entry<float> rotationY,
+            MelonPreferences_Entry<float> oldMillTime
         ) {
             this.posX = posX;
             this.posY = posY;
@@ -85,6 +97,7 @@ namespace FastReset {
             this.rotY = rotY;
             this.rotW = rotW;
             this._rotationY = rotationY;
+            this._oldMillTime = oldMillTime;
         }
 #endif
     }

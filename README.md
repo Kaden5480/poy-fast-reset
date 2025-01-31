@@ -5,9 +5,10 @@
 
 A
 [Peaks of Yore](https://store.steampowered.com/app/2236070/)
-mod which quickly teleports you to the start of a level.
+mod which quickly teleports you to the start of a leve.
 
 # Overview
+- [Features](#features)
 - [Installing](#installing)
     - [BepInEx](#bepinex)
     - [MelonLoader](#melonloader)
@@ -15,6 +16,15 @@ mod which quickly teleports you to the start of a level.
     - [Dotnet](#dotnet-build)
     - [Visual Studio](#visual-studio-build)
     - [Custom game locations](#custom-game-locations)
+
+# Features
+- Allows teleporting to a position and setting a camera rotation (f4 by default)
+- Allows setting custom positions and camera rotations at the base of a peak (f8 by default)
+- Allows the use of a temporary position and rotation in routing flag mode
+  which can be set anywhere you can stand
+- Teleports you to your custom position if you hit a killbox
+- Resets positions and rotations of beams and wheels such as in Tutor's Tower, Seaside Tribune, and Almáttr Dam
+- Allows saving and restoring the rotation of Old Mill (along with player position and camera rotation)
 
 # Installing
 ## BepInEx

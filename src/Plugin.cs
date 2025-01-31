@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 #if BEPINEX
 
 using BepInEx;
+using BepInEx.Configuration;
 
 namespace FastReset {
     [BepInPlugin("com.github.Kaden5480.poy-fast-reset", "FastReset", PluginInfo.PLUGIN_VERSION)]
@@ -31,13 +32,20 @@ namespace FastReset {
             );
 
             foreach (KeyValuePair<string, float[]> entry in Scenes.defaultPoints) {
+                ConfigEntry<float> oldMillTime = null;
+
+                if ("Peak_3_OldMill".Equals(entry.Key)) {
+                    oldMillTime = Config.Bind(entry.Key, "oldMillTime", 0f);
+                }
+
                 SceneData data = new SceneData(
                     Config.Bind(entry.Key, "posX", entry.Value[0]),
                     Config.Bind(entry.Key, "posY", entry.Value[1]),
                     Config.Bind(entry.Key, "posZ", entry.Value[2]),
                     Config.Bind(entry.Key, "rotY", entry.Value[3]),
                     Config.Bind(entry.Key, "rotW", entry.Value[4]),
-                    Config.Bind(entry.Key, "rotationY", entry.Value[5])
+                    Config.Bind(entry.Key, "rotationY", entry.Value[5]),
+                    oldMillTime
                 );
 
                 config.AddSceneData(entry.Key, data);
@@ -129,7 +137,12 @@ namespace FastReset {
 
             foreach (KeyValuePair<string, float[]> entry in Scenes.defaultPoints) {
                 MelonPreferences_Category scene = MelonPreferences.CreateCategory($"FastReset_{entry.Key}");
+                MelonPreferences_Entry<float> oldMillTime = null;
                 scene.SetFilePath(filePath);
+
+                if ("Peak_3_OldMill".Equals(entry.Key)) {
+                    oldMillTime = scene.CreateEntry<float>("oldMillTime", 0f);
+                }
 
                 SceneData data = new SceneData(
                     scene.CreateEntry<float>("posX", entry.Value[0]),
@@ -137,7 +150,8 @@ namespace FastReset {
                     scene.CreateEntry<float>("posZ", entry.Value[2]),
                     scene.CreateEntry<float>("rotY", entry.Value[3]),
                     scene.CreateEntry<float>("rotW", entry.Value[4]),
-                    scene.CreateEntry<float>("rotationY", entry.Value[5])
+                    scene.CreateEntry<float>("rotationY", entry.Value[5]),
+                    oldMillTime
                 );
 
                 config.AddSceneData(entry.Key, data);
@@ -322,6 +336,16 @@ namespace FastReset {
                 data.rotation = tempRotation;
                 data.rotationY = tempRotationY;
             }
+
+            if ("Peak_3_OldMill".Equals(SceneManager.GetActiveScene().name)) {
+                GameObject millWings = GameObject.Find("SceneObjects/oldwindmill/mill_wings");
+                Animation animation = millWings.GetComponent<Animation>();
+
+                foreach (AnimationState state in animation) {
+                    data.oldMillTime = state.time;
+                    break;
+                }
+            }
         }
 
         /**
@@ -383,6 +407,16 @@ namespace FastReset {
 
             foreach (JointData joint in sceneObjects.joints) {
                 joint.Reset();
+            }
+
+            if ("Peak_3_OldMill".Equals(SceneManager.GetActiveScene().name)) {
+                GameObject millWings = GameObject.Find("SceneObjects/oldwindmill/mill_wings");
+                Animation animation = millWings.GetComponent<Animation>();
+
+                foreach (AnimationState state in animation) {
+                    state.time = data.oldMillTime;
+                    break;
+                }
             }
         }
 
