@@ -147,7 +147,7 @@ namespace FastReset {
             }
 
             // Can't use while getting a score
-            if (TimeAttack.receivingScore || TimeAttack.aboutToReceiveScore) {
+            if (TimeAttack.receivingScore) {
                 return false;
             }
 
