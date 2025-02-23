@@ -141,13 +141,19 @@ namespace FastReset {
          * <return>True if teleporting is enabled, false otherwise</return>
          */
         public bool CanTeleport() {
+            if (timeAttack == null) {
+                return false;
+            }
+
+            bool timerLocked = GetPrivateField<TimeAttack, bool>(timeAttack, "timerLocked");
+
             // Only allowed in normal mode
             if (GameManager.control.permaDeathEnabled || GameManager.control.freesoloEnabled) {
                 return false;
             }
 
             // Can't use while getting a score
-            if (TimeAttack.receivingScore) {
+            if (timerLocked == false && TimeAttack.receivingScore) {
                 return false;
             }
 
@@ -183,8 +189,7 @@ namespace FastReset {
                 && iceAxes != null
                 && playerMove != null
                 && playerRB != null
-                && playerTransform != null
-                && timeAttack != null;
+                && playerTransform != null;
         }
     }
 }
