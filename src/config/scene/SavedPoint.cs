@@ -12,9 +12,6 @@ namespace FastReset.Config {
         // The config file this point is contained in
         private ConfigFile configFile;
 
-        // Shorthand for accessing cache
-        private Cache cache { get => Plugin.instance.cache; }
-
         // Position to teleport to
         public ConfigEntry<float> _posX;
         public ConfigEntry<float> _posY;
