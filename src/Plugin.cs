@@ -12,6 +12,7 @@ namespace FastReset {
 
         public Cfg config { get; } = new Cfg();
         public Cache cache { get; } = new Cache();
+        public Patcher patcher { get; } = new Patcher();
         public Resetter resetter { get; } = new Resetter();
 
         // Default keybinds
@@ -38,6 +39,9 @@ namespace FastReset {
                 "General", "profile", "Default",
                 "The current profile in use"
             );
+
+            // Apply early patches
+            patcher.Patch();
 
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;

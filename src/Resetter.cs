@@ -132,18 +132,20 @@ namespace FastReset {
          * <summary>
          * Restores the saved state of the scene.
          * </summary>
+         * <returns>True if restoring was successful, false otherwise</returns>
          */
-        public void RestoreState() {
+        public bool RestoreState() {
             if (CanUse() == false) {
-                return;
+                return false;
             }
 
             // If the player's state wasn't restored, do nothing else
             if (player.RestoreState() == false) {
-                return;
+                return false;
             }
 
             PlayClick();
+            return true;
         }
 
         /**
