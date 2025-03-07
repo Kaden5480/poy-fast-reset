@@ -7,8 +7,6 @@ namespace FastReset {
         // The current scene
         public Scene scene;
 
-        public AudioSource menuClick;
-
         public Climbing climbing;
         public FallingEvent fallingEvent;
         public IceAxe iceAxes;
@@ -81,12 +79,6 @@ namespace FastReset {
         public void OnSceneLoaded() {
             scene = SceneManager.GetActiveScene();
 
-            // Try to get the menu click sound effect
-            InGameMenu inGameMenu = GameObject.FindObjectOfType<InGameMenu>();
-            if (inGameMenu != null) {
-                menuClick = inGameMenu.menuClick;
-            }
-
             climbing = GameObject.FindObjectOfType<Climbing>();
             if (climbing == null) {
                 return;
@@ -127,8 +119,6 @@ namespace FastReset {
          * </summary>
          */
         public void OnSceneUnloaded() {
-            menuClick = null;
-
             climbing = null;
             fallingEvent = null;
             iceAxes = null;

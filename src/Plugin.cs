@@ -11,6 +11,7 @@ namespace FastReset {
         public static Plugin instance = null;
 
         public Cfg config { get; } = new Cfg();
+        public Audio audio { get; } = new Audio();
         public Cache cache { get; } = new Cache();
         public Patcher patcher { get; } = new Patcher();
         public Resetter resetter { get; } = new Resetter();
@@ -45,6 +46,9 @@ namespace FastReset {
 
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
+
+            // Load audio clips
+            StartCoroutine(audio.Load());
         }
 
         /**

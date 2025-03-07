@@ -5,7 +5,8 @@ using Player = FastReset.Models.Player;
 
 namespace FastReset {
     public class Resetter {
-        // Shorthands for accessing config and cache
+        // Shorthands for accessing audio, config, and cache
+        private Audio audio { get => Plugin.instance.audio; }
         private Cfg config { get => Plugin.instance.config; }
         private Cache cache { get => Plugin.instance.cache; }
 
@@ -96,20 +97,6 @@ namespace FastReset {
 
         /**
          * <summary>
-         * Plays the menu click sound effect.
-         * </summary>
-         */
-        private void PlayClick() {
-            if (cache.menuClick == null) {
-                Plugin.LogDebug("Menu click audio source missing, not playing");
-                return;
-            }
-
-            cache.menuClick.Play();
-        }
-
-        /**
-         * <summary>
          * Saves the current state of the scene.
          * </summary>
          */
@@ -124,7 +111,7 @@ namespace FastReset {
                 return;
             }
 
-            PlayClick();
+            audio.PlayPlayer();
             player.SaveState();
         }
 
@@ -144,7 +131,7 @@ namespace FastReset {
                 return false;
             }
 
-            PlayClick();
+            audio.PlayPlayer();
             return true;
         }
 
