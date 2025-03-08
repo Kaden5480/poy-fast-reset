@@ -2,6 +2,10 @@ using BepInEx.Configuration;
 
 namespace FastReset.State {
     public class SavedAnimation : BaseAnimation {
+        private string configFile {
+            get => SceneState.animationFile;
+        }
+
         private List<ConfigEntry<float>> stateTimers;
 
         public SavedAnimation(Animation animation) : base(animation) {
