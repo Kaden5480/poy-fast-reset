@@ -8,13 +8,13 @@ namespace FastReset.State {
 
         private List<ConfigEntry<float>> stateTimers;
 
-        public SavedAnimation(Animation animation) : base(animation) {
+        public SavedAnimation(string trackedId, Animation animation) : base(animation) {
             stateTimers = new List<ConfigEntry<float>>();
 
             int i = 0;
             foreach (AnimationState state in animation) {
                 stateTimers.Add(configFile.Bind(
-                    "Animation", $"state_{i}", state.normalizedTime
+                    trackedId, $"state_{i}", state.normalizedTime
                 ));
                 i++;
             }
@@ -28,7 +28,7 @@ namespace FastReset.State {
                 }
                 else {
                     stateTimers.Add(configFile.Bind(
-                        "Animation", $"state_{i}", state.normalizedTime
+                        trackedId, $"state_{i}", state.normalizedTime
                     ));
                 }
                 i++;
