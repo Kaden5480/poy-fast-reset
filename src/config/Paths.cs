@@ -1,7 +1,14 @@
+using System.IO;
+
 namespace FastReset.Config {
     public class Paths {
         // The directory where configs besides the main one will be located
         public static string configDirName { get; } = "com.github.Kaden5480.poy-fast-reset";
+
+        // The name of the current scene
+        public static string sceneName {
+            get => Plugin.instance.cache.scene.name;
+        }
 
         // The directory for the currently selected profile
         public static string profileDir {

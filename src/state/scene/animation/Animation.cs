@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+
+using UnityEngine;
 using UAnim = UnityEngine.Animation;
 
 namespace FastReset.State {

@@ -1,6 +1,8 @@
 using BepInEx.Configuration;
 using UnityEngine;
 
+using Paths = FastReset.Config.Paths;
+
 namespace FastReset.State {
     /**
      * <summary>
@@ -70,7 +72,7 @@ namespace FastReset.State {
             Vector3 _position = position ?? Vector3.zero;
             Quaternion _rotationX = rotationX ?? Quaternion.identity;
 
-            configFile = new ConfigFile(Cfg.Paths.pointPath, false);
+            configFile = new ConfigFile(Paths.playerPath, false);
             _posX = configFile.Bind("Point", "posX", _position.x);
             _posY = configFile.Bind("Point", "posY", _position.y);
             _posZ = configFile.Bind("Point", "posZ", _position.z);

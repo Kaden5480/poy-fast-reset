@@ -1,4 +1,9 @@
+using System.IO;
+
 using UnityEngine;
+
+using Cfg = FastReset.Config.Cfg;
+using Paths = FastReset.Config.Paths;
 
 namespace FastReset.State {
     public class PlayerState {
@@ -42,7 +47,7 @@ namespace FastReset.State {
          * </summary>
          */
         private void ResetState() {
-            Plugin.LogDebug("Resetting player );
+            Plugin.LogDebug("Resetting player state");
 
             // Release grip
             cache.climbing.ReleaseLHand(false);
@@ -75,9 +80,9 @@ namespace FastReset.State {
             ResetState();
 
             // Update the player's position and rotation
-            position = position;
-            rotationX = rotationX;
-            rotationY = rotationY;
+            this.position = position;
+            this.rotationX = rotationX;
+            this.rotationY = rotationY;
 
             if (cache.routingFlag.isSolemnTempest == true) {
                 cache.routingFlag.distanceActivatorST.ForceCheck();
@@ -219,7 +224,7 @@ namespace FastReset.State {
          * </summary>
          */
         public void OnSceneLoaded() {
-            if (File.Exists(Cfg.playerPath) == true) {
+            if (File.Exists(Paths.playerPath) == true) {
                 savedPoint = new SavedPoint();
             }
         }

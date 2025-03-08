@@ -1,14 +1,21 @@
+using System.Collections.Generic;
+
 using BepInEx.Configuration;
+using UnityEngine;
+using UAnim = UnityEngine.Animation;
 
 namespace FastReset.State {
     public class SavedAnimation : BaseAnimation {
-        private string configFile {
+        private string trackedId;
+
+        private ConfigFile configFile {
             get => SceneState.animationFile;
         }
 
         private List<ConfigEntry<float>> stateTimers;
 
-        public SavedAnimation(string trackedId, Animation animation) : base(animation) {
+        public SavedAnimation(string trackedId, UAnim animation) : base(animation) {
+            this.trackedId = trackedId;
             stateTimers = new List<ConfigEntry<float>>();
 
             int i = 0;

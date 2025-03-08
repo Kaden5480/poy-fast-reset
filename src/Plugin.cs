@@ -87,9 +87,6 @@ namespace FastReset {
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
             // Make sure the cache is loaded first
             cache.OnSceneLoaded();
-
-            // Load the per scene config
-            config.scene.Load();
         }
 
         /**
@@ -99,10 +96,6 @@ namespace FastReset {
          * <param name="scene">The scene which unloaded</param>
          */
         private void OnSceneUnloaded(Scene scene) {
-            // Save the per scene config and clear objects
-            config.scene.Save();
-            config.scene.Clear();
-
             // Perform any required actions on scene unload
             // for the resetter (such as wiping the player's
             // temporary reset point)

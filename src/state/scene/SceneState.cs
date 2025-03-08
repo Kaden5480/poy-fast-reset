@@ -1,3 +1,8 @@
+using System.Collections.Generic;
+
+using BepInEx.Configuration;
+using UnityEngine;
+
 using Cfg = FastReset.Config.Cfg;
 using Paths = FastReset.Config.Paths;
 
@@ -15,16 +20,52 @@ namespace FastReset.State {
         public static ConfigFile animationFile = null;
 
         // Initial, temporary, and saved states of objects
-        private Dictionary<string, TrackedObject> initial;
-        private Dictionary<string, TrackedObject> temporary;
-        private Dictionary<string, TrackedObject> saved;
+        private List<TrackedObject> initial = new List<TrackedObject>();
+        private List<TrackedObject> temporary = null;
+        private Dictionary<string, TrackedObject> saved = null;
+
+        /**
+         * <summary>
+         * Saves the initial state.
+         * </summary>
+         */
+        private void SaveInitialState() {
+            initial.Clear();
+            foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
+                TrackedObject tracked = new TrackedObject(obj);
+                tracked.SaveState();
+                initial.Add(tracked);
+            }
+        }
+
+        /**
+         * <summary>
+         * Restores the initial state.
+         * </summary>
+         */
+        private void RestoreInitialState() {
+            foreach (TrackedObject obj in initial) {
+                obj.RestoreState();
+            }
+        }
 
         /**
          * <summary>
          * Saves the scene state temporarily.
          * </summary>
          */
-        private void SaveTempState() {}
+        private void SaveTempState() {
+            if (temporary == null) {
+                temporary = new List<TrackedObject>();
+            }
+
+            temporary.Clear();
+            foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
+                TrackedObject tracked = new TrackedObject(obj);
+                tracked.SaveState();
+                temporary.Add(tracked);
+            }
+        }
 
         /**
          * <summary>
@@ -34,7 +75,15 @@ namespace FastReset.State {
          * if a temporary state wasn't saved.
          * </summary>
          */
-        private void RestoreTempState() {}
+        private void RestoreTempState() {
+            if (temporary == null) {
+                return;
+            }
+
+            foreach (TrackedObject obj in temporary) {
+                obj.RestoreState();
+            }
+        }
 
         /**
          * <summary>
@@ -46,7 +95,12 @@ namespace FastReset.State {
          * Otherwise, the state is saved to a file permanently.
          * </summary>
          */
-        public void SaveState() {}
+        public void SaveState() {
+            if (cache.routingFlag.currentlyUsingFlag == true) {
+                SaveTempState();
+                return;
+            }
+        }
 
         /**
          * <summary>
@@ -60,7 +114,12 @@ namespace FastReset.State {
          * state is used.
          * </summary>
          */
-        public void RestoreState() {}
+        public void RestoreState() {
+            if (cache.routingFlag.currentlyUsingFlag == true) {
+                RestoreTempState();
+                return;
+            }
+        }
 
         /**
          * <summary>
@@ -68,6 +127,9 @@ namespace FastReset.State {
          * </summary>
          */
         public void OnSceneLoaded() {
+            // Save the initial scene state
+            SaveInitialState();
+
             animationFile = new ConfigFile(
                 Paths.animationsPath, false
             );
@@ -83,6 +145,11 @@ namespace FastReset.State {
             animationFile.Save();
 
             animationFile = null;
+
+            initial.Clear();
+            temporary = null;
+            saved = null;
         }
+
     }
 }

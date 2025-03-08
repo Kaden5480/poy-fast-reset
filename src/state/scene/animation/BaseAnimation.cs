@@ -1,8 +1,12 @@
+using UnityEngine;
+
+using UAnim = UnityEngine.Animation;
+
 namespace FastReset.State {
     public abstract class BaseAnimation {
-        protected Animation animation;
+        protected UAnim animation;
 
-        public BaseAnimation(Animation animation) {
+        public BaseAnimation(UAnim animation) {
             this.animation = animation;
         }
 

@@ -1,10 +1,23 @@
+using UnityEngine;
+
 namespace FastReset.State {
     public class TrackedObject {
+        // The ID of this tracked object
         public string id { get; }
+
+        // The object being tracked
         public GameObject obj { get; }
 
+        // Components to track on this object
         public BaseAnimation animation;
 
+        /**
+         * <summary>
+         * Constructs a new instance of TrackedObject.
+         * </summary>
+         * <param name="obj">The object to track</param>
+         * <param name="useConfig">Whether this object will be saved to a file</param>
+         */
         public TrackedObject(GameObject obj, bool useConfig = false) {
             this.obj = obj;
             id = GenerateID(obj);
@@ -18,10 +31,10 @@ namespace FastReset.State {
         public static string GenerateID(GameObject obj) {
             string tempId = obj.name;
 
-            GameObject parent = obj.transform.parent;
+            Transform parent = obj.transform.parent;
             while (parent != null) {
-                tempId = $"{parent.name}/{tempId}";
-                parent = obj.transform.parent;
+                tempId = $"{parent.gameObject.name}/{tempId}";
+                parent = parent.parent;
             }
 
             // Add on position info
