@@ -1,17 +1,20 @@
 using UnityEngine;
 
-using Cfg = FastReset.Config.Cfg;
-using SavedPoint = FastReset.Config.SavedPoint;
-
-namespace FastReset.Models {
-    public class Player {
-        // Shorthands for accessing config and cache
-        private Cfg config {
-            get => Plugin.instance.config;
-        }
+namespace FastReset.State {
+    public class PlayerState {
+        // Shorthand for accessing cache and config
         private Cache cache {
             get => Plugin.instance.cache;
         }
+        public Cfg config {
+            get => Plugin.instance.config;
+        }
+
+        // Temporary point to reset to
+        private Point tempPoint = null;
+
+        // Saved point to reset to
+        private SavedPoint savedPoint = null;
 
         // The player's current position and rotation
         public Vector3 position {
@@ -19,16 +22,18 @@ namespace FastReset.Models {
             // the origin shifter (specifically on ST)
             get => cache.playerTransform.position
                 - cache.leavePeakScene.transform.position;
+
+            set => cache.playerTransform.position = value
+                + cache.leavePeakScene.transform.position;
         }
         public Quaternion rotationX {
             get => cache.playerCamX.gameObject.transform.rotation;
+            set => cache.playerCamX.gameObject.transform.rotation = value;
         }
         public float rotationY {
             get => cache.playerCamY.rotationY;
+            set => cache.playerCamY.rotationY = value;
         }
-
-        // The temporary save point used in routing flag mode
-        BasePoint tempPoint = null;
 
         /**
          * <summary>
@@ -37,7 +42,7 @@ namespace FastReset.Models {
          * </summary>
          */
         private void ResetState() {
-            Plugin.LogDebug("Resetting player state");
+            Plugin.LogDebug("Resetting player );
 
             // Release grip
             cache.climbing.ReleaseLHand(false);
@@ -69,10 +74,10 @@ namespace FastReset.Models {
             Plugin.LogDebug($"Attempting to move player to: {position} (relative) | {rotationX} | {rotationY}");
             ResetState();
 
-            // Calculate the real position to move to, as the provided position is an offset
-            cache.playerTransform.position = cache.leavePeakScene.transform.position + position;
-            cache.playerCamX.gameObject.transform.rotation = rotationX;
-            cache.playerCamY.rotationY = rotationY;
+            // Update the player's position and rotation
+            position = position;
+            rotationX = rotationX;
+            rotationY = rotationY;
 
             if (cache.routingFlag.isSolemnTempest == true) {
                 cache.routingFlag.distanceActivatorST.ForceCheck();
@@ -80,11 +85,9 @@ namespace FastReset.Models {
             }
 
             // Log actual values
-            Vector3 newPos = cache.playerTransform.position;
-            Quaternion newRotX = cache.playerCamX.gameObject.transform.rotation;
-            float newRotY = cache.playerCamY.rotationY;
-
-            Plugin.LogDebug($"Moved player to: {newPos} (real) | {newRotX} | {newRotY}");
+            Plugin.LogDebug(
+                $"Moved player to: {position} (real) | {rotationX} | {rotationY}"
+            );
         }
 
         /**
@@ -115,15 +118,15 @@ namespace FastReset.Models {
          * <returns>True if the player was moved, false otherwise</returns>
          */
         private bool RestoreTempState() {
-            BasePoint point = config.scene.point;
+            BasePoint point = savedPoint;
 
-            // Use the temporary point
+            // Use the temporary point if it exists
             if (tempPoint != null) {
                 Plugin.LogDebug("Temporary point found, using instead of saved");
                 point = tempPoint;
             }
 
-            // Check if the point exists
+            // Check if the selected point exists
             if (point == null) {
                 Plugin.LogDebug("Unable to reset player, neither temporary or saved points exist");
                 return false;
@@ -156,13 +159,13 @@ namespace FastReset.Models {
                 $"Creating/updating saved point: {position} | {rotationX} | {rotationY}"
             );
 
-            SavedPoint point = config.scene.point;
+            SavedPoint point = savedPoint;
 
             // If the config doesn't have a saved point, create one
             // based upon the current state
             if (point == null) {
                 Plugin.LogDebug("Creating new config file for point");
-                config.scene.point = new SavedPoint(
+                savedPoint = new SavedPoint(
                     position, rotationX, rotationY
                 );
                 return;
@@ -196,7 +199,7 @@ namespace FastReset.Models {
                 return RestoreTempState();
             }
 
-            SavedPoint point = config.scene.point;
+            SavedPoint point = savedPoint;
 
             // If there is no saved point, do nothing
             if (point == null) {
@@ -212,10 +215,26 @@ namespace FastReset.Models {
 
         /**
          * <summary>
-         * Clears the temporary point when the scene is unloaded.
+         * Loads the config for the current scene.
+         * </summary>
+         */
+        public void OnSceneLoaded() {
+            if (File.Exists(Cfg.playerPath) == true) {
+                savedPoint = new SavedPoint();
+            }
+        }
+
+        /**
+         * <summary>
+         * Saves and wipes the config to prepare for the next scene.
          * </summary>
          */
         public void OnSceneUnloaded() {
+            if (savedPoint != null) {
+                savedPoint.Save();
+            }
+
+            savedPoint = null;
             tempPoint = null;
         }
     }

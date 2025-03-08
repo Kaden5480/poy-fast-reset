@@ -1,14 +1,14 @@
 using BepInEx.Configuration;
 using UnityEngine;
 
-namespace FastReset.Config {
+namespace FastReset.State {
     /**
      * <summary>
      * A class which is used for saved points.
      * </summary>
-     * <see cref="Models.Point">See Models.Point for a temporary point</see>
+     * <see cref="Point">See Point for a temporary point</see>
      */
-    public class SavedPoint : Models.BasePoint {
+    public class SavedPoint : BasePoint {
         // The config file this point is contained in
         private ConfigFile configFile;
 
@@ -70,7 +70,7 @@ namespace FastReset.Config {
             Vector3 _position = position ?? Vector3.zero;
             Quaternion _rotationX = rotationX ?? Quaternion.identity;
 
-            configFile = new ConfigFile(SceneConfig.pointPath, false);
+            configFile = new ConfigFile(Cfg.Paths.pointPath, false);
             _posX = configFile.Bind("Point", "posX", _position.x);
             _posY = configFile.Bind("Point", "posY", _position.y);
             _posZ = configFile.Bind("Point", "posZ", _position.z);

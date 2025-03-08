@@ -1,9 +1,9 @@
-namespace FastReset.Models {
+namespace FastReset.State {
     /**
      * <summary>
      * A class which is used for temporary points.
      * </summary>
-     * <see cref="Config.SavedPoint">See Config.SavedPoint for a permanently saved point</see>
+     * <see cref="SavedPoint">See SavedPoint for a permanently saved point</see>
      */
     public class Point : BasePoint {
         // Position

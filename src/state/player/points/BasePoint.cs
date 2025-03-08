@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace FastReset.Models {
+namespace FastReset.State {
     /**
      * <summary>
      * A class which represents a position and camera rotation.

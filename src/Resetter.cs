@@ -1,7 +1,7 @@
 using UnityEngine;
 
 using Cfg = FastReset.Config.Cfg;
-using Player = FastReset.Models.Player;
+using PlayerState = FastReset.State.PlayerState;
 
 namespace FastReset {
     public class Resetter {
@@ -11,7 +11,7 @@ namespace FastReset {
         private Cache cache { get => Plugin.instance.cache; }
 
         // An object for managing the player's state
-        private Player player = new Player();
+        private PlayerState player = new PlayerState();
 
         /**
          * <summary>
@@ -111,8 +111,8 @@ namespace FastReset {
                 return;
             }
 
-            audio.PlayPlayer();
             player.SaveState();
+            audio.PlayPlayer();
         }
 
         /**
@@ -137,8 +137,19 @@ namespace FastReset {
 
         /**
          * <summary>
+         * Performs any required actions on a scene load.
+         * Such as loading configs.
+         * </summary>
+         */
+        public void OnSceneLoaded() {
+            player.OnSceneLoaded();
+        }
+
+        /**
+         * <summary>
          * Performs any required actions on a scene unload.
-         * Such as resetting the player's temporary reset point.
+         * Such as resetting temporary reset points
+         * and scene states.
          * </summary>
          */
         public void OnSceneUnloaded() {
