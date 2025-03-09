@@ -12,7 +12,7 @@ namespace FastReset.State {
         private Quaternion temporaryRotation;
         private ConfigEntry<string> configRotation;
 
-        private void ResetJoint(Quaternion rotation) {
+        private void Restore(Quaternion rotation) {
             jointRb.angularVelocity = Vector3.zero;
             jointRb.velocity = Vector3.zero;
 
@@ -21,17 +21,17 @@ namespace FastReset.State {
 
         public override void RestoreInitialState() {
             Plugin.LogDebug($"TrackedJoint: [{obj.name}] Restoring initial state");
-            ResetJoint(initialRotation);
+            Restore(initialRotation);
         }
 
         public override void RestoreTempState() {
             Plugin.LogDebug($"TrackedJoint: [{obj.name}] Restoring temporary state");
-            ResetJoint(temporaryRotation);
+            Restore(temporaryRotation);
         }
 
         public override void RestoreConfigState() {
             Plugin.LogDebug($"TrackedJoint: [{obj.name}] Restoring config state");
-            ResetJoint(Cfg.StringToQuat(configRotation.Value));
+            Restore(Cfg.StringToQuat(configRotation.Value));
         }
 
         protected override void SaveInitialState() {
