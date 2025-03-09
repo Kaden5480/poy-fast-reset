@@ -19,6 +19,7 @@ namespace FastReset.Patches {
 
             // If restoring state failed, don't override normal execution
             if (Plugin.instance.resetter.RestoreState() == false) {
+                Plugin.LogDebug("ResetPositionEnter: not bypassed");
                 return true;
             }
 
@@ -48,10 +49,18 @@ namespace FastReset.Patches {
      */
     [HarmonyPatch(typeof(ResetPosition), "OnTriggerStay")]
     static class ResetPositionStay {
-        static bool Prefix() {
+        static bool Prefix(Collider other) {
+            // Don't override normal execution in these cases
+            if (ResetPosition.resettingPosition == true
+                || other.CompareTag("PlayerTrigger") == false
+            ) {
+                return true;
+            }
+
             // If saving/restoring is not permitted
             // continue with normal execution
             if (Plugin.instance.resetter.CanUse() == false) {
+                Plugin.LogDebug("ResetPositionStay: not bypassed");
                 return true;
             }
 
