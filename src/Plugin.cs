@@ -43,6 +43,10 @@ namespace FastReset {
                 "General", "profile", "Default",
                 "The current profile in use"
             );
+            config.resetWind = Config.Bind(
+                "General", "resetWind", false,
+                "Whether to reset the wind on wuthering crest"
+            );
 
             // Apply early patches
             patcher.Patch();

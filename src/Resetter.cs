@@ -3,6 +3,7 @@ using UnityEngine;
 using Cfg = FastReset.Config.Cfg;
 using PlayerState = FastReset.State.PlayerState;
 using SceneState = FastReset.State.SceneState;
+using WindResetter = FastReset.Patches.WindResetter;
 
 namespace FastReset {
     public class Resetter {
@@ -16,6 +17,22 @@ namespace FastReset {
 
         // An object for managing the scene's state
         private SceneState scene = new SceneState();
+
+        // An object for managing the state of the wind
+        private WindResetter windResetter;
+
+        /**
+         * <summary>
+         * Constructs an instance of Resetter.
+         * </summary>
+         */
+        public Resetter() {
+            // Create the peak wind resetter object
+            GameObject windResetterObj = new GameObject("Fast Reset Wind Resetter");
+            GameObject.DontDestroyOnLoad(windResetterObj);
+
+            windResetter = windResetterObj.AddComponent<WindResetter>();
+        }
 
         /**
          * <summary>
@@ -139,6 +156,8 @@ namespace FastReset {
                 return false;
             }
 
+            // TODO: Handle the constant small wind somehow
+            //windResetter.Reset();
             scene.RestoreState();
 
             audio.PlayPlayer();
@@ -165,6 +184,7 @@ namespace FastReset {
          */
         public void UnloadStates() {
             Plugin.LogDebug("Resetter: Unloading states");
+            windResetter.Stop();
             player.Unload();
             scene.Unload();
         }

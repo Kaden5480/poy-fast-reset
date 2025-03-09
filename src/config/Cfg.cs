@@ -13,6 +13,9 @@ namespace FastReset.Config {
         // The currently selected profile
         public ConfigEntry<string> profile;
 
+        // Whether to reset the wind on wuthering crest
+        public ConfigEntry<bool> resetWind;
+
         public static string Vec3ToString(Vector3 vec) {
             return $"{vec.x};{vec.y};{vec.z}";
         }

@@ -27,6 +27,9 @@ namespace FastReset {
         public CameraLook playerCamX;
         public CameraLook playerCamY;
 
+        // Objects used for resetting the wind
+        public PeakWind peakWind;
+
         /**
          * <summary>
          * Gets a field of type `FT` from a provided instance of an object of type `T`.
@@ -116,6 +119,8 @@ namespace FastReset {
                     playerCamY = cameraLook;
                 }
             }
+
+            peakWind = GameObject.FindObjectOfType<PeakWind>();
         }
 
         /**
@@ -138,6 +143,8 @@ namespace FastReset {
             playerRb = null;
             playerCamX = null;
             playerCamY = null;
+
+            peakWind = null;
         }
     }
 }
