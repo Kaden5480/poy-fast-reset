@@ -22,15 +22,15 @@ namespace FastReset.Patches {
             }
 
             // Check for inputs for saves/restores
-            if (Input.GetKeyDown(config.saveKeybind.Value)) {
+            if (Input.GetKeyDown(config.saveKeybind.Value) == true) {
                 resetter.SaveState();
             }
 
-            if (Input.GetKeyDown(config.resetKeybind.Value)) {
+            if (Input.GetKeyDown(config.resetKeybind.Value) == true) {
                 resetter.RestoreState();
+                __instance.limitViewWhileLookingAtInventoryGrounded = false;
             }
 
-            __instance.limitViewWhileLookingAtInventoryGrounded = false;
         }
     }
 }
