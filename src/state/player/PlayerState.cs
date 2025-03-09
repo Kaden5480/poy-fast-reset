@@ -1,5 +1,7 @@
 using UnityEngine;
 
+using PositionFix = FastReset.Patches.PositionFix;
+
 namespace FastReset.State {
     public class PlayerState : BaseState {
         // Temporary point to reset to
@@ -12,11 +14,8 @@ namespace FastReset.State {
         private Vector3 position {
             // The position has to be relative to LeavePeakScene to deal with
             // the origin shifter (specifically on ST)
-            get => cache.playerTransform.position
-                - cache.leavePeakScene.transform.position;
-
-            set => cache.playerTransform.position = value
-                + cache.leavePeakScene.transform.position;
+            get => PositionFix.RealToOffset(cache.playerTransform.position);
+            set => cache.playerTransform.position = PositionFix.OffsetToReal(value);
         }
 
         private Quaternion rotationX {
