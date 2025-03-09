@@ -33,6 +33,13 @@ namespace FastReset.Config {
             );
         }
 
+        // The path to the file containing brittle ice states
+        public static string brittleIcePath {
+            get => Path.Combine(
+                profileDir, sceneName, "brittle-ice.cfg"
+            );
+        }
+
         // The path to the file containing crumbling hold states
         public static string crumblingHoldsPath {
             get => Path.Combine(
