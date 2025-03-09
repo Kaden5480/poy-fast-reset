@@ -65,22 +65,6 @@ namespace FastReset {
 
         /**
          * <summary>
-         * Executes every frame.
-         * </summary>
-         */
-        public void Update() {
-            // Check for inputs for saves/restores
-            if (Input.GetKeyDown(config.saveKeybind.Value)) {
-                resetter.SaveState();
-            }
-
-            if (Input.GetKeyDown(config.resetKeybind.Value)) {
-                resetter.RestoreState();
-            }
-        }
-
-        /**
-         * <summary>
          * Executes when a scene is loaded.
          * </summary>
          * <param name="scene">The scene which loaded</param>
