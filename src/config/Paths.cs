@@ -32,5 +32,12 @@ namespace FastReset.Config {
                 profileDir, sceneName, "animations.cfg"
             );
         }
+
+        // The path to the file containing joint states
+        public static string jointsPath {
+            get => Path.Combine(
+                profileDir, sceneName, "joints.cfg"
+            );
+        }
     }
 }
