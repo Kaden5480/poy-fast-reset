@@ -4,24 +4,13 @@ namespace FastReset.State {
     public class TempPoint {
         private bool isSet = false;
 
-        private float posX;
-        private float posY;
-        private float posZ;
-        private float rotY;
-        private float rotW;
+        private Vector3 _position;
+        private Quaternion _rotationX;
         private float _rotationY;
 
-        public Vector3 position {
-            get => new Vector3(posX, posY, posZ);
-        }
-
-        public Quaternion rotationX {
-            get => new Quaternion(0f, rotY, 0f, rotW);
-        }
-
-        public float rotationY {
-            get => _rotationY;
-        }
+        public Vector3 position { get => _position; }
+        public Quaternion rotationX { get => _rotationX; }
+        public float rotationY { get => _rotationY; }
 
         public bool IsSet() {
             return isSet;
@@ -30,11 +19,8 @@ namespace FastReset.State {
         public void Set(Vector3 position, Quaternion rotationX, float rotationY) {
             Plugin.LogDebug($"TempPoint: setting: {position} | {rotationX} | {rotationY}");
 
-            posX = position.x;
-            posY = position.y;
-            posZ = position.z;
-            rotY = rotationX.y;
-            rotW = rotationX.w;
+            _position = position;
+            _rotationX = rotationX;
             _rotationY = rotationY;
 
             isSet = true;

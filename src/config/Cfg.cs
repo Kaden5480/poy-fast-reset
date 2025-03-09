@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 using BepInEx.Configuration;
@@ -11,5 +12,34 @@ namespace FastReset.Config {
 
         // The currently selected profile
         public ConfigEntry<string> profile;
+
+        public static string Vec3ToString(Vector3 vec) {
+            return $"{vec.x};{vec.y};{vec.z}";
+        }
+
+        public static Vector3 StringToVec3(string str) {
+            string[] parts = str.Split(';');
+
+            return new Vector3(
+                Single.Parse(parts[0]),
+                Single.Parse(parts[1]),
+                Single.Parse(parts[2])
+            );
+        }
+
+        public static string QuatToString(Quaternion quat) {
+            return $"{quat.x};{quat.y};{quat.z};{quat.w}";
+        }
+
+        public static Quaternion StringToQuat(string str) {
+            string[] parts = str.Split(';');
+
+            return new Quaternion(
+                Single.Parse(parts[0]),
+                Single.Parse(parts[1]),
+                Single.Parse(parts[2]),
+                Single.Parse(parts[3])
+            );
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.IO;
 using BepInEx.Configuration;
 using UnityEngine;
 
+using Cfg = FastReset.Config.Cfg;
 using Paths = FastReset.Config.Paths;
 
 namespace FastReset.State {
@@ -11,19 +12,17 @@ namespace FastReset.State {
         private bool isSet = false;
 
         private ConfigFile configFile;
-        private ConfigEntry<float> posX;
-        private ConfigEntry<float> posY;
-        private ConfigEntry<float> posZ;
-        private ConfigEntry<float> rotY;
-        private ConfigEntry<float> rotW;
+
+        private ConfigEntry<string> _position;
+        private ConfigEntry<string> _rotationX;
         private ConfigEntry<float> _rotationY;
 
         public Vector3 position {
-            get => new Vector3(posX.Value, posY.Value, posZ.Value);
+            get => Cfg.StringToVec3(_position.Value);
         }
 
         public Quaternion rotationX {
-            get => new Quaternion(0f, rotY.Value, 0f, rotW.Value);
+            get => Cfg.StringToQuat(_rotationX.Value);
         }
 
         public float rotationY {
@@ -34,11 +33,8 @@ namespace FastReset.State {
             Plugin.LogDebug("ConfigPoint: Binding config");
 
             configFile = new ConfigFile(Paths.playerPath, false);
-            posX = configFile.Bind("Point", "posX", 0f);
-            posY = configFile.Bind("Point", "posY", 0f);
-            posZ = configFile.Bind("Point", "posZ", 0f);
-            rotY = configFile.Bind("Point", "rotY", 0f);
-            rotW = configFile.Bind("Point", "rotW", 0f);
+            _position = configFile.Bind("Point", "position", Cfg.Vec3ToString(Vector3.zero));
+            _rotationX = configFile.Bind("Point", "rotationX", Cfg.QuatToString(Quaternion.identity));
             _rotationY = configFile.Bind("Point", "rotationY", 0f);
         }
 
@@ -52,11 +48,8 @@ namespace FastReset.State {
             }
 
             Plugin.LogDebug($"ConfigPoint: setting: {position} | {rotationX} | {rotationY}");
-            posX.Value = position.x;
-            posY.Value = position.y;
-            posZ.Value = position.z;
-            rotY.Value = rotationX.y;
-            rotW.Value = rotationX.w;
+            _position.Value = Cfg.Vec3ToString(position);
+            _rotationX.Value = Cfg.QuatToString(rotationX);
             _rotationY.Value = rotationY;
 
             isSet = true;
