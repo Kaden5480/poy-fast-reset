@@ -22,7 +22,6 @@ namespace FastReset.State {
             holdComponent.col1.enabled = enabled;
             holdComponent.col2.enabled = enabled;
             holdComponent.meshesHolder.SetActive(enabled);
-            //holdComponent.enabled = enabled;
         }
 
         public override void RestoreInitialState() {
