@@ -101,11 +101,18 @@ namespace FastReset {
          * <param name="message">The message to log</param>
          */
         public static void LogDebug(string message) {
+#if DEBUG
             if (instance == null) {
                 Console.WriteLine($"[Debug] FastReset: {message}");
                 return;
             }
+
             instance.Logger.LogInfo(message);
+#else
+            if (instance != null) {
+                instance.Logger.LogDebug(message);
+            }
+#endif
         }
 
         /**
