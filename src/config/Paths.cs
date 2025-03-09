@@ -33,6 +33,13 @@ namespace FastReset.Config {
             );
         }
 
+        // The path to the file containing crumbling hold states
+        public static string crumblingHoldsPath {
+            get => Path.Combine(
+                profileDir, sceneName, "crumbling-holds.cfg"
+            );
+        }
+
         // The path to the file containing joint states
         public static string jointsPath {
             get => Path.Combine(

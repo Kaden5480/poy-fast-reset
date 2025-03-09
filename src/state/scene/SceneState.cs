@@ -14,12 +14,14 @@ namespace FastReset.State {
         private List<TrackedObject> objs = new List<TrackedObject>();
 
         public static ConfigFile animationsFile;
+        public static ConfigFile crumblingHoldsFile;
         public static ConfigFile jointsFile;
 
         private void SaveInitialState() {
             Plugin.LogDebug("SceneState: Saving initial state");
             foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
                 Animation animation = obj.GetComponent<Animation>();
+                CrumblingHoldRegular crumblingHold = obj.GetComponent<CrumblingHoldRegular>();
                 ConfigurableJoint joint = obj.GetComponent<ConfigurableJoint>();
 
                 if (animation != null
@@ -27,6 +29,12 @@ namespace FastReset.State {
                     && "mill_wings".Equals(obj.name) == true
                 ) {
                     objs.Add(new TrackedAnimation(obj));
+                }
+
+                if (crumblingHold != null
+                    && obj.transform.Find("meshes") != null
+                ) {
+                    objs.Add(new TrackedCrumblingHold(obj));
                 }
 
                 if (joint != null && (
@@ -95,6 +103,14 @@ namespace FastReset.State {
                 setConfig = true;
             }
 
+            if (File.Exists(Paths.crumblingHoldsPath) == true) {
+                Plugin.LogDebug("SceneState: Loading crumbling holds config");
+                crumblingHoldsFile = new ConfigFile(
+                    Paths.crumblingHoldsPath, false
+                );
+                setConfig = true;
+            }
+
             if (File.Exists(Paths.jointsPath) == true) {
                 Plugin.LogDebug("SceneState: Loading joints config");
                 jointsFile = new ConfigFile(
@@ -117,12 +133,19 @@ namespace FastReset.State {
                 animationsFile.Save();
             }
 
+            if (crumblingHoldsFile != null) {
+                Plugin.LogDebug("SceneState: Saving crumbling holds file");
+                crumblingHoldsFile.Save();
+            }
+
             if (jointsFile != null) {
                 Plugin.LogDebug("SceneState: Saving joints file");
                 jointsFile.Save();
             }
 
+
             animationsFile = null;
+            crumblingHoldsFile = null;
             jointsFile = null;
 
             objs.Clear();
