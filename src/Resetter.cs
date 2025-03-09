@@ -2,6 +2,7 @@ using UnityEngine;
 
 using Cfg = FastReset.Config.Cfg;
 using PlayerState = FastReset.State.PlayerState;
+using SceneState = FastReset.State.SceneState;
 
 namespace FastReset {
     public class Resetter {
@@ -12,6 +13,9 @@ namespace FastReset {
 
         // An object for managing the player's state
         private PlayerState player = new PlayerState();
+
+        // An object for managing the scene's state
+        private SceneState scene = new SceneState();
 
         /**
          * <summary>
@@ -24,19 +28,19 @@ namespace FastReset {
             if (GameManager.control.permaDeathEnabled == true
                 || GameManager.control.freesoloEnabled == true
             ) {
-                Plugin.LogDebug("yfyd/fs active, unable to use resetter");
+                Plugin.LogDebug("Resetter: yfyd/fs active, unable to use resetter");
                 return false;
             }
 
             // Ensure the cache contains everything required
             if (cache.IsComplete() == false) {
-                Plugin.LogError("Cache is incomplete, unable to use resetter");
+                Plugin.LogError("Resetter: Cache is incomplete, unable to use resetter");
                 return false;
             }
 
             // If the player is receiving a score, prevent resetting
             if (cache.timerLocked == false && TimeAttack.receivingScore == true) {
-                Plugin.LogDebug("Receiving score, unable to use resetter");
+                Plugin.LogDebug("Resetter: Receiving score, unable to use resetter");
                 return false;
             }
 
@@ -46,7 +50,7 @@ namespace FastReset {
                 || Crampons.cramponsActivated == true
                 || cache.ropeAnchor.attached == true
             ) {
-                Plugin.LogDebug("Using bivouac/crampons/rope, unable to use resetter");
+                Plugin.LogDebug("Resetter: Using bivouac/crampons/rope, unable to use resetter");
                 return false;
             }
 
@@ -57,7 +61,7 @@ namespace FastReset {
                 || StamperPeakSummit.currentlyStampingPeakJournal == true
                 || SummitFlag.placingEvent == true
             ) {
-                Plugin.LogDebug("Other misc case, unable to use resetter");
+                Plugin.LogDebug("Resetter: Other misc case, unable to use resetter");
                 return false;
             }
 
@@ -65,7 +69,7 @@ namespace FastReset {
             if (cache.routingFlag.isSolemnTempest == true
                 && cache.routingFlag.distanceActivatorST == null
             ) {
-                Plugin.LogDebug("Missing distance activator on ST, unable to use resetter");
+                Plugin.LogDebug("Resetter: Missing distance activator on ST, unable to use resetter");
                 return false;
             }
 
@@ -97,63 +101,72 @@ namespace FastReset {
 
         /**
          * <summary>
-         * Saves the current state of the scene.
+         * Saves the current state
          * </summary>
          */
         public void SaveState() {
-            if (CanUse() == false) {
+            if (CanUse() == false
+                || CanSave() == false
+            ) {
+                Plugin.LogDebug("Resetter: Unable to save currently");
                 return;
             }
 
-            // Check if saving is permitted
-            if (CanSave() == false) {
-                Plugin.LogDebug("Saving state is not permitted currently");
-                return;
-            }
+            Plugin.LogDebug("Resetter: Saving state");
 
             player.SaveState();
+            scene.SaveState();
+
             audio.PlayPlayer();
         }
 
         /**
          * <summary>
-         * Restores the saved state of the scene.
+         * Restores the saved state
          * </summary>
-         * <returns>True if restoring was successful, false otherwise</returns>
          */
         public bool RestoreState() {
             if (CanUse() == false) {
+                Plugin.LogDebug("Resetter: Unable to restore currently");
                 return false;
             }
 
-            // If the player's state wasn't restored, do nothing else
+            // Try restoring state
+            Plugin.LogDebug("Resetter: Restoring state");
+
             if (player.RestoreState() == false) {
+                Plugin.LogDebug("Resetter: Failed restoring player state");
                 return false;
             }
+
+            scene.RestoreState();
 
             audio.PlayPlayer();
+
             return true;
         }
 
         /**
          * <summary>
-         * Performs any required actions on a scene load.
-         * Such as loading configs.
+         * Loads any saved states.
          * </summary>
          */
-        public void OnSceneLoaded() {
-            player.OnSceneLoaded();
+        public void LoadStates() {
+            Plugin.LogDebug("Resetter: Loading saved states");
+            player.Load();
+            scene.Load();
         }
 
         /**
          * <summary>
-         * Performs any required actions on a scene unload.
-         * Such as resetting temporary reset points
-         * and scene states.
+         * Unloads states to prepare
+         * for the next scene.
          * </summary>
          */
-        public void OnSceneUnloaded() {
-            player.OnSceneUnloaded();
+        public void UnloadStates() {
+            Plugin.LogDebug("Resetter: Unloading states");
+            player.Unload();
+            scene.Unload();
         }
     }
 }

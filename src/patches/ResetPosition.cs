@@ -22,7 +22,7 @@ namespace FastReset.Patches {
                 return true;
             }
 
-            Plugin.LogDebug("ResetPosition.OnTriggerEnter bypassed, updating falls");
+            Plugin.LogDebug("ResetPositionEnter: bypassed, updating falls");
 
             int falls = Plugin.instance.cache.fallingEvent.falls;
             int globalFalls = GameManager.control.global_stats_falls;
@@ -32,8 +32,8 @@ namespace FastReset.Patches {
             GameManager.control.global_stats_falls++;
             GameManager.control.SaveAllStats();
 
-            Plugin.LogDebug($"Increased falls: {falls} -> {Plugin.instance.cache.fallingEvent.falls}");
-            Plugin.LogDebug($"Increased global falls: {globalFalls} -> {GameManager.control.global_stats_falls}");
+            Plugin.LogDebug($"ResetPositionEnter: Increased falls: {falls} -> {Plugin.instance.cache.fallingEvent.falls}");
+            Plugin.LogDebug($"ResetPositionEnter: Increased global falls: {globalFalls} -> {GameManager.control.global_stats_falls}");
 
             // Bypass normal execution
             return false;
@@ -55,7 +55,7 @@ namespace FastReset.Patches {
                 return true;
             }
 
-            Plugin.LogDebug("ResetPosition.OnTriggerStay bypassed");
+            Plugin.LogDebug("ResetPositionStay: bypassed");
             return false;
         }
     }

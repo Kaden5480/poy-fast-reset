@@ -77,10 +77,12 @@ namespace FastReset {
          * </summary>
          */
         public void OnSceneLoaded() {
+            Plugin.LogDebug("Cache: Caching objects in scene");
             scene = SceneManager.GetActiveScene();
 
             climbing = GameObject.FindObjectOfType<Climbing>();
             if (climbing == null) {
+                Plugin.LogDebug("Cache: No Climbing object found");
                 return;
             }
 
@@ -97,6 +99,7 @@ namespace FastReset {
             // Access the player's camera
             GameObject cameraHolderObj = GameObject.Find("PlayerCameraHolder");
             if (cameraHolderObj == null) {
+                Plugin.LogDebug("Cache: No camera holder found");
                 return;
             }
 
@@ -105,9 +108,11 @@ namespace FastReset {
                 string name = cameraLook.gameObject.name;
 
                 if ("PlayerCameraHolder".Equals(name) == true) {
+                    Plugin.LogDebug("Cache: Found camX");
                     playerCamX = cameraLook;
                 }
                 else {
+                    Plugin.LogDebug("Cache: Found camY");
                     playerCamY = cameraLook;
                 }
             }
@@ -119,6 +124,8 @@ namespace FastReset {
          * </summary>
          */
         public void OnSceneUnloaded() {
+            Plugin.LogDebug("Cache: clearing cache");
+
             climbing = null;
             fallingEvent = null;
             iceAxes = null;

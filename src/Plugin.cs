@@ -1,3 +1,5 @@
+using System;
+
 using BepInEx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -87,6 +89,8 @@ namespace FastReset {
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
             // Make sure the cache is loaded first
             cache.OnSceneLoaded();
+
+            resetter.LoadStates();
         }
 
         /**
@@ -99,7 +103,7 @@ namespace FastReset {
             // Perform any required actions on scene unload
             // for the resetter (such as wiping the player's
             // temporary reset point)
-            resetter.OnSceneUnloaded();
+            resetter.UnloadStates();
 
             // Wipe the cache last
             cache.OnSceneUnloaded();
@@ -112,7 +116,11 @@ namespace FastReset {
          * <param name="message">The message to log</param>
          */
         public static void LogDebug(string message) {
-            instance.Logger.LogDebug(message);
+            if (instance == null) {
+                Console.WriteLine($"[Debug] FastReset: {message}");
+                return;
+            }
+            instance.Logger.LogInfo(message);
         }
 
         /**
@@ -122,6 +130,10 @@ namespace FastReset {
          * <param name="message">The message to log</param>
          */
         public static void LogInfo(string message) {
+            if (instance == null) {
+                Console.WriteLine($"[Info] FastReset: {message}");
+                return;
+            }
             instance.Logger.LogInfo(message);
         }
 
@@ -132,6 +144,10 @@ namespace FastReset {
          * <param name="message">The message to log</param>
          */
         public static void LogError(string message) {
+            if (instance == null) {
+                Console.WriteLine($"[Error] FastReset: {message}");
+                return;
+            }
             instance.Logger.LogError(message);
         }
     }

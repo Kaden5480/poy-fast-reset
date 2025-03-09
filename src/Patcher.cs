@@ -10,7 +10,7 @@ namespace FastReset {
         public void Patch() {
             Harmony.CreateAndPatchAll(typeof(Patches.ResetPositionEnter));
             Harmony.CreateAndPatchAll(typeof(Patches.ResetPositionStay));
-            Plugin.LogDebug("Applied patches");
+            Plugin.LogDebug("Patcher: Applied patches");
         }
     }
 }

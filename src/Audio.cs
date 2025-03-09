@@ -20,6 +20,7 @@ namespace FastReset {
          */
         public Audio() {
             // Create the audio game object
+            Plugin.LogDebug("Audio: Creating game object and audio source");
             GameObject sourceObj = new GameObject("Fast Reset Audio");
             GameObject.DontDestroyOnLoad(sourceObj);
 
@@ -34,7 +35,8 @@ namespace FastReset {
          */
         public IEnumerator Load() {
             // Load the great gales cabin
-            const int buildIndex = 2;
+            Plugin.LogDebug("Audio: Loading audio clips from cabin scene");
+            const int buildIndex = 1;
 
             AsyncOperation load = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
             while (load.isDone == false) {
@@ -55,6 +57,9 @@ namespace FastReset {
                 yield return null;
             }
 
+            Plugin.LogDebug("Audio: Finished loading audio clips from cabin scene");
+
+            Plugin.LogDebug("Audio: Reloading scene");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
         }
 
@@ -65,9 +70,11 @@ namespace FastReset {
          */
         public void PlayScene() {
             if (sceneState == null) {
+                Plugin.LogDebug("Audio: scene state clip is null");
                 return;
             }
 
+            Plugin.LogDebug("Audio: playing scene state clip");
             source.clip = sceneState;
             source.volume = 0.33f;
             source.Play();
@@ -80,9 +87,11 @@ namespace FastReset {
          */
         public void PlayPlayer() {
             if (playerState == null) {
+                Plugin.LogDebug("Audio: player state clip is null");
                 return;
             }
 
+            Plugin.LogDebug("Audio: playing player state clip");
             source.clip = playerState;
             source.volume = 0.25f;
             source.Play();

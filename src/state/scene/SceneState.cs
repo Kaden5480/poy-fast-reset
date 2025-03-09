@@ -1,155 +1,116 @@
 using System.Collections.Generic;
+using System.IO;
 
 using BepInEx.Configuration;
 using UnityEngine;
 
-using Cfg = FastReset.Config.Cfg;
 using Paths = FastReset.Config.Paths;
 
 namespace FastReset.State {
-    public class SceneState {
-        // Shorthand for accessing cache and config
-        private static Cache cache {
-            get => Plugin.instance.cache;
-        }
-        public static Cfg config {
-            get => Plugin.instance.config;
-        }
+    public class SceneState : BaseState {
+        private bool setTemporary = false;
+        private bool setConfig = false;
 
-        // File where the animation states are stored
-        public static ConfigFile animationFile = null;
+        private List<TrackedObject> objs = new List<TrackedObject>();
 
-        // Initial, temporary, and saved states of objects
-        private List<TrackedObject> initial = new List<TrackedObject>();
-        private List<TrackedObject> temporary = null;
-        private Dictionary<string, TrackedObject> saved = null;
+        public static ConfigFile animationsFile;
 
-        /**
-         * <summary>
-         * Saves the initial state.
-         * </summary>
-         */
         private void SaveInitialState() {
-            initial.Clear();
+            Plugin.LogDebug("SceneState: Saving initial state");
             foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
-                TrackedObject tracked = new TrackedObject(obj);
-                tracked.SaveState();
-                initial.Add(tracked);
+                Animation animation = obj.GetComponent<Animation>();
+                if (animation != null
+                    && "Peak_3_OldMill".Equals(cache.scene.name) == true
+                    && "mill_wings".Equals(obj.name) == true
+                ) {
+                    objs.Add(new TrackedAnimation(obj));
+                }
             }
         }
 
-        /**
-         * <summary>
-         * Restores the initial state.
-         * </summary>
-         */
+        protected override void SaveTempState() {
+            Plugin.LogDebug("SceneState: Saving temporary state");
+            foreach (TrackedObject obj in objs) {
+                obj.SaveTempState();
+            }
+
+            setTemporary = true;
+        }
+
+        protected override void SaveConfigState() {
+            Plugin.LogDebug("SceneState: Saving config state");
+            foreach (TrackedObject obj in objs) {
+                obj.SaveConfigState();
+            }
+
+            setConfig = true;
+        }
+
+        protected override bool HasTempState() {
+            return setTemporary;
+        }
+
+        protected override bool HasConfigState() {
+            return setConfig;
+        }
+
         private void RestoreInitialState() {
-            foreach (TrackedObject obj in initial) {
-                obj.RestoreState();
+            Plugin.LogDebug("SceneState: Restoring initial state");
+            foreach (TrackedObject obj in objs) {
+                obj.RestoreInitialState();
             }
         }
 
-        /**
-         * <summary>
-         * Saves the scene state temporarily.
-         * </summary>
-         */
-        private void SaveTempState() {
-            if (temporary == null) {
-                temporary = new List<TrackedObject>();
-            }
-
-            temporary.Clear();
-            foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
-                TrackedObject tracked = new TrackedObject(obj);
-                tracked.SaveState();
-                temporary.Add(tracked);
+        protected override void RestoreTempState() {
+            Plugin.LogDebug("SceneState: Restoring temporary state");
+            foreach (TrackedObject obj in objs) {
+                obj.RestoreTempState();
             }
         }
 
-        /**
-         * <summary>
-         * Restores the temporarily saved scene state.
-         *
-         * This will default to the saved state (if it exists)
-         * if a temporary state wasn't saved.
-         * </summary>
-         */
-        private void RestoreTempState() {
-            if (temporary == null) {
-                return;
-            }
-
-            foreach (TrackedObject obj in temporary) {
-                obj.RestoreState();
+        protected override void RestoreConfigState() {
+            Plugin.LogDebug("SceneState: Restoring config state");
+            foreach (TrackedObject obj in objs) {
+                obj.RestoreConfigState();
             }
         }
 
-        /**
-         * <summary>
-         * Saves the current scene state.
-         *
-         * If the player is in routing flag mode, the state is
-         * only saved temporarily.
-         *
-         * Otherwise, the state is saved to a file permanently.
-         * </summary>
-         */
-        public void SaveState() {
-            if (cache.routingFlag.currentlyUsingFlag == true) {
-                SaveTempState();
-                return;
+        // Scene loads and unloads
+        public override void Load() {
+            if (File.Exists(Paths.animationsPath) == true) {
+                Plugin.LogDebug("SceneState: Loading animations config");
+                animationsFile = new ConfigFile(
+                    Paths.animationsPath, false
+                );
+                setConfig = true;
             }
-        }
 
-        /**
-         * <summary>
-         * Restores the scene's state.
-         *
-         * If the player is in routing flag mode, the temporary
-         * state is used. If the temporary state is unset, the saved
-         * state is used.
-         *
-         * If the player isn't in routing flag mode, only the saved
-         * state is used.
-         * </summary>
-         */
-        public void RestoreState() {
-            if (cache.routingFlag.currentlyUsingFlag == true) {
-                RestoreTempState();
-                return;
-            }
-        }
-
-        /**
-         * <summary>
-         * Prepares configs for the current scene.
-         * </summary>
-         */
-        public void OnSceneLoaded() {
-            // Save the initial scene state
             SaveInitialState();
-
-            animationFile = new ConfigFile(
-                Paths.animationsPath, false
-            );
         }
 
-        /**
-         * <summary>
-         * Saves configs for the current scene and
-         * prepares for the next scene load.
-         * </summary>
-         */
-        public void OnSceneUnloaded() {
-            animationFile.Save();
+        public override void Unload() {
+            Plugin.LogDebug("SceneState: Unloading scene states");
 
-            animationFile = null;
+            setTemporary = false;
+            setConfig = false;
 
-            initial.Clear();
-            temporary = null;
-            saved = null;
+            if (animationsFile != null) {
+                Plugin.LogDebug("SceneState: Saving animations file");
+                animationsFile.Save();
+            }
+
+            animationsFile = null;
+
+            objs.Clear();
         }
 
+        // Allow saving/restoring initial states
+        public override void SaveState() {
+            base.SaveState();
+        }
+
+        public override bool RestoreState() {
+            return base.RestoreState();
+        }
     }
 }
