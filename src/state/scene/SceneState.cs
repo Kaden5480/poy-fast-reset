@@ -11,9 +11,10 @@ namespace FastReset.State {
         private bool setTemporary = false;
         private bool setConfig = false;
 
-        private List<TrackedObject> objs = new List<TrackedObject>();
+        public List<TrackedObject> objs { get; } = new List<TrackedObject>();
 
         public static ConfigFile animationsFile;
+        public static ConfigFile brittleIceFile;
         public static ConfigFile crumblingHoldsFile;
         public static ConfigFile jointsFile;
 
@@ -24,6 +25,7 @@ namespace FastReset.State {
                 CrumblingHoldRegular crumblingHold = obj.GetComponent<CrumblingHoldRegular>();
                 ConfigurableJoint joint = obj.GetComponent<ConfigurableJoint>();
 
+                // Currently only track the animation of the mill on Old Mill
                 if (animation != null
                     && "Peak_3_OldMill".Equals(cache.scene.name) == true
                     && "mill_wings".Equals(obj.name) == true
@@ -31,9 +33,7 @@ namespace FastReset.State {
                     objs.Add(new TrackedAnimation(obj));
                 }
 
-                if (crumblingHold != null
-                    && obj.transform.Find("meshes") != null
-                ) {
+                if (crumblingHold != null) {
                     objs.Add(new TrackedCrumblingHold(obj));
                 }
 
@@ -103,6 +103,14 @@ namespace FastReset.State {
                 setConfig = true;
             }
 
+            if (File.Exists(Paths.brittleIcePath) == true) {
+                Plugin.LogDebug("SceneState: Loading brittle ice config");
+                brittleIceFile = new ConfigFile(
+                    Paths.brittleIcePath, false
+                );
+                setConfig = true;
+            }
+
             if (File.Exists(Paths.crumblingHoldsPath) == true) {
                 Plugin.LogDebug("SceneState: Loading crumbling holds config");
                 crumblingHoldsFile = new ConfigFile(
@@ -133,6 +141,11 @@ namespace FastReset.State {
                 animationsFile.Save();
             }
 
+            if (brittleIceFile != null) {
+                Plugin.LogDebug("SceneState: Saving brittle ice file");
+                brittleIceFile.Save();
+            }
+
             if (crumblingHoldsFile != null) {
                 Plugin.LogDebug("SceneState: Saving crumbling holds file");
                 crumblingHoldsFile.Save();
@@ -145,6 +158,7 @@ namespace FastReset.State {
 
 
             animationsFile = null;
+            brittleIceFile = null;
             crumblingHoldsFile = null;
             jointsFile = null;
 
