@@ -26,41 +26,29 @@ namespace FastReset {
 
             // Assign an AudioSource to it
             source = sourceObj.AddComponent<AudioSource>();
+
         }
 
         /**
          * <summary>
-         * Loads audio clips from the game for later use.
+         * Finds the required audio clips.
          * </summary>
          */
-        public IEnumerator Load() {
-            // Load the great gales cabin
-            Plugin.LogDebug("Audio: Loading audio clips from cabin scene");
-            const int buildIndex = 1;
-
-            AsyncOperation load = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
-            while (load.isDone == false) {
-                yield return null;
+        public void Load() {
+            if (playerState != null && sceneState != null) {
+                return;
             }
 
-            foreach (AudioSource source in GameObject.FindObjectsOfType<AudioSource>()) {
-                if ("DirtDingSound".Equals(source.gameObject.name) == true) {
-                    sceneState = source.clip;
+            foreach (AudioClip clip in Resources.FindObjectsOfTypeAll(typeof(AudioClip))) {
+                if ("ding".Equals(clip.name) == true) {
+                    Plugin.LogDebug($"Found scene state clip: {clip.name}");
+                    sceneState = clip;
                 }
-                else if ("ClickSound".Equals(source.gameObject.name) == true) {
-                    playerState = source.clip;
+                else if ("click".Equals(clip.name) == true) {
+                    Plugin.LogDebug($"Found player state clip: {clip.name}");
+                    playerState = clip;
                 }
             }
-
-            AsyncOperation unload = SceneManager.UnloadSceneAsync(buildIndex);
-            while (unload.isDone == false) {
-                yield return null;
-            }
-
-            Plugin.LogDebug("Audio: Finished loading audio clips from cabin scene");
-
-            Plugin.LogDebug("Audio: Reloading scene");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
         }
 
         /**

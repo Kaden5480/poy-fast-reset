@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 
 using BepInEx;
 using UnityEngine;
@@ -46,11 +47,9 @@ namespace FastReset {
             // Apply early patches
             patcher.Patch();
 
+            // Track scene changes
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
-
-            // Load audio clips
-            StartCoroutine(audio.Load());
         }
 
         /**
@@ -71,9 +70,11 @@ namespace FastReset {
          * <param name="mode">The mode the scene loaded with</param>
          */
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+            // Get audio
+            audio.Load();
+
             // Make sure the cache is loaded first
             cache.OnSceneLoaded();
-
             resetter.LoadStates();
         }
 
