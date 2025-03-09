@@ -84,9 +84,9 @@ namespace FastReset.State {
                 SceneState.animationsFile = new ConfigFile(
                     Paths.animationsPath, false
                 );
-
-                BindConfig();
             }
+
+            BindConfig();
 
             int i = 0;
             foreach (AnimationState state in animation) {
@@ -101,6 +101,10 @@ namespace FastReset.State {
         }
 
         protected override void BindConfig() {
+            if (boundConfig == true) {
+                return;
+            }
+
             if (SceneState.animationsFile == null) {
                 Plugin.LogDebug("TrackedAnimation: Animations file doesn't exist, not binding config");
                 return;
@@ -113,6 +117,8 @@ namespace FastReset.State {
                     id, $"state_{i}", initialTimes[i]
                 ));
             }
+
+            boundConfig = true;
         }
 
         public TrackedAnimation(GameObject obj) : base(obj) {}

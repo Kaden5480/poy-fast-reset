@@ -2,6 +2,8 @@ using UnityEngine;
 
 namespace FastReset.State {
     public abstract class TrackedObject {
+        protected bool boundConfig = false;
+
         protected GameObject obj { get; }
         protected string id { get; }
 

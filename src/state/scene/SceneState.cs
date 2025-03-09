@@ -14,16 +14,26 @@ namespace FastReset.State {
         private List<TrackedObject> objs = new List<TrackedObject>();
 
         public static ConfigFile animationsFile;
+        public static ConfigFile jointsFile;
 
         private void SaveInitialState() {
             Plugin.LogDebug("SceneState: Saving initial state");
             foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
                 Animation animation = obj.GetComponent<Animation>();
+                ConfigurableJoint joint = obj.GetComponent<ConfigurableJoint>();
+
                 if (animation != null
                     && "Peak_3_OldMill".Equals(cache.scene.name) == true
                     && "mill_wings".Equals(obj.name) == true
                 ) {
                     objs.Add(new TrackedAnimation(obj));
+                }
+
+                if (joint != null && (
+                    obj.name.StartsWith("TrainingBeam") == true
+                    || obj.name.StartsWith("wheelJoint") == true
+                )) {
+                    objs.Add(new TrackedJoint(obj));
                 }
             }
         }
@@ -85,6 +95,14 @@ namespace FastReset.State {
                 setConfig = true;
             }
 
+            if (File.Exists(Paths.jointsPath) == true) {
+                Plugin.LogDebug("SceneState: Loading joints config");
+                jointsFile = new ConfigFile(
+                    Paths.jointsPath, false
+                );
+                setConfig = true;
+            }
+
             SaveInitialState();
         }
 
@@ -99,7 +117,13 @@ namespace FastReset.State {
                 animationsFile.Save();
             }
 
+            if (jointsFile != null) {
+                Plugin.LogDebug("SceneState: Saving joints file");
+                jointsFile.Save();
+            }
+
             animationsFile = null;
+            jointsFile = null;
 
             objs.Clear();
         }
