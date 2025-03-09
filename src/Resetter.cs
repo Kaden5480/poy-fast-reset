@@ -156,8 +156,7 @@ namespace FastReset {
                 return false;
             }
 
-            // TODO: Handle the constant small wind somehow
-            //windResetter.Reset();
+            windResetter.Reset();
             scene.RestoreState();
 
             audio.PlayPlayer();

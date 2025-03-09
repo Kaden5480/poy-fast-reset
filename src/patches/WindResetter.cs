@@ -31,16 +31,15 @@ namespace FastReset.Patches {
          */
         private IEnumerator ResetWind() {
             Plugin.LogDebug("WindResetter: Peak wind found on map, stopping wind cycle");
-            peakWind.StopAllWindEvents();
-            peakWind.playerWindForce.force = Vector3.zero;
+            peakWind.StopCoroutine("AddWindToHands");
             peakWind.harshWindSound.volume = 0f;
+            peakWind.playerWindForce.force = peakWind.windVectorDirection;
 
             Plugin.LogDebug($"WindResetter: Waiting for: {peakWind.waitBeforeHarshWindMax}s");
             yield return new WaitForSeconds(peakWind.waitBeforeHarshWindMax);
 
             Plugin.LogDebug("WindResetter: Restarting wind cycle");
-            AccessTools.Method(typeof(PeakWind), "StartWindMethod")
-                .Invoke(peakWind, new object[] {});
+            peakWind.StartCoroutine("AddWindToHands");
         }
 
         public void Reset() {
