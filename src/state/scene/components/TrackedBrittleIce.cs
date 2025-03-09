@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 
 using BepInEx.Configuration;
-using HarmonyLib;
 using UnityEngine;
 
 using Cfg = FastReset.Config.Cfg;
@@ -18,10 +17,11 @@ namespace FastReset.State {
 
         private BrittleIce brittleIce;
 
+        private Rigidbody[] myRBs {
+            get => brittleIce.gameObject.GetComponentsInChildren<Rigidbody>();
+        }
         private Renderer[] iceCracksRenderers {
-            get => (Renderer[]) AccessTools
-                .Field(typeof(BrittleIce), "iceCracksRenderers")
-                .GetValue(brittleIce);
+            get => brittleIce.gameObject.GetComponentsInChildren<Renderer>();
         }
 
         // HP of the ice
@@ -84,7 +84,7 @@ namespace FastReset.State {
             // Disable all coroutines
             brittleIce.StopAllCoroutines();
 
-            foreach (Rigidbody rb in brittleIce.myRBs) {
+            foreach (Rigidbody rb in myRBs) {
                 rb.isKinematic = isActive;
                 rb.gameObject.SetActive(isActive);
 
@@ -100,8 +100,8 @@ namespace FastReset.State {
             Plugin.LogDebug($"TrackedBrittleIce: [{obj.name}] Restoring initial state");
             Restore(initialHp, initialMaterial);
 
-            for (int i = 0; i < brittleIce.myRBs.Length; i++) {
-                Transform transform = brittleIce.myRBs[i].transform;
+            for (int i = 0; i < myRBs.Length; i++) {
+                Transform transform = myRBs[i].transform;
                 transform.position = PositionFix.OffsetToReal(initialPositions[i]);
                 transform.rotation = initialRotations[i];
             }
@@ -111,8 +111,8 @@ namespace FastReset.State {
             Plugin.LogDebug($"TrackedBrittleIce: [{obj.name}] Restoring temporary state");
             Restore(temporaryHp, temporaryMaterial);
 
-            for (int i = 0; i < brittleIce.myRBs.Length; i++) {
-                Transform transform = brittleIce.myRBs[i].transform;
+            for (int i = 0; i < myRBs.Length; i++) {
+                Transform transform = myRBs[i].transform;
                 transform.position = PositionFix.OffsetToReal(temporaryPositions[i]);
                 transform.rotation = temporaryRotations[i];
             }
@@ -122,8 +122,8 @@ namespace FastReset.State {
             Plugin.LogDebug($"TrackedBrittleIce: [{obj.name}] Restoring config state");
             Restore(configHp.Value, configMaterial.Value);
 
-            for (int i = 0; i < brittleIce.myRBs.Length; i++) {
-                Transform transform = brittleIce.myRBs[i].transform;
+            for (int i = 0; i < myRBs.Length; i++) {
+                Transform transform = myRBs[i].transform;
                 transform.position = PositionFix.OffsetToReal(Cfg.StringToVec3(configPositions[i].Value));
                 transform.rotation = Cfg.StringToQuat(configRotations[i].Value);
             }
@@ -143,7 +143,7 @@ namespace FastReset.State {
                 iceCracksRenderers[0].material
             );
 
-            foreach (Rigidbody rb in brittleIce.myRBs) {
+            foreach (Rigidbody rb in myRBs) {
                 initialPositions.Add(PositionFix.RealToOffset(rb.transform.position));
                 initialRotations.Add(rb.transform.rotation);
             }
@@ -157,7 +157,7 @@ namespace FastReset.State {
                 iceCracksRenderers[0].material
             );
 
-            foreach (Rigidbody rb in brittleIce.myRBs) {
+            foreach (Rigidbody rb in myRBs) {
                 temporaryPositions.Add(PositionFix.RealToOffset(rb.transform.position));
                 temporaryRotations.Add(rb.transform.rotation);
             }
@@ -184,8 +184,8 @@ namespace FastReset.State {
             Plugin.LogDebug($"TrackedBrittleIce: [{obj.name}] saving material as {materialString}");
             configMaterial.Value = materialString;
 
-            for (int i = 0; i < brittleIce.myRBs.Length; i++) {
-                Transform transform = brittleIce.myRBs[i].transform;
+            for (int i = 0; i < myRBs.Length; i++) {
+                Transform transform = myRBs[i].transform;
 
                 string positionString = Cfg.Vec3ToString(PositionFix.RealToOffset(transform.position));
                 string rotationString = Cfg.QuatToString(transform.rotation);

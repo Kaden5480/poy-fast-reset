@@ -11,7 +11,7 @@ namespace FastReset.State {
         private bool setTemporary = false;
         private bool setConfig = false;
 
-        public List<TrackedObject> objs { get; } = new List<TrackedObject>();
+        private List<TrackedObject> objs = new List<TrackedObject>();
 
         public static ConfigFile animationsFile;
         public static ConfigFile brittleIceFile;
@@ -22,6 +22,7 @@ namespace FastReset.State {
             Plugin.LogDebug("SceneState: Saving initial state");
             foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
                 Animation animation = obj.GetComponent<Animation>();
+                BrittleIce brittleIce = obj.GetComponent<BrittleIce>();
                 CrumblingHoldRegular crumblingHold = obj.GetComponent<CrumblingHoldRegular>();
                 ConfigurableJoint joint = obj.GetComponent<ConfigurableJoint>();
 
@@ -31,6 +32,12 @@ namespace FastReset.State {
                     && "mill_wings".Equals(obj.name) == true
                 ) {
                     objs.Add(new TrackedAnimation(obj));
+                }
+
+                if (brittleIce != null
+                    && brittleIce.largeStalagmite == true
+                ) {
+                    objs.Add(new TrackedBrittleIce(obj));
                 }
 
                 if (crumblingHold != null) {
