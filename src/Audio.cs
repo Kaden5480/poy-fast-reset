@@ -26,7 +26,6 @@ namespace FastReset {
 
             // Assign an AudioSource to it
             source = sourceObj.AddComponent<AudioSource>();
-
         }
 
         /**
@@ -41,12 +40,26 @@ namespace FastReset {
 
             foreach (AudioClip clip in Resources.FindObjectsOfTypeAll(typeof(AudioClip))) {
                 if ("ding".Equals(clip.name) == true) {
-                    Plugin.LogDebug($"Found scene state clip: {clip.name}");
+                    Plugin.LogDebug($"Audio: Found scene state clip: {clip.name}");
                     sceneState = clip;
                 }
                 else if ("click".Equals(clip.name) == true) {
-                    Plugin.LogDebug($"Found player state clip: {clip.name}");
+                    Plugin.LogDebug($"Audio: Found player state clip: {clip.name}");
                     playerState = clip;
+
+                }
+            }
+
+            // Also take the sfx mixer group
+            foreach (AudioSource src in GameObject.FindObjectsOfType<AudioSource>()) {
+                if (src.outputAudioMixerGroup == null) {
+                    continue;
+                }
+
+                if ("SFX".Equals(src.outputAudioMixerGroup.name) == true) {
+                    Plugin.LogDebug($"Audio: Found SFX audio mixer group");
+                    source.outputAudioMixerGroup = src.outputAudioMixerGroup;
+                    break;
                 }
             }
         }
