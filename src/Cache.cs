@@ -91,6 +91,8 @@ namespace FastReset {
             Plugin.LogDebug("Cache: Caching objects in scene");
             scene = SceneManager.GetActiveScene();
 
+            inGameMenu = GameObject.FindObjectOfType<InGameMenu>();
+
             climbing = GameObject.FindObjectOfType<Climbing>();
             if (climbing == null) {
                 Plugin.LogDebug("Cache: No Climbing object found");
@@ -99,7 +101,6 @@ namespace FastReset {
 
             fallingEvent = GameObject.FindObjectOfType<FallingEvent>();
             iceAxes = GameObject.FindObjectOfType<IceAxe>();
-            inGameMenu = GameObject.FindObjectOfType<InGameMenu>();
             inventory = GameObject.FindObjectOfType<Inventory>();
             leavePeakScene = GameObject.FindObjectOfType<LeavePeakScene>();
             peakSummited = GameObject.FindObjectOfType<PeakSummited>();
