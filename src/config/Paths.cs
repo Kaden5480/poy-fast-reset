@@ -1,6 +1,11 @@
 using System.IO;
 
 namespace FastReset.Config {
+    /**
+     * <summary>
+     * Paths which fast reset writes to.
+     * </summary>
+     */
     public class Paths {
         // The directory where configs besides the main one will be located
         public static string configDirName { get; } = "com.github.Kaden5480.poy-fast-reset";

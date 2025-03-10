@@ -39,10 +39,12 @@ namespace FastReset {
          * </summary>
          */
         public void Load() {
+            // If the clips have already been found, don't search
             if (playerState != null && sceneState != null) {
                 return;
             }
 
+            // Try finding the audio clips
             foreach (AudioClip clip in Resources.FindObjectsOfTypeAll(typeof(AudioClip))) {
                 if ("ding".Equals(clip.name) == true) {
                     Plugin.LogDebug($"Audio: Found scene state clip: {clip.name}");

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace FastReset.Patches {
     /**
      * <summary>
-     * Patches ResetPosition to restore the state of the scene where possible.
+     * Patches ResetPosition to restore state where possible.
      * </summary>
      */
     [HarmonyPatch(typeof(ResetPosition), "OnTriggerEnter")]
@@ -44,7 +44,7 @@ namespace FastReset.Patches {
     /**
      * <summary>
      * Bypasses the OnTriggerStay for ResetPosition if
-     * the scene state can be restored.
+     * the state can be restored.
      * </summary>
      */
     [HarmonyPatch(typeof(ResetPosition), "OnTriggerStay")]

@@ -27,10 +27,8 @@
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all"/>
     <PackageReference Include="BepInEx.Core" Version="5.*"/>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="UnityEngine.Modules" Version="2019.4.36" PrivateAssets="all"/>
+    <PackageReference Include="PeterO.Cbor" Version="4.5.5"/>
   </ItemGroup>
 
   <ItemGroup Condition="'$(OS)' == 'Unix'">

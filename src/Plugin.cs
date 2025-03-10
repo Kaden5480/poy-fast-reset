@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 
 using BepInEx;
+using PeterO.Cbor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 
 using Cfg = FastReset.Config.Cfg;
 using Window = FastReset.UI.Window;
@@ -56,7 +58,7 @@ namespace FastReset {
             );
 
             // Apply early patches
-            patcher.Patch();
+            patcher.PatchEarly();
 
             // Track scene changes
             SceneManager.sceneLoaded += OnSceneLoaded;

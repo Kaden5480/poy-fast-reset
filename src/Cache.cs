@@ -3,6 +3,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace FastReset {
+    /**
+     * <summary>
+     * This class contains objects which make fast
+     * reset work properly.
+     * </summary>
+     */
     public class Cache {
         // The current scene
         public Scene scene;
@@ -65,6 +71,9 @@ namespace FastReset {
          * <summary>
          * Checks if all objects required for fast reset to function
          * are available in the cache.
+         *
+         * This is limited to objects required for resetting/saving
+         * the player's position.
          * </summary>
          * <returns>True if they are, false otherwise</returns>
          */

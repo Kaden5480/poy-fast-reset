@@ -6,25 +6,19 @@ using UnityEngine;
 using Cfg = FastReset.Config.Cfg;
 
 namespace FastReset.Patches {
+    /**
+     * <summary>
+     * A class used for controlling the wind on
+     * wuthering crest.
+     * </summary>
+     */
     public class WindResetter : MonoBehaviour {
-        // Shorthand for accessing the cache and config
-        private Cfg config {
-            get => Plugin.instance.config;
-        }
-
-        private Cache cache {
-            get => Plugin.instance.cache;
-        }
-
         private PeakWind peakWind {
-            get => cache.peakWind;
+            get => Plugin.instance.cache.peakWind;
         }
 
         /**
          * <summary>
-         * Restores the state of the peak wind on
-         * wuthering crest.
-         *
          * Sets the wind to use the maximum possible duration
          * before reverting to old RNG behaviour.
          * </summary>
@@ -42,12 +36,19 @@ namespace FastReset.Patches {
             peakWind.StartCoroutine("AddWindToHands");
         }
 
+        /**
+         * <summary>
+         * Resets the wind if possible.
+         * </summary>
+         */
         public void Reset() {
             if (peakWind == null) {
                 Plugin.LogDebug("WindResetter: No peak wind on map, not resetting");
                 return;
             }
 
+            // Stop running the old coroutine
+            // before starting another
             StopAllCoroutines();
             StartCoroutine(ResetWind());
         }
