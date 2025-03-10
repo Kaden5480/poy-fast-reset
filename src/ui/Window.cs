@@ -19,11 +19,14 @@ namespace FastReset.UI {
 
         public State state { get; } = new State();
 
-        private const float height = 350;
-        private const float width = 300;
+        private const float height = 300;
+        private const float width = 386;
         private const float padding = 20;
         private const float elementWidth = 100;
         private const float smallElementWidth = 50;
+
+        private const string profileTextPadding = "============";
+        private const string stateTextPadding = "=======";
 
         private bool allowingMovement = true;
         private bool showUI = false;
@@ -196,6 +199,7 @@ namespace FastReset.UI {
          * Renders the main pane.
          * </summary>
          */
+        /*
         public void RenderMain() {
             GUILayout.Label("== Player State ==", GUILayout.ExpandWidth(true));
             GUILayout.Label($"Routing flag mode: {IsAvailable(resetter.player.HasTempState())}");
@@ -218,6 +222,50 @@ namespace FastReset.UI {
                 state.useInitialState, "Use initial state"
             );
         }
+        */
+        public void RenderMain() {
+            GUILayout.BeginHorizontal();
+
+            // Extra padding
+            GUILayout.BeginVertical(GUILayout.Width(6));
+            GUILayout.Space(6);
+            GUILayout.EndVertical();
+
+            // Options
+            GUILayout.BeginVertical(GUILayout.Width(156));
+            GUILayout.Space(4);
+            GUILayout.Label("When saving:");
+            state.editPlayerState = GUILayout.Toggle(
+                state.editPlayerState, "Save player state"
+            );
+            state.editSceneState = GUILayout.Toggle(
+                state.editSceneState, "Save scene state"
+            );
+
+            GUILayout.Space(5);
+
+            GUILayout.Label("When restoring:");
+            state.useInitialState = GUILayout.Toggle(
+                state.useInitialState, "Use initial state"
+            );
+
+            GUILayout.EndVertical();
+
+            // Information
+            GUILayout.BeginVertical();
+
+            GUILayout.Label($"{stateTextPadding} Player State {stateTextPadding}");
+            GUILayout.Label($"Normal: {IsAvailable(resetter.player.HasConfigState())}");
+            GUILayout.Label($"Routing flag mode: {IsAvailable(resetter.player.HasTempState())}");
+            GUILayout.Space(30);
+            GUILayout.Label($"{stateTextPadding} Scene State {stateTextPadding}");
+            GUILayout.Label($"Normal: {IsAvailable(resetter.scene.HasConfigState())}");
+            GUILayout.Label($"Routing flag mode: {IsAvailable(resetter.scene.HasTempState())}");
+
+            GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
+        }
 
         /**
          * <summary>
@@ -236,11 +284,11 @@ namespace FastReset.UI {
             float y = centerY - height / 2;
 
             GUILayout.BeginArea(new Rect(x, y, width, height), GUI.skin.box);
-            GUILayout.Label($"== Current Profile: {state.currentProfile} ==");
+            GUILayout.Label($"{profileTextPadding} Current Profile: {state.currentProfile} {profileTextPadding}");
 
             state.scrollPosition = GUILayout.BeginScrollView(
                 state.scrollPosition,
-                GUILayout.Width(width - padding), GUILayout.Height(height - padding - 65)
+                GUILayout.Width(width - padding), GUILayout.Height(height - padding - 64)
             );
 
             switch (state.pane) {
