@@ -55,14 +55,17 @@ namespace FastReset.UI {
          * </summary>
          */
         private bool IsInMenu() {
+            if (InGameMenu.isCurrentlyNavigationMenu == true) {
+                return true;
+            }
+
             if (cache.inGameMenu == null) {
                 Plugin.LogDebug("UI.Window: inGameMenu is null");
                 return false;
             }
 
             return cache.inGameMenu.isMainMenu == true
-                || cache.inGameMenu.inMenu == true
-                || InGameMenu.isCurrentlyNavigationMenu == true;
+                || cache.inGameMenu.inMenu == true;
         }
 
         /**
@@ -72,6 +75,15 @@ namespace FastReset.UI {
          */
         public void Toggle() {
             showUI = !showUI;
+        }
+
+        /**
+         * <summary>
+         * Forcefully disables the UI.
+         * </summary>
+         */
+        public void Disable() {
+            showUI = false;
         }
 
         /**
@@ -172,13 +184,22 @@ namespace FastReset.UI {
 
         /**
          * <summary>
+         * Converts true/false to available/unavailable.
+         * </summary>
+         */
+        private string IsAvailable(bool available) {
+            return (available == true) ? "Available" : "Unavailable";
+        }
+
+        /**
+         * <summary>
          * Renders the main pane.
          * </summary>
          */
         public void RenderMain() {
             GUILayout.Label("== Player State ==", GUILayout.ExpandWidth(true));
-            GUILayout.Label($"Temporary loaded: {resetter.player.HasTempState()}");
-            GUILayout.Label($"Config loaded: {resetter.player.HasConfigState()}");
+            GUILayout.Label($"Routing flag mode: {IsAvailable(resetter.player.HasTempState())}");
+            GUILayout.Label($"Normal: {IsAvailable(resetter.player.HasConfigState())}");
 
             state.editPlayerState = GUILayout.Toggle(
                 state.editPlayerState, "Allow editing"
@@ -186,8 +207,8 @@ namespace FastReset.UI {
 
             GUILayout.Space(padding);
             GUILayout.Label("== Scene State ==");
-            GUILayout.Label($"Temporary loaded: {resetter.scene.HasTempState()}");
-            GUILayout.Label($"Config loaded: {resetter.scene.HasConfigState()}");
+            GUILayout.Label($"Routing flag mode: {IsAvailable(resetter.scene.HasTempState())}");
+            GUILayout.Label($"Normal: {IsAvailable(resetter.scene.HasConfigState())}");
 
             state.editSceneState = GUILayout.Toggle(
                 state.editSceneState, "Allow editing"

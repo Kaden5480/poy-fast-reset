@@ -138,6 +138,9 @@ namespace FastReset {
             // temporary reset point)
             resetter.UnloadStates();
 
+            // Make sure the UI is off
+            ui.Disable();
+
             // Wipe the cache last
             cache.OnSceneUnloaded();
         }
