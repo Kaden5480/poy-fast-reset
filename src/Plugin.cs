@@ -61,6 +61,9 @@ namespace FastReset {
             // Track scene changes
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
+
+            // Load user profiles
+            ui.state.LoadProfiles();
         }
 
         /**
@@ -120,7 +123,6 @@ namespace FastReset {
 
             // Make sure the cache is loaded first
             cache.OnSceneLoaded();
-            ui.state.LoadProfiles();
             resetter.LoadStates();
         }
 
