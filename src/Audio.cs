@@ -26,6 +26,11 @@ namespace FastReset {
 
             // Assign an AudioSource to it
             source = sourceObj.AddComponent<AudioSource>();
+
+            // Bypass any effects
+            source.bypassEffects = true;
+            source.bypassListenerEffects = true;
+            source.bypassReverbZones = true;
         }
 
         /**
