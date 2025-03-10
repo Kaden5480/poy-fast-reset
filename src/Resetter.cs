@@ -19,23 +19,10 @@ namespace FastReset {
         public SceneState scene { get; } = new SceneState();
 
         // An object for managing the state of the wind
-        private WindResetter windResetter;
+        private WindResetter windResetter = null;
 
         // UI state for changing resetter behaviour
         private UI.State uiState { get => Plugin.instance.ui.state; }
-
-        /**
-         * <summary>
-         * Constructs an instance of Resetter.
-         * </summary>
-         */
-        public Resetter() {
-            // Create the peak wind resetter object
-            GameObject windResetterObj = new GameObject("Fast Reset Wind Resetter");
-            GameObject.DontDestroyOnLoad(windResetterObj);
-
-            windResetter = windResetterObj.AddComponent<WindResetter>();
-        }
 
         /**
          * <summary>
@@ -171,7 +158,10 @@ namespace FastReset {
                 return false;
             }
 
-            windResetter.Reset();
+            if (windResetter != null) {
+                windResetter.Reset();
+            }
+
             scene.RestoreState();
 
             audio.PlayPlayer();
@@ -186,6 +176,16 @@ namespace FastReset {
          */
         public void LoadStates() {
             Plugin.LogDebug("Resetter: Loading saved states");
+
+            // Create the peak wind resetter object
+            if (config.resetWind.Value == true
+                && "Peak_11_WutheringCrestNEW".Equals(cache.scene.name) == true
+            ) {
+                Plugin.LogDebug("Resetter: Creating wind resetter");
+                GameObject windResetterObj = new GameObject("Fast Reset Wind Resetter");
+                windResetter = windResetterObj.AddComponent<WindResetter>();
+            }
+
             player.Load();
             scene.Load();
         }
@@ -198,7 +198,13 @@ namespace FastReset {
          */
         public void UnloadStates() {
             Plugin.LogDebug("Resetter: Unloading states");
-            windResetter.Stop();
+
+            if (windResetter != null) {
+                Plugin.LogDebug("Resetter: Destroying wind resetter");
+                GameObject.Destroy(windResetter.gameObject);
+                windResetter = null;
+            }
+
             player.Unload();
             scene.Unload();
         }

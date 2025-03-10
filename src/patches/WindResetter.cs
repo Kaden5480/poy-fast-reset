@@ -43,16 +43,6 @@ namespace FastReset.Patches {
         }
 
         public void Reset() {
-            // Only reset if configured to do so
-            if (config.resetWind.Value == false) {
-                return;
-            }
-
-            // Only reset on wuthering crest
-            if ("Peak_11_WutheringCrestNEW".Equals(cache.scene.name) == false) {
-                return;
-            }
-
             if (peakWind == null) {
                 Plugin.LogDebug("WindResetter: No peak wind on map, not resetting");
                 return;
@@ -60,10 +50,6 @@ namespace FastReset.Patches {
 
             StopAllCoroutines();
             StartCoroutine(ResetWind());
-        }
-
-        public void Stop() {
-            StopAllCoroutines();
         }
     }
 }
