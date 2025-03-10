@@ -91,26 +91,23 @@ namespace FastReset {
             Plugin.LogDebug("Cache: Caching objects in scene");
             scene = SceneManager.GetActiveScene();
 
-            inGameMenu = GameObject.FindObjectOfType<InGameMenu>();
-
             climbing = GameObject.FindObjectOfType<Climbing>();
-            if (climbing == null) {
-                Plugin.LogDebug("Cache: No Climbing object found");
-                return;
-            }
-
             fallingEvent = GameObject.FindObjectOfType<FallingEvent>();
             iceAxes = GameObject.FindObjectOfType<IceAxe>();
+            inGameMenu = GameObject.FindObjectOfType<InGameMenu>();
             inventory = GameObject.FindObjectOfType<Inventory>();
             leavePeakScene = GameObject.FindObjectOfType<LeavePeakScene>();
             peakSummited = GameObject.FindObjectOfType<PeakSummited>();
+            peakWind = GameObject.FindObjectOfType<PeakWind>();
             playerManager = GameObject.FindObjectOfType<PlayerManager>();
             playerMove = GameObject.FindObjectOfType<PlayerMove>();
             ropeAnchor = GameObject.FindObjectOfType<RopeAnchor>();
             routingFlag = GameObject.FindObjectOfType<RoutingFlag>();
             timeAttack = GameObject.FindObjectOfType<TimeAttack>();
 
-            playerRb = climbing.gameObject.GetComponent<Rigidbody>();
+            if (climbing != null) {
+                playerRb = climbing.gameObject.GetComponent<Rigidbody>();
+            }
 
             // Access the player's camera
             GameObject cameraHolderObj = GameObject.Find("PlayerCameraHolder");
@@ -132,8 +129,6 @@ namespace FastReset {
                     playerCamY = cameraLook;
                 }
             }
-
-            peakWind = GameObject.FindObjectOfType<PeakWind>();
         }
 
         /**
