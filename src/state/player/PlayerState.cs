@@ -61,6 +61,8 @@ namespace FastReset.State {
             this.rotationX = rotationX;
             this.rotationY = rotationY;
 
+            cache.playerCamX.PlayerGrabbed();
+
             if (cache.routingFlag.isSolemnTempest == true) {
                 cache.routingFlag.distanceActivatorST.ForceCheck();
                 Plugin.LogDebug("PlayerState: Force checked ST distance activator");

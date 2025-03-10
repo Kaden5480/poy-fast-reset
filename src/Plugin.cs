@@ -80,6 +80,22 @@ namespace FastReset {
          */
         public void Update() {
             ui.Update();
+
+            if (Input.GetKeyDown(config.saveKeybind.Value) == true) {
+                Plugin.LogDebug($"Plugin: {config.saveKeybind.Value} is down");
+                if (Input.GetKey(config.toggleModifier.Value) == true) {
+                    Plugin.LogDebug($"Plugin: {config.toggleModifier.Value} is down");
+                    ui.Toggle();
+                }
+                else {
+                    resetter.SaveState();
+                }
+            }
+
+            if (Input.GetKeyDown(config.resetKeybind.Value) == true) {
+                Plugin.LogDebug($"Plugin: {config.resetKeybind.Value} is down");
+                resetter.RestoreState();
+            }
         }
 
         /**
