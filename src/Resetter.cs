@@ -21,6 +21,9 @@ namespace FastReset {
         // An object for managing the state of the wind
         private WindResetter windResetter;
 
+        // UI state for changing resetter behaviour
+        private UI.State uiState { get => Plugin.instance.ui.state; }
+
         /**
          * <summary>
          * Constructs an instance of Resetter.
@@ -131,10 +134,22 @@ namespace FastReset {
 
             Plugin.LogDebug("Resetter: Saving state");
 
-            player.SaveState();
-            scene.SaveState();
+            if (uiState.editPlayerState == true) {
+                player.SaveState();
+            }
 
-            audio.PlayPlayer();
+            if (uiState.editSceneState == true) {
+                scene.SaveState();
+                audio.PlayScene();
+            }
+
+            // Play normal audio if not editing scene
+            if (uiState.editPlayerState == true
+                && uiState.editSceneState == false
+            ) {
+                audio.PlayPlayer();
+            }
+
         }
 
         /**

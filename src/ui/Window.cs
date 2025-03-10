@@ -188,6 +188,10 @@ namespace FastReset.UI {
             state.editSceneState = GUILayout.Toggle(
                 state.editSceneState, "Allow editing"
             );
+
+            state.useInitialState = GUILayout.Toggle(
+                state.useInitialState, "Use initial state"
+            );
         }
 
         /**

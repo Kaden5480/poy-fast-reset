@@ -11,6 +11,8 @@ namespace FastReset.State {
         private bool setTemporary = false;
         private bool setConfig = false;
 
+        private UI.State uiState { get => Plugin.instance.ui.state; }
+
         private List<TrackedObject> objs = new List<TrackedObject>();
 
         public static ConfigFile animationsFile;
@@ -195,12 +197,14 @@ namespace FastReset.State {
             objs.Clear();
         }
 
-        // Allow saving/restoring initial states
-        public override void SaveState() {
-            base.SaveState();
-        }
-
+        // Allow restoring initial states
         public override bool RestoreState() {
+            if (uiState.useInitialState == true) {
+                // Load the initial state
+                RestoreInitialState();
+                return true;
+            }
+
             return base.RestoreState();
         }
     }
