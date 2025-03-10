@@ -5,11 +5,14 @@ namespace FastReset.State {
         protected abstract void SaveTempState();
         protected abstract void SaveConfigState();
 
-        protected abstract bool HasTempState();
-        protected abstract bool HasConfigState();
+        public abstract bool HasTempState();
+        public abstract bool HasConfigState();
 
         protected abstract void RestoreTempState();
         protected abstract void RestoreConfigState();
+
+        // Reloads configs
+        public abstract void Reload();
 
         // Scene loads and unloads
         public abstract void Load();

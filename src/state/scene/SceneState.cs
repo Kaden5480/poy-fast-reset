@@ -71,11 +71,11 @@ namespace FastReset.State {
             setConfig = true;
         }
 
-        protected override bool HasTempState() {
+        public override bool HasTempState() {
             return setTemporary;
         }
 
-        protected override bool HasConfigState() {
+        public override bool HasConfigState() {
             return setConfig;
         }
 
@@ -100,8 +100,7 @@ namespace FastReset.State {
             }
         }
 
-        // Scene loads and unloads
-        public override void Load() {
+        private void LoadConfigs() {
             if (File.Exists(Paths.animationsPath) == true) {
                 Plugin.LogDebug("SceneState: Loading animations config");
                 animationsFile = new ConfigFile(
@@ -133,14 +132,9 @@ namespace FastReset.State {
                 );
                 setConfig = true;
             }
-
-            SaveInitialState();
         }
 
-        public override void Unload() {
-            Plugin.LogDebug("SceneState: Unloading scene states");
-
-            setTemporary = false;
+        private void ClearConfigs() {
             setConfig = false;
 
             if (animationsFile != null) {
@@ -168,7 +162,36 @@ namespace FastReset.State {
             brittleIceFile = null;
             crumblingHoldsFile = null;
             jointsFile = null;
+        }
 
+        /**
+         * <summary>
+         * Reloads configs for the current scene.
+         * </summary>
+         */
+        public override void Reload() {
+            Plugin.LogDebug("SceneState: Reloading configs");
+            ClearConfigs();
+            LoadConfigs();
+
+            // All configs have to be rebound
+            foreach (TrackedObject obj in objs) {
+                obj.RebindConfig();
+            }
+        }
+
+        // Scene loads and unloads
+        public override void Load() {
+            Plugin.LogDebug("SceneState: Loading configs");
+            LoadConfigs();
+            SaveInitialState();
+        }
+
+
+        public override void Unload() {
+            Plugin.LogDebug("SceneState: Unloading scene states");
+            setTemporary = false;
+            ClearConfigs();
             objs.Clear();
         }
 

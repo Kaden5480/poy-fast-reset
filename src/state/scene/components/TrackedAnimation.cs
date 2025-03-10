@@ -111,6 +111,7 @@ namespace FastReset.State {
             }
 
             Plugin.LogDebug("TrackedAnimation: Binding config");
+            configTimes.Clear();
             for (int i = 0; i < initialTimes.Count; i++) {
                 Plugin.LogDebug($"TrackedAnimation: Binding state_{i} as {initialTimes[i]}");
                 configTimes.Add(SceneState.animationsFile.Bind(

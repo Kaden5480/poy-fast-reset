@@ -17,6 +17,11 @@ namespace FastReset.State {
 
         protected abstract void BindConfig();
 
+        public void RebindConfig() {
+            boundConfig = false;
+            BindConfig();
+        }
+
         public TrackedObject(GameObject obj) {
             Plugin.LogDebug($"TrackedObject: Creating tracked object for: {obj.name}");
             this.obj = obj;

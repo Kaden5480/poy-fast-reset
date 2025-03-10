@@ -9,6 +9,7 @@ namespace FastReset.Config {
         // Save/reset keybinds
         public ConfigEntry<KeyCode> saveKeybind;
         public ConfigEntry<KeyCode> resetKeybind;
+        public ConfigEntry<KeyCode> toggleModifier;
 
         // The currently selected profile
         public ConfigEntry<string> profile;

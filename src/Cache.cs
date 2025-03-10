@@ -10,7 +10,10 @@ namespace FastReset {
         public Climbing climbing;
         public FallingEvent fallingEvent;
         public IceAxe iceAxes;
+        public InGameMenu inGameMenu;
         public LeavePeakScene leavePeakScene;
+        public PeakSummited peakSummited;
+        public PlayerManager playerManager;
         public PlayerMove playerMove;
         public RopeAnchor ropeAnchor;
         public RoutingFlag routingFlag;
@@ -91,7 +94,10 @@ namespace FastReset {
 
             fallingEvent = GameObject.FindObjectOfType<FallingEvent>();
             iceAxes = GameObject.FindObjectOfType<IceAxe>();
+            inGameMenu = GameObject.FindObjectOfType<InGameMenu>();
             leavePeakScene = GameObject.FindObjectOfType<LeavePeakScene>();
+            peakSummited = GameObject.FindObjectOfType<PeakSummited>();
+            playerManager = GameObject.FindObjectOfType<PlayerManager>();
             playerMove = GameObject.FindObjectOfType<PlayerMove>();
             ropeAnchor = GameObject.FindObjectOfType<RopeAnchor>();
             routingFlag = GameObject.FindObjectOfType<RoutingFlag>();
@@ -134,7 +140,10 @@ namespace FastReset {
             climbing = null;
             fallingEvent = null;
             iceAxes = null;
+            inGameMenu = null;
             leavePeakScene = null;
+            peakSummited = null;
+            playerManager = null;
             playerMove = null;
             ropeAnchor = null;
             routingFlag = null;

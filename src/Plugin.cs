@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using Cfg = FastReset.Config.Cfg;
+using Window = FastReset.UI.Window;
 
 namespace FastReset {
     [BepInPlugin("com.github.Kaden5480.poy-fast-reset", "Fast Reset", PluginInfo.PLUGIN_VERSION)]
@@ -18,10 +19,12 @@ namespace FastReset {
         public Cache cache { get; } = new Cache();
         public Patcher patcher { get; } = new Patcher();
         public Resetter resetter { get; } = new Resetter();
+        public Window ui { get; } = new Window();
 
         // Default keybinds
         private const KeyCode defaultSaveKeybind = KeyCode.F8;
         private const KeyCode defaultResetKeybind = KeyCode.F4;
+        private const KeyCode defaultToggleModifier = KeyCode.LeftShift;
 
         /**
          * <summary>
@@ -38,6 +41,10 @@ namespace FastReset {
             config.resetKeybind = Config.Bind(
                 "General", "resetKeybind", defaultResetKeybind,
                 "The keybind to reset you to your custom set position and rotation"
+            );
+            config.toggleModifier = Config.Bind(
+                "General", "toggleModifier", defaultToggleModifier,
+                "The key to press along with `saveKeybind` to open the UI"
             );
             config.profile = Config.Bind(
                 "General", "profile", "Default",
@@ -68,6 +75,24 @@ namespace FastReset {
 
         /**
          * <summary>
+         * Executes each frame.
+         * </summary>
+         */
+        public void Update() {
+            ui.Update();
+        }
+
+        /**
+         * <summary>
+         * Executes to render the UI.
+         * </summary>
+         */
+        public void OnGUI() {
+            ui.Render();
+        }
+
+        /**
+         * <summary>
          * Executes when a scene is loaded.
          * </summary>
          * <param name="scene">The scene which loaded</param>
@@ -79,6 +104,7 @@ namespace FastReset {
 
             // Make sure the cache is loaded first
             cache.OnSceneLoaded();
+            ui.state.LoadProfiles();
             resetter.LoadStates();
         }
 

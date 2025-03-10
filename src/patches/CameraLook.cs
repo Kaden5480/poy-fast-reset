@@ -2,6 +2,7 @@ using HarmonyLib;
 using UnityEngine;
 
 using Cfg = FastReset.Config.Cfg;
+using Window = FastReset.UI.Window;
 
 namespace FastReset.Patches {
     [HarmonyPatch(typeof(CameraLook), "Test")]
@@ -15,6 +16,9 @@ namespace FastReset.Patches {
         private static Resetter resetter {
             get => Plugin.instance.resetter;
         }
+        private static Window ui {
+            get => Plugin.instance.ui;
+        }
 
         static void Prefix(CameraLook __instance) {
             if (__instance != cache.playerCamX) {
@@ -23,10 +27,18 @@ namespace FastReset.Patches {
 
             // Check for inputs for saves/restores
             if (Input.GetKeyDown(config.saveKeybind.Value) == true) {
-                resetter.SaveState();
+                Plugin.LogDebug($"CameraLookTest: {config.saveKeybind.Value} is down");
+                if (Input.GetKey(config.toggleModifier.Value) == true) {
+                    Plugin.LogDebug($"CameraLookTest: {config.toggleModifier.Value} is down");
+                    ui.Toggle();
+                }
+                else {
+                    resetter.SaveState();
+                }
             }
 
             if (Input.GetKeyDown(config.resetKeybind.Value) == true) {
+                Plugin.LogDebug($"CameraLookTest: {config.resetKeybind.Value} is down");
                 resetter.RestoreState();
                 __instance.limitViewWhileLookingAtInventoryGrounded = false;
             }

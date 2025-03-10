@@ -10,10 +10,17 @@ namespace FastReset.Config {
             get => Plugin.instance.cache.scene.name;
         }
 
+        // The directory containing all configs
+        public static string configDir {
+            get => Path.Combine(
+                BepInEx.Paths.ConfigPath, configDirName
+            );
+        }
+
         // The directory for the currently selected profile
         public static string profileDir {
             get => Path.Combine(
-                BepInEx.Paths.ConfigPath, configDirName,
+                configDir,
                 Plugin.instance.config.profile.Value
             );
         }

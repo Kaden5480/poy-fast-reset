@@ -13,10 +13,10 @@ namespace FastReset {
         private Cache cache { get => Plugin.instance.cache; }
 
         // An object for managing the player's state
-        private PlayerState player = new PlayerState();
+        public PlayerState player { get; } = new PlayerState();
 
         // An object for managing the scene's state
-        private SceneState scene = new SceneState();
+        public SceneState scene { get; } = new SceneState();
 
         // An object for managing the state of the wind
         private WindResetter windResetter;
@@ -186,6 +186,18 @@ namespace FastReset {
             windResetter.Stop();
             player.Unload();
             scene.Unload();
+        }
+
+        /**
+         * <summary>
+         * Reloads config states.
+         * Used for profile changes.
+         * </summary>
+         */
+        public void ReloadStates() {
+            Plugin.LogDebug("Resetter: Reloading states");
+            player.Reload();
+            scene.Reload();
         }
     }
 }

@@ -221,6 +221,8 @@ namespace FastReset.State {
                 id, "material", initialMaterial
             );
 
+            configPositions.Clear();
+            configRotations.Clear();
             for (int i = 0; i < initialPositions.Count; i++) {
                 string positionString = Cfg.Vec3ToString(initialPositions[i]);
                 string rotationString = Cfg.QuatToString(initialRotations[i]);

@@ -69,6 +69,11 @@ namespace FastReset.State {
 
         public void Unload() {
             Plugin.LogDebug("ConfigPoint: Unloading");
+
+            if (configFile != null) {
+                configFile.Save();
+            }
+
             isInitialized = false;
             isSet = false;
         }

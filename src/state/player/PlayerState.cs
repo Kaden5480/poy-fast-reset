@@ -82,11 +82,11 @@ namespace FastReset.State {
             configPoint.Set(position, rotationX, rotationY);
         }
 
-        protected override bool HasTempState() {
+        public override bool HasTempState() {
             return tempPoint.IsSet();
         }
 
-        protected override bool HasConfigState() {
+        public override bool HasConfigState() {
             return configPoint.IsSet();
         }
 
@@ -98,6 +98,12 @@ namespace FastReset.State {
         protected override void RestoreConfigState() {
             Plugin.LogDebug("PlayerState: Restoring config state");
             MoveTo(configPoint.position, configPoint.rotationX, configPoint.rotationY);
+        }
+
+        public override void Reload() {
+            Plugin.LogDebug("PlayerState: Reloading states");
+            configPoint.Unload();
+            Load();
         }
 
         public override void Load() {
