@@ -11,6 +11,7 @@ namespace FastReset {
         public FallingEvent fallingEvent;
         public IceAxe iceAxes;
         public InGameMenu inGameMenu;
+        public Inventory inventory;
         public LeavePeakScene leavePeakScene;
         public PeakSummited peakSummited;
         public PlayerManager playerManager;
@@ -20,6 +21,10 @@ namespace FastReset {
         public TimeAttack timeAttack;
         public bool timerLocked {
             get => GetField<TimeAttack, bool>(timeAttack, "timerLocked");
+        }
+        public bool canActivateInventory {
+            get => GetField<Inventory, bool>(inventory, "canActivateInventory");
+            set => SetField<Inventory, bool>(inventory, "canActivateInventory", value);
         }
 
         // Objects used for resetting the player
@@ -95,6 +100,7 @@ namespace FastReset {
             fallingEvent = GameObject.FindObjectOfType<FallingEvent>();
             iceAxes = GameObject.FindObjectOfType<IceAxe>();
             inGameMenu = GameObject.FindObjectOfType<InGameMenu>();
+            inventory = GameObject.FindObjectOfType<Inventory>();
             leavePeakScene = GameObject.FindObjectOfType<LeavePeakScene>();
             peakSummited = GameObject.FindObjectOfType<PeakSummited>();
             playerManager = GameObject.FindObjectOfType<PlayerManager>();
@@ -141,6 +147,7 @@ namespace FastReset {
             fallingEvent = null;
             iceAxes = null;
             inGameMenu = null;
+            inventory = null;
             leavePeakScene = null;
             peakSummited = null;
             playerManager = null;

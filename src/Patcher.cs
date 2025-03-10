@@ -8,6 +8,7 @@ namespace FastReset {
          * </summary>
          */
         public void Patch() {
+            Harmony.CreateAndPatchAll(typeof(Patches.InventoryFix));
             Harmony.CreateAndPatchAll(typeof(Patches.ResetPositionEnter));
             Harmony.CreateAndPatchAll(typeof(Patches.ResetPositionStay));
             Plugin.LogDebug("Patcher: Applied patches");

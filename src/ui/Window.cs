@@ -28,6 +28,10 @@ namespace FastReset.UI {
         private bool allowingMovement = true;
         private bool showUI = false;
 
+        public bool showingUI {
+            get => showUI;
+        }
+
         /**
          * <summary>
          * Toggles whether movement is allowed.
