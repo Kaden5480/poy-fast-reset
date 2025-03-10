@@ -1,3 +1,6 @@
+using System.Security.Cryptography;
+using System.Text;
+
 using UnityEngine;
 
 namespace FastReset.State {
@@ -22,8 +25,18 @@ namespace FastReset.State {
             BindConfig();
         }
 
+        private string SHA1(string id) {
+            SHA1Managed sha1 = new SHA1Managed();
+            StringBuilder hash = new StringBuilder();
+
+            foreach (byte b in sha1.ComputeHash(Encoding.UTF8.GetBytes(id))) {
+                hash.Append(b.ToString("x2"));
+            }
+
+            return hash.ToString();
+        }
+
         public TrackedObject(GameObject obj) {
-            Plugin.LogDebug($"TrackedObject: Creating tracked object for: {obj.name}");
             this.obj = obj;
 
             string tempId = obj.name;
@@ -36,7 +49,11 @@ namespace FastReset.State {
 
             // Add on position info
             Vector3 position = obj.transform.position;
-            id = $"{tempId}-{position.x}_{position.y}_{position.z}";
+
+            tempId = $"{tempId}-{position.x}_{position.y}_{position.z}";
+            id = SHA1(tempId);
+
+            Plugin.LogDebug($"TrackedObject: Tracking object {tempId} as {id}");
 
             SaveInitialState();
             BindConfig();
