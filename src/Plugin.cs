@@ -36,11 +36,11 @@ namespace FastReset {
 
             config.saveKeybind = Config.Bind(
                 "General", "saveKeybind", defaultSaveKeybind,
-                "The keybind for saving your current position and rotation"
+                "The keybind for saving the current player and/or scene state"
             );
             config.resetKeybind = Config.Bind(
                 "General", "resetKeybind", defaultResetKeybind,
-                "The keybind to reset you to your custom set position and rotation"
+                "The keybind to restore your saved player and scene state"
             );
             config.toggleModifier = Config.Bind(
                 "General", "toggleModifier", defaultToggleModifier,
