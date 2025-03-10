@@ -50,6 +50,10 @@ namespace FastReset.UI {
             Plugin.LogDebug($"UI.State: currently selected {currentProfile}");
             profiles.Add(new Profile(currentProfile, true));
 
+            if (Directory.Exists(Paths.configDir) == false) {
+                return;
+            }
+
             foreach (string path in Directory.GetDirectories(Paths.configDir)) {
                 string profile = Path.GetFileName(path);
 
