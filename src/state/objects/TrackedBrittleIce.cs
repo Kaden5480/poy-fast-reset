@@ -63,7 +63,7 @@ namespace FastReset.State {
                 Rigidbody rb = rigidBodies[i];
 
                 rb.isKinematic = enabled;
-                obj.SetActive(enabled);
+                rb.gameObject.SetActive(enabled);
 
                 // Enable/disable any colliders
                 Collider[] colliders = rb.gameObject.GetComponents<Collider>();
