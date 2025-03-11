@@ -89,17 +89,18 @@ namespace FastReset.Patches {
          */
         private IEnumerator ResetWind() {
             LogDebug("Stopping wind cycle");
-            peakWind.StopCoroutine("AddWindToHands");
+            peakWind.StopAllWindEvents();
 
             peakWind.harshWindSound.volume = 0f;
-            peakWind.playerWindForce.force = peakWind.windVectorDirection;
+            peakWind.playerWindForce.force = Vector3.zero;
             float waitTime = peakWind.waitBeforeHarshWindMax;
 
             LogDebug($"Waiting for: {waitTime}s");
             yield return new WaitForSeconds(waitTime);
 
             LogDebug("Restarting wind cycle");
-            peakWind.StartCoroutine("AddWindToHands");
+            AccessTools.Method(typeof(PeakWind), "StartWindMethod")
+                .Invoke(peakWind, new object[] {});
         }
 
         /**
