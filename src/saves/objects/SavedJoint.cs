@@ -7,17 +7,19 @@ namespace FastReset.Saves {
         public Quaternion rotation = Quaternion.identity;
 
         public override CBORObject ToCBOR () {
-            return CBORObject.NewMap()
-                .Add("id", id)
-                .Add("rot", SaveManager.QuatToBytes(rotation));
+            LogDebug($"Saving joint: {id} | {rotation}");
+
+            return CBORObject.NewArray()
+                .Add(byteId)
+                .Add(SaveManager.QuatToBytes(rotation));
         }
 
-        public SavedJoint(byte[] id) : base(id) {}
+        public SavedJoint(byte[] byteId) : base(byteId) {}
 
-        public SavedJoint(CBORObject cbor) {
-            id = cbor["id"].GetByteString();
-            rotation = SaveManager.BytesToQuat(cbor["rot"].GetByteString());
-            LogDebug($"Loaded joint: {System.BitConverter.ToString(id)} | {rotation}");
+        public SavedJoint(CBORObject cbor) : base(cbor[0].GetByteString()) {
+            rotation = SaveManager.BytesToQuat(cbor[1].GetByteString());
+
+            LogDebug($"Loaded joint: {id} | {rotation}");
         }
     }
 }

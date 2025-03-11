@@ -3,6 +3,8 @@ using System.Text;
 
 using UnityEngine;
 
+using SaveManager = FastReset.Saves.SaveManager;
+
 namespace FastReset.State {
     public abstract class BaseTracked {
         // The GameObject which contains the component
@@ -12,7 +14,10 @@ namespace FastReset.State {
         // The ID of this object, a SHA1 digest based upon
         // the object's full path in the object hierarchy
         // and it's position upon loading the scene
-        protected byte[] id { get; }
+        protected byte[] byteId { get; }
+
+        // The ID of this object as a string
+        protected string id { get; }
 
         /**
          * <summary>
@@ -104,9 +109,10 @@ namespace FastReset.State {
             tempId = $"{tempId}-{position.x}_{position.y}_{position.z}";
 
             // Compute the SHA1 digest
-            id = SHA1(tempId);
+            byteId = SHA1(tempId);
+            id = SaveManager.BytesToString(byteId);
 
-            LogDebug($"Tracking object {tempId} as {System.BitConverter.ToString(id)}");
+            LogDebug($"Tracking object {tempId} as {id}");
 
             // Make sure to save this object's initial state
             SaveInitialState();

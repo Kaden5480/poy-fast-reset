@@ -33,10 +33,10 @@ namespace FastReset.Saves {
         private SavedPlayer player = null;
 
         // Dictionaries mapping IDs to saved objects
-        //private Dictionary<string, SavedAnimation> animations;
-        //private Dictionary<string, SavedBrittleIce> brittleIces;
-        //private Dictionary<string, SavedCrumblingHold> crumblingHolds;
-        private Dictionary<byte[], SavedJoint> joints = new Dictionary<byte[], SavedJoint>();
+        private Dictionary<string, SavedAnimation> animations = new Dictionary<string, SavedAnimation>();
+        private Dictionary<string, SavedBrittleIce> brittleIces = new Dictionary<string, SavedBrittleIce>();
+        private Dictionary<string, SavedCrumblingHold> crumblingHolds = new Dictionary<string, SavedCrumblingHold>();
+        private Dictionary<string, SavedJoint> joints = new Dictionary<string, SavedJoint>();
 
         // What states exist for this scene
         public static bool hasPlayerState = false;
@@ -49,45 +49,7 @@ namespace FastReset.Saves {
             instance = this;
         }
 
-#region Adding/Getting
-
-        /**
-         * <summary>
-         * Adds an object to the data store.
-         * </summary>
-         * <param name="obj">The BaseSaved to add</param>
-         */
-        public static void Add(BaseSaved obj) {
-            instance.LogDebug($"Adding object: {obj.id}");
-
-            switch (obj) {
-                case SavedJoint joint:
-                    instance.joints[joint.id] = joint;
-                    break;
-                default:
-                    instance.LogError($"Trying to save unrecognised type: {obj.GetType()}");
-                    throw new Exception();
-            }
-
-            hasSceneState = true;
-        }
-
-        /**
-         * <summary>
-         * Gets an object from the data store.
-         * </summary>
-         * <param name="id">The ID of the object to find</param>
-         * <returns>The object if found, null otherwise</returns>
-         */
-        public static SavedJoint GetJoint(byte[] id) {
-            instance.LogDebug($"Getting saved joint: {System.BitConverter.ToString(id)}");
-
-            if (instance.joints.ContainsKey(id) == true) {
-                return instance.joints[id];
-            }
-
-            return null;
-        }
+#region Adding
 
         /**
          * <summary>
@@ -101,6 +63,40 @@ namespace FastReset.Saves {
 
         /**
          * <summary>
+         * Adds an object to the data store.
+         * </summary>
+         * <param name="obj">The BaseSaved to add</param>
+         */
+        public static void Add(BaseSaved obj) {
+            instance.LogDebug($"Adding {obj.GetType()}: {obj.id}");
+
+            switch (obj) {
+                case SavedAnimation animation:
+                    instance.animations[animation.id] = animation;
+                    break;
+                case SavedBrittleIce brittleIce:
+                    instance.brittleIces[brittleIce.id] = brittleIce;
+                    break;
+                case SavedCrumblingHold crumblingHold:
+                    instance.crumblingHolds[crumblingHold.id] = crumblingHold;
+                    break;
+                case SavedJoint joint:
+                    instance.joints[joint.id] = joint;
+                    break;
+                default:
+                    instance.LogError($"Trying to save unrecognised type: {obj.GetType()}");
+                    throw new Exception();
+            }
+
+            hasSceneState = true;
+        }
+
+#endregion
+
+#region Getting
+
+        /**
+         * <summary>
          * Gets the player state from the data store.
          * </summary>
          */
@@ -108,9 +104,58 @@ namespace FastReset.Saves {
             return instance.player;
         }
 
+        /**
+         * <summary>
+         * Gets objects from the data store.
+         * </summary>
+         * <param name="id">The ID of the object to find</param>
+         * <returns>The object if found, null otherwise</returns>
+         */
+        public static SavedAnimation GetAnimation(string id) {
+            if (instance.animations.ContainsKey(id) == true) {
+                return instance.animations[id];
+            }
+
+            return null;
+        }
+
+        public static SavedBrittleIce GetBrittleIce(string id) {
+            if (instance.brittleIces.ContainsKey(id) == true) {
+                return instance.brittleIces[id];
+            }
+
+            return null;
+        }
+
+        public static SavedCrumblingHold GetCrumblingHold(string id) {
+            if (instance.crumblingHolds.ContainsKey(id) == true) {
+                return instance.crumblingHolds[id];
+            }
+
+            return null;
+        }
+
+        public static SavedJoint GetJoint(string id) {
+            if (instance.joints.ContainsKey(id) == true) {
+                return instance.joints[id];
+            }
+
+            return null;
+        }
+
 #endregion
 
 #region Serializing/Deserializing Types
+
+        /**
+         * <summary>
+         * Converts a byte array into a string representation.
+         * </summary>
+         * <returns>The bytes as a hex string</returns>
+         */
+        public static string BytesToString(byte[] bytes) {
+            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
+        }
 
         /**
          * <summary>
@@ -201,6 +246,71 @@ namespace FastReset.Saves {
 
         /**
          * <summary>
+         * Adds a section of the data store to a CBORObject
+         * if it has any data.
+         * </summary>
+         * <param name="root">The object to add to</param>
+         * <param name="key">The key to store the data with</param>
+         * <param name="section">The section to add</param>
+         */
+        public void AddSection<T>(
+            CBORObject root,
+            string key,
+            Dictionary<string, T> section
+        ) where T : BaseSaved{
+            if (section.Count < 1) {
+                return;
+            }
+
+            CBORObject array = CBORObject.NewArray();
+
+            foreach (T item in section.Values) {
+                array.Add(item.ToCBOR());
+            }
+
+            root.Add(key, array);
+        }
+
+        /**
+         * <summary>
+         * Gets a section from a CBORObject
+         * and stores it in the appropriate section
+         * of the data store.
+         * </summary>
+         * <param name="root">The object to get a section from</param>
+         * <param name="key">The name of the section</param>
+         */
+        public void GetSection<T>(
+            CBORObject root,
+            string key
+        ) where T : BaseSaved, new() {
+            if (root.ContainsKey(key) == false) {
+                return;
+            }
+
+            CBORObject array = root[key];
+
+            for (int i = 0; i < array.Count; i++) {
+                if (typeof(T) == typeof(SavedAnimation)) {
+                    Add(new SavedAnimation(array[i]));
+                }
+                else if (typeof(T) == typeof(SavedBrittleIce)) {
+                    Add(new SavedBrittleIce(array[i]));
+                }
+                else if (typeof(T) == typeof(SavedCrumblingHold)) {
+                    Add(new SavedCrumblingHold(array[i]));
+                }
+                else if (typeof(T) == typeof(SavedJoint)) {
+                    Add(new SavedJoint(array[i]));
+                }
+                else {
+                    LogError($"Unsupported type: {typeof(T)}");
+                }
+            }
+        }
+
+        /**
+         * <summary>
          * Saves the currently stored objects to the data store.
          * </summary>
          */
@@ -218,20 +328,15 @@ namespace FastReset.Saves {
             // Construct a CBOR object holding everything
             CBORObject root = CBORObject.NewMap();
 
-            // Maps for each type
-            if (joints.Count > 0) {
-                CBORObject jointArray = CBORObject.NewArray();
-
-                foreach (SavedJoint joint in joints.Values) {
-                    jointArray = jointArray.Add(joint.ToCBOR());
-                }
-
-                root = root.Add("joints", jointArray);
-            }
+            // Add sections
+            AddSection<SavedAnimation>(root, "animations", animations);
+            AddSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
+            AddSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
+            AddSection<SavedJoint>(root, "joints", joints);
 
             // Add the player if there is a state
             if (player != null) {
-                root = root.Add("player", player.ToCBOR());
+                root.Add("player", player.ToCBOR());
             }
 
             // Save the object to a file
@@ -263,7 +368,12 @@ namespace FastReset.Saves {
 
             hasPlayerState = false;
             hasSceneState = false;
+
+            // Wiping these states is VERY important
             player = null;
+            animations.Clear();
+            brittleIces.Clear();
+            crumblingHolds.Clear();
             joints.Clear();
 
             // Load data
@@ -284,8 +394,6 @@ namespace FastReset.Saves {
                 return;
             }
 
-            LogDebug("Found data for current scene");
-
             // Try loading the data
             CBORObject root = CBORObject.DecodeFromBytes(
                 File.ReadAllBytes(stateFilePath)
@@ -296,14 +404,13 @@ namespace FastReset.Saves {
                 player = new SavedPlayer(root["player"]);
                 hasPlayerState = true;
             }
-            if (root.ContainsKey("joints") == true) {
-                CBORObject jointArray = root["joints"];
-                for (int i = 0; i < jointArray.Count; i++) {
-                    SavedJoint joint = new SavedJoint(jointArray[i]);
-                    joints.Add(joint.id, joint);
-                }
-                hasSceneState = true;
-            }
+
+            GetSection<SavedAnimation>(root, "animations");
+            GetSection<SavedBrittleIce>(root, "brittleIces");
+            GetSection<SavedCrumblingHold>(root, "crumblingHolds");
+            GetSection<SavedJoint>(root, "joints");
+
+            LogDebug($"Loaded data: {root.ToJSONString()}");
         }
 
         /**
