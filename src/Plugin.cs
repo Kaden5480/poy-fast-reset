@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 
 using Cfg = FastReset.Config.Cfg;
-using Window = FastReset.UI.Window;
+using SaveManager = FastReset.Saves.SaveManager;
 
 namespace FastReset {
     [BepInPlugin("com.github.Kaden5480.poy-fast-reset", "Fast Reset", PluginInfo.PLUGIN_VERSION)]
@@ -21,7 +21,7 @@ namespace FastReset {
         public Cache cache { get; } = new Cache();
         public Patcher patcher { get; } = new Patcher();
         public Resetter resetter { get; } = new Resetter();
-        public Window ui { get; } = new Window();
+        public SaveManager saveManager { get; } = new SaveManager();
 
         // Default keybinds
         private const KeyCode defaultSaveKeybind = KeyCode.F8;
@@ -56,6 +56,22 @@ namespace FastReset {
                 "General", "resetWind", false,
                 "Whether to reset the wind on wuthering crest"
             );
+            config.modifyPlayerState = Config.Bind(
+                "State", "modifyPlayerState", true,
+                "Whether to modify the player state when saving"
+            );
+            config.modifySceneState = Config.Bind(
+                "State", "modifySceneState", true,
+                "Whether to modify the scene state when saving"
+            );
+            config.useInitialPlayerState = Config.Bind(
+                "State", "useInitialPlayerState", false,
+                "Whether to reset to the player's spawn point instead"
+            );
+            config.useInitialSceneState = Config.Bind(
+                "State", "useInitialSceneState", false,
+                "Whether to reset the scene's initial state instead"
+            );
 
             // Apply early patches
             patcher.PatchEarly();
@@ -63,9 +79,6 @@ namespace FastReset {
             // Track scene changes
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
-
-            // Load user profiles
-            ui.state.LoadProfiles();
         }
 
         /**
@@ -84,13 +97,11 @@ namespace FastReset {
          * </summary>
          */
         public void Update() {
-            ui.Update();
-
             if (Input.GetKeyDown(config.saveKeybind.Value) == true) {
                 Plugin.LogDebug($"Plugin: {config.saveKeybind.Value} is down");
                 if (Input.GetKey(config.toggleModifier.Value) == true) {
                     Plugin.LogDebug($"Plugin: {config.toggleModifier.Value} is down");
-                    ui.Toggle();
+                    //ui.Toggle();
                 }
                 else {
                     resetter.SaveState();
@@ -109,7 +120,7 @@ namespace FastReset {
          * </summary>
          */
         public void OnGUI() {
-            ui.Render();
+            //ui.Render();
         }
 
         /**
@@ -120,12 +131,14 @@ namespace FastReset {
          * <param name="mode">The mode the scene loaded with</param>
          */
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-            // Get audio
-            audio.Load();
-
             // Make sure the cache is loaded first
-            cache.OnSceneLoaded();
-            resetter.LoadStates();
+            cache.FindObjects();
+
+            // Load the config for this scene
+            saveManager.Load();
+
+            // Save the initial state of the scene
+            resetter.stateManager.SaveInitialState();
         }
 
         /**
@@ -135,16 +148,14 @@ namespace FastReset {
          * <param name="scene">The scene which unloaded</param>
          */
         private void OnSceneUnloaded(Scene scene) {
-            // Perform any required actions on scene unload
-            // for the resetter (such as wiping the player's
-            // temporary reset point)
-            resetter.UnloadStates();
+            // Save state to the disk
+            saveManager.Save();
 
-            // Make sure the UI is off
-            ui.Disable();
+            // Wipe the tracked state
+            resetter.stateManager.WipeState();
 
             // Wipe the cache last
-            cache.OnSceneUnloaded();
+            cache.Clear();
         }
 
         /**

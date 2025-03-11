@@ -9,7 +9,7 @@ namespace FastReset {
      * reset work properly.
      * </summary>
      */
-    public class Cache {
+    public class Cache : Loggable {
         // The current scene
         public Scene scene;
 
@@ -96,8 +96,8 @@ namespace FastReset {
          * Caches objects in the scene.
          * </summary>
          */
-        public void OnSceneLoaded() {
-            Plugin.LogDebug("Cache: Caching objects in scene");
+        public void FindObjects() {
+            LogDebug("Caching objects in scene");
             scene = SceneManager.GetActiveScene();
 
             climbing = GameObject.FindObjectOfType<Climbing>();
@@ -121,7 +121,7 @@ namespace FastReset {
             // Access the player's camera
             GameObject cameraHolderObj = GameObject.Find("PlayerCameraHolder");
             if (cameraHolderObj == null) {
-                Plugin.LogDebug("Cache: No camera holder found");
+                LogDebug("No camera holder found");
                 return;
             }
 
@@ -130,11 +130,11 @@ namespace FastReset {
                 string name = cameraLook.gameObject.name;
 
                 if ("PlayerCameraHolder".Equals(name) == true) {
-                    Plugin.LogDebug("Cache: Found camX");
+                    LogDebug("Found camX");
                     playerCamX = cameraLook;
                 }
                 else {
-                    Plugin.LogDebug("Cache: Found camY");
+                    LogDebug("Found camY");
                     playerCamY = cameraLook;
                 }
             }
@@ -145,8 +145,8 @@ namespace FastReset {
          * Clears the cache.
          * </summary>
          */
-        public void OnSceneUnloaded() {
-            Plugin.LogDebug("Cache: clearing cache");
+        public void Clear() {
+            LogDebug("clearing cache");
 
             climbing = null;
             fallingEvent = null;

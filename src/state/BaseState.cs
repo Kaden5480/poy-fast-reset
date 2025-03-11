@@ -1,49 +1,90 @@
 namespace FastReset.State {
-    public abstract class BaseState {
-        protected Cache cache { get => Plugin.instance.cache; }
+    public interface BaseState {
 
-        protected abstract void SaveTempState();
-        protected abstract void SaveConfigState();
+#region Initial
 
-        public abstract bool HasTempState();
-        public abstract bool HasConfigState();
+        /**
+         * <summary>
+         * Saves the initial state of the current scene.
+         * </summary>
+         */
+        void SaveInitialState();
 
-        protected abstract void RestoreTempState();
-        protected abstract void RestoreConfigState();
+        /**
+         * <summary>
+         * Restores the initial state for the current scene.
+         * </summary>
+         */
+        void RestoreInitialState();
 
-        // Reloads configs
-        public abstract void Reload();
+#endregion
 
-        // Scene loads and unloads
-        public abstract void Load();
-        public abstract void Unload();
+#region Temporary
 
-        public virtual void SaveState() {
-            Plugin.LogDebug("BaseState: Saving state");
-            if (cache.routingFlag.currentlyUsingFlag == true) {
-                SaveTempState();
-                return;
-            }
+        /**
+         * <summary>
+         * Checks whether a temporary state is available
+         * for the current scene.
+         * </summary>
+         */
+        bool HasTempState();
 
-            SaveConfigState();
-        }
+        /**
+         * <summary>
+         * Saves the state of the scene temporarily.
+         * </summary>
+         */
+        void SaveTempState();
 
-        public virtual bool RestoreState() {
-            Plugin.LogDebug("BaseState: Restoring state");
-            if (cache.routingFlag.currentlyUsingFlag == true
-                && HasTempState() == true
-            ) {
-                RestoreTempState();
-                return true;
-            }
+        /**
+         * <summary>
+         * Restores the temporary state
+         * for the current scene.
+         * </summary>
+         */
+        void RestoreTempState();
 
-            if (HasConfigState() == true) {
-                RestoreConfigState();
-                return true;
-            }
+#endregion
 
-            Plugin.LogDebug("BaseState: Found no state to restore");
-            return false;
-        }
+#region Saved
+
+        /**
+         * <summary>
+         * Checks whether a saved state is available for
+         * the current scene.
+         * </summary>
+         */
+        bool HasSavedState();
+
+        /**
+         * <summary>
+         * Saves the current scene state to the data store.
+         * </summary>
+         */
+        void SaveState();
+
+        /**
+         * <summary>
+         * Restores the saved state for the current scene.
+         * </summary>
+         */
+        void RestoreState();
+
+#endregion
+
+#region Cleaning Up
+
+        /**
+         * <summary>
+         * Wipes any stored states, typically used
+         * on scene unloads.
+         *
+         * WARNING: This doesn't save anything
+         * </summary>
+         */
+        void WipeState();
+
+#endregion
+
     }
 }

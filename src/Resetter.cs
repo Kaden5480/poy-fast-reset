@@ -1,28 +1,19 @@
-using UnityEngine;
-
-using Cfg = FastReset.Config.Cfg;
-using PlayerState = FastReset.State.PlayerState;
-using SceneState = FastReset.State.SceneState;
-using WindResetter = FastReset.Patches.WindResetter;
+using StateManager = FastReset.State.StateManager;
 
 namespace FastReset {
-    public class Resetter {
-        // Shorthands for accessing audio, config, and cache
-        private Audio audio { get => Plugin.instance.audio; }
-        private Cfg config { get => Plugin.instance.config; }
+    /**
+     * <summary>
+     * A class that determines whether saves/restores
+     * are permitted and dispatches these requests
+     * to the StateManager.
+     * </summary>
+     */
+    public class Resetter : Loggable {
+        // Shorthand for accessing cache
         private Cache cache { get => Plugin.instance.cache; }
 
-        // An object for managing the player's state
-        public PlayerState player { get; } = new PlayerState();
-
         // An object for managing the scene's state
-        public SceneState scene { get; } = new SceneState();
-
-        // An object for managing the state of the wind
-        private WindResetter windResetter = null;
-
-        // UI state for changing resetter behaviour
-        private UI.State uiState { get => Plugin.instance.ui.state; }
+        public StateManager stateManager { get; } = new StateManager();
 
         /**
          * <summary>
@@ -35,19 +26,19 @@ namespace FastReset {
             if (GameManager.control.permaDeathEnabled == true
                 || GameManager.control.freesoloEnabled == true
             ) {
-                Plugin.LogDebug("Resetter: yfyd/fs active, unable to use resetter");
+                LogDebug("yfyd/fs active, unable to use resetter");
                 return false;
             }
 
             // Ensure the cache contains everything required
             if (cache.IsComplete() == false) {
-                Plugin.LogError("Resetter: Cache is incomplete, unable to use resetter");
+                LogError("Cache is incomplete, unable to use resetter");
                 return false;
             }
 
             // If the player is receiving a score, prevent resetting
             if (cache.timerLocked == false && TimeAttack.receivingScore == true) {
-                Plugin.LogDebug("Resetter: Receiving score, unable to use resetter");
+                LogDebug("Receiving score, unable to use resetter");
                 return false;
             }
 
@@ -57,7 +48,7 @@ namespace FastReset {
                 || Crampons.cramponsActivated == true
                 || cache.ropeAnchor.attached == true
             ) {
-                Plugin.LogDebug("Resetter: Using bivouac/crampons/rope, unable to use resetter");
+                LogDebug("Using bivouac/crampons/rope, unable to use resetter");
                 return false;
             }
 
@@ -68,7 +59,7 @@ namespace FastReset {
                 || StamperPeakSummit.currentlyStampingPeakJournal == true
                 || SummitFlag.placingEvent == true
             ) {
-                Plugin.LogDebug("Resetter: Other misc case, unable to use resetter");
+                LogDebug("Other misc case, unable to use resetter");
                 return false;
             }
 
@@ -76,7 +67,7 @@ namespace FastReset {
             if (cache.routingFlag.isSolemnTempest == true
                 && cache.routingFlag.distanceActivatorST == null
             ) {
-                Plugin.LogDebug("Resetter: Missing distance activator on ST, unable to use resetter");
+                LogDebug("Missing distance activator on ST, unable to use resetter");
                 return false;
             }
 
@@ -115,28 +106,11 @@ namespace FastReset {
             if (CanUse() == false
                 || CanSave() == false
             ) {
-                Plugin.LogDebug("Resetter: Unable to save currently");
+                LogDebug("Unable to save currently");
                 return;
             }
 
-            Plugin.LogDebug("Resetter: Saving state");
-
-            if (uiState.editPlayerState == true) {
-                player.SaveState();
-            }
-
-            if (uiState.editSceneState == true) {
-                scene.SaveState();
-                audio.PlayScene();
-            }
-
-            // Play normal audio if not editing scene
-            if (uiState.editPlayerState == true
-                && uiState.editSceneState == false
-            ) {
-                audio.PlayPlayer();
-            }
-
+            stateManager.SaveState();
         }
 
         /**
@@ -146,79 +120,12 @@ namespace FastReset {
          */
         public bool RestoreState() {
             if (CanUse() == false) {
-                Plugin.LogDebug("Resetter: Unable to restore currently");
+                LogDebug("Unable to restore currently");
                 return false;
             }
 
-            // Try restoring state
-            Plugin.LogDebug("Resetter: Restoring state");
-
-            if (player.RestoreState() == false) {
-                Plugin.LogDebug("Resetter: Failed restoring player state");
-                return false;
-            }
-
-            if (windResetter != null) {
-                windResetter.Reset();
-            }
-
-            scene.RestoreState();
-
-            audio.PlayPlayer();
-
+            stateManager.RestoreState();
             return true;
-        }
-
-        /**
-         * <summary>
-         * Loads any saved states.
-         * </summary>
-         */
-        public void LoadStates() {
-            Plugin.LogDebug("Resetter: Loading saved states");
-
-            // Create the peak wind resetter object
-            if (config.resetWind.Value == true
-                && "Peak_11_WutheringCrestNEW".Equals(cache.scene.name) == true
-            ) {
-                Plugin.LogDebug("Resetter: Creating wind resetter");
-                GameObject windResetterObj = new GameObject("Fast Reset Wind Resetter");
-                windResetter = windResetterObj.AddComponent<WindResetter>();
-            }
-
-            player.Load();
-            scene.Load();
-        }
-
-        /**
-         * <summary>
-         * Unloads states to prepare
-         * for the next scene.
-         * </summary>
-         */
-        public void UnloadStates() {
-            Plugin.LogDebug("Resetter: Unloading states");
-
-            if (windResetter != null) {
-                Plugin.LogDebug("Resetter: Destroying wind resetter");
-                GameObject.Destroy(windResetter.gameObject);
-                windResetter = null;
-            }
-
-            player.Unload();
-            scene.Unload();
-        }
-
-        /**
-         * <summary>
-         * Reloads config states.
-         * Used for profile changes.
-         * </summary>
-         */
-        public void ReloadStates() {
-            Plugin.LogDebug("Resetter: Reloading states");
-            player.Reload();
-            scene.Reload();
         }
     }
 }

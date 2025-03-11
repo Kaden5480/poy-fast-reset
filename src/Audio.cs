@@ -5,7 +5,7 @@ using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 namespace FastReset {
-    public class Audio {
+    public class Audio : Loggable {
         // The source to play the clips with
         private AudioSource source = null;
 
@@ -20,7 +20,7 @@ namespace FastReset {
          */
         public Audio() {
             // Create the audio game object
-            Plugin.LogDebug("Audio: Creating game object and audio source");
+            LogDebug("Creating game object and audio source");
             GameObject sourceObj = new GameObject("Fast Reset Audio");
             GameObject.DontDestroyOnLoad(sourceObj);
 
@@ -47,11 +47,11 @@ namespace FastReset {
             // Try finding the audio clips
             foreach (AudioClip clip in Resources.FindObjectsOfTypeAll(typeof(AudioClip))) {
                 if ("ding".Equals(clip.name) == true) {
-                    Plugin.LogDebug($"Audio: Found scene state clip: {clip.name}");
+                    LogDebug($"Found scene state clip: {clip.name}");
                     sceneState = clip;
                 }
                 else if ("click".Equals(clip.name) == true) {
-                    Plugin.LogDebug($"Audio: Found player state clip: {clip.name}");
+                    LogDebug($"Found player state clip: {clip.name}");
                     playerState = clip;
 
                 }
@@ -64,7 +64,7 @@ namespace FastReset {
                 }
 
                 if ("SFX".Equals(src.outputAudioMixerGroup.name) == true) {
-                    Plugin.LogDebug($"Audio: Found SFX audio mixer group");
+                    LogDebug($"Found SFX audio mixer group");
                     source.outputAudioMixerGroup = src.outputAudioMixerGroup;
                     break;
                 }
@@ -78,11 +78,11 @@ namespace FastReset {
          */
         public void PlayScene() {
             if (sceneState == null) {
-                Plugin.LogDebug("Audio: scene state clip is null");
+                LogDebug("scene state clip is null");
                 return;
             }
 
-            Plugin.LogDebug("Audio: playing scene state clip");
+            LogDebug("playing scene state clip");
             source.clip = sceneState;
             source.volume = 0.33f;
             source.Play();

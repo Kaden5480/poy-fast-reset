@@ -7,7 +7,7 @@ namespace FastReset {
      * for fast reset.
      * </summary>
      */
-    public class Patcher {
+    public class Patcher : Loggable {
         /**
          * <summary>
          * Applies early patches.
@@ -18,7 +18,7 @@ namespace FastReset {
             Harmony.CreateAndPatchAll(typeof(Patches.InventoryFix));
             Harmony.CreateAndPatchAll(typeof(Patches.ResetPositionEnter));
             Harmony.CreateAndPatchAll(typeof(Patches.ResetPositionStay));
-            Plugin.LogDebug("Patcher: Applied early patches");
+            LogDebug("Applied early patches");
         }
     }
 }
