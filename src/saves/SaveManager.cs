@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -24,7 +25,9 @@ namespace FastReset.Saves {
             BepInEx.Paths.ConfigPath, "com.github.Kaden5480.poy-fast-reset"
         );
 
-        private const string stateFileName = "state.dat";
+        // If a state takes up more than this many
+        // bytes, use compression
+        private const int byteCompressionLimit = 256;
 
         // The path to the file containing state data
         private string stateDirPath = null;
@@ -313,7 +316,7 @@ namespace FastReset.Saves {
          */
         public void Save() {
             // If there is no state path, do nothing
-            if (stateDirPath == null || stateFilePath == null) {
+            if (stateFilePath == null) {
                 return;
             }
 
@@ -341,12 +344,11 @@ namespace FastReset.Saves {
                 Directory.CreateDirectory(stateDirPath);
             }
 
-            LogDebug($"Saving: {root.ToJSONString()}");
+            byte[] bytes = root.EncodeToBytes();
 
-            File.WriteAllBytes(
-                stateFilePath,
-                Compress(root.EncodeToBytes())
-            );
+            // Store large states with compression
+            LogDebug($"Saving: {root.ToJSONString()}");
+            File.WriteAllBytes(stateFilePath, Compress(bytes));
         }
 
         /**
@@ -380,10 +382,10 @@ namespace FastReset.Saves {
 
             // Where the data should be loaded from
             stateDirPath = Path.Combine(
-                configDir, profile, sceneName
+                configDir, profile
             );
             stateFilePath = Path.Combine(
-                stateDirPath, stateFileName
+                stateDirPath, $"{sceneName}.dat"
             );
 
             // Check if the state file exists
@@ -435,6 +437,11 @@ namespace FastReset.Saves {
          * <returns>The compressed bytes</returns>
          */
         private byte[] Compress(byte[] bytes) {
+            if (bytes.Length < byteCompressionLimit) {
+                LogDebug($"Not compressing data of size: {bytes.Length}");
+                return bytes;
+            }
+
             using (MemoryStream stream = new MemoryStream()) {
             using (GZipStream gzip = new GZipStream(stream, CompressionMode.Compress)) {
                 gzip.Write(bytes, 0, bytes.Length);
@@ -452,12 +459,19 @@ namespace FastReset.Saves {
          * <returns>the decompressed bytes</returns>
          */
         private byte[] Decompress(byte[] bytes) {
-            using (MemoryStream compressed = new MemoryStream(bytes)) {
-            using (GZipStream gzip = new GZipStream(compressed, CompressionMode.Decompress)) {
-            using (MemoryStream decompressed = new MemoryStream()) {
-                gzip.CopyTo(decompressed);
-                return decompressed.ToArray();
-            }}}
+            try {
+                using (MemoryStream compressed = new MemoryStream(bytes)) {
+                using (GZipStream gzip = new GZipStream(compressed, CompressionMode.Decompress)) {
+                using (MemoryStream decompressed = new MemoryStream()) {
+                    gzip.CopyTo(decompressed);
+                    return decompressed.ToArray();
+                }}}
+            }
+            catch (IOException) {
+                LogDebug("Failed decompressing, data may not be compressed");
+            }
+
+            return bytes;
         }
 
 #endregion
