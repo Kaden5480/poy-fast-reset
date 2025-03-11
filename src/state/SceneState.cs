@@ -32,10 +32,9 @@ namespace FastReset.State {
                 CrumblingHoldRegular crumblingHold = obj.GetComponent<CrumblingHoldRegular>();
                 ConfigurableJoint joint = obj.GetComponent<ConfigurableJoint>();
 
-                /*
                 // Currently only track the animation of the mill on Old Mill
                 if (animation != null
-                    && "Peak_3_OldMill".Equals(cache.scene.name) == true
+                    && "Peak_3_OldMill".Equals(Plugin.instance.cache.scene.name) == true
                     && "mill_wings".Equals(obj.name) == true
                 ) {
                     objs.Add(new TrackedAnimation(obj));
@@ -53,7 +52,6 @@ namespace FastReset.State {
                     objs.Add(new TrackedCrumblingHold(obj));
                     crumblingHoldCount++;
                 }
-                */
 
                 if (joint != null && (
                     obj.name.StartsWith("TrainingBeam") == true
