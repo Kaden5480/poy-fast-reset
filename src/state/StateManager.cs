@@ -171,6 +171,16 @@ namespace FastReset.State {
                 restored = true;
             }
 
+            // If the player state failed to restore in
+            // normal mode, fail
+            if (cache.routingFlag.currentlyUsingFlag == false
+                && restorePlayerState == true
+                && restored == false
+            ) {
+                LogDebug("Cannot restore only scene state in normal mode");
+                return false;
+            }
+
             if (restoreSceneState == true
                 && Restore(scene, config.useInitialSceneState.Value) == true
             ) {
