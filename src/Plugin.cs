@@ -88,6 +88,9 @@ namespace FastReset {
             // Track scene changes
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
+
+            // Load profiles
+            ui.LoadProfiles();
         }
 
         /**

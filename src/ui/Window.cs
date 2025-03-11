@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using UnityEngine;
 
 using Cfg = FastReset.Config.Cfg;
@@ -18,7 +19,7 @@ namespace FastReset.UI {
             get => Plugin.instance.resetter;
         }
 
-        public State state { get; } = new State();
+        private State state { get; } = new State();
 
         private const float height = 300;
         private const float width = 386;
@@ -26,7 +27,7 @@ namespace FastReset.UI {
         private const float elementWidth = 100;
         private const float smallElementWidth = 50;
 
-        private const string profileTextPadding = "============";
+        private string profileTextPadding = "";
         private const string stateTextPadding = "=======";
 
         private bool allowingMovement = true;
@@ -126,11 +127,11 @@ namespace FastReset.UI {
          * </summary>
          */
         private void RenderProfile(Profile profile) {
-            //GUILayout.Label($"== {profile.name} ==");
             GUILayout.Label($"{profile.name}");
 
             if (GUILayout.Button("Use") == true) {
                 Profile.Select(profile);
+                Recalculate();
             }
 
             if (profile.pendingDeletion == false
@@ -163,6 +164,7 @@ namespace FastReset.UI {
             );
             if (GUILayout.Button("Add Profile", GUILayout.Width(elementWidth)) == true) {
                 state.AddProfile();
+                Recalculate();
             }
             GUILayout.EndHorizontal();
 
@@ -306,6 +308,32 @@ namespace FastReset.UI {
             }
 
             GUILayout.EndArea();
+        }
+
+        /**
+         * <summary>
+         * Load a list of currently the selected profile and any other
+         * profiles which exist in the config directory.
+         * </summary>
+         */
+        public void LoadProfiles() {
+            state.LoadProfiles();
+            Recalculate();
+        }
+
+        /**
+         * <summary>
+         * Recalculates the profile text padding.
+         * </summary>
+         */
+        public void Recalculate() {
+            int totalLength = 55;
+            int textLength = 19 + state.currentProfile.Length;
+            int paddingCount = (totalLength - textLength) / 2;
+
+            StringBuilder builder = new StringBuilder();
+            builder.Append('=', paddingCount);
+            profileTextPadding = builder.ToString();
         }
     }
 }
