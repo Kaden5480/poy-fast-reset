@@ -132,8 +132,18 @@ namespace FastReset {
                 return false;
             }
 
+            bool restored = false;
+
             // Reset the wind
-            return WindResetter.Reset() || stateManager.RestoreState();
+            if (WindResetter.Reset() == true) {
+                restored = true;
+            }
+
+            if (stateManager.RestoreState() == true) {
+                restored = true;
+            }
+
+            return restored;
         }
 
 #endregion
