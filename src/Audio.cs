@@ -10,8 +10,8 @@ namespace FastReset {
         private AudioSource source = null;
 
         // Audio clips for scene/player state saves/restores
-        private AudioClip sceneState = null;
-        private AudioClip playerState = null;
+        private AudioClip saveState = null;
+        private AudioClip restoreState = null;
 
         /**
          * <summary>
@@ -40,19 +40,19 @@ namespace FastReset {
          */
         public void Load() {
             // If the clips have already been found, don't search
-            if (playerState != null && sceneState != null) {
+            if (restoreState != null && saveState != null) {
                 return;
             }
 
             // Try finding the audio clips
             foreach (AudioClip clip in Resources.FindObjectsOfTypeAll(typeof(AudioClip))) {
                 if ("ding".Equals(clip.name) == true) {
-                    LogDebug($"Found scene state clip: {clip.name}");
-                    sceneState = clip;
+                    LogDebug($"Found save state clip: {clip.name}");
+                    saveState = clip;
                 }
                 else if ("click".Equals(clip.name) == true) {
-                    LogDebug($"Found player state clip: {clip.name}");
-                    playerState = clip;
+                    LogDebug($"Found restore state clip: {clip.name}");
+                    restoreState = clip;
 
                 }
             }
@@ -73,34 +73,34 @@ namespace FastReset {
 
         /**
          * <summary>
-         * Plays the scene state save sound effect.
+         * Plays the save state sound effect.
          * </summary>
          */
-        public void PlayScene() {
-            if (sceneState == null) {
-                LogDebug("scene state clip is null");
+        public void PlaySave() {
+            if (saveState == null) {
+                LogDebug("Save state clip is null");
                 return;
             }
 
-            LogDebug("playing scene state clip");
-            source.clip = sceneState;
+            LogDebug("Playing save state clip");
+            source.clip = saveState;
             source.volume = 0.33f;
             source.Play();
         }
 
         /**
          * <summary>
-         * Plays the player state save/restore sound effect.
+         * Plays the restore state sound effect.
          * </summary>
          */
-        public void PlayPlayer() {
-            if (playerState == null) {
-                Plugin.LogDebug("Audio: player state clip is null");
+        public void PlayRestore() {
+            if (restoreState == null) {
+                LogDebug("Restore state clip is null");
                 return;
             }
 
-            Plugin.LogDebug("Audio: playing player state clip");
-            source.clip = playerState;
+            LogDebug("Playing restore state clip");
+            source.clip = restoreState;
             source.volume = 0.25f;
             source.Play();
         }

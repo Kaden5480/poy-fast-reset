@@ -108,12 +108,14 @@ namespace FastReset {
                 }
                 else {
                     resetter.SaveState();
+                    audio.PlaySave();
                 }
             }
 
             if (Input.GetKeyDown(config.resetKeybind.Value) == true) {
                 Plugin.LogDebug($"Plugin: {config.resetKeybind.Value} is down");
                 resetter.RestoreState();
+                audio.PlayRestore();
             }
         }
 
