@@ -39,7 +39,7 @@ or (hopefully in rare cases) some kind of unexpected error occurred.
 # Advanced Usage
 
 ## The UI
-Fast Reset's UI can be accessed by default by pressing Shift+F8.
+Fast Reset's UI can be accessed by default by pressing `Shift+F8`.
 
 You can also close the UI with the same keybind, or by pressing the "Close" button.
 
@@ -80,21 +80,31 @@ of restoring the player and scene states separately.
 Do read [Catches](#catches) as there are exceptions for restoring state.
 
 ## State Management
+### Tracked objects
+Fast reset tracks a variety of objects for the scene state.
+
+These are currently:
+- The state of the mill on Old Mill
+- The multi-hit brittle ice on ST
+- Crumbling holds
+- Wheels/beams on maps such as Tutor's Tower and Seaside Tribune.
+
+### States
 In Fast Reset, there are many ways of managing player and scene states.
 But first, the different states need to be explained.
 
-### The initial state
+#### The initial state
 An "initial state" is always saved upon entering a scene.
 This holds information on the state the scene was in when it first loaded
 and also the player's spawn point. This is different between scenes, of course,
 and will update automatically. This state isn't saved to a file.
 
-### The normal (saved) state
+#### The normal (saved) state
 A "saved state" is saved by using the "save" keybind.
 This state is saved to a file and will always be accessible
 when you reload the scene.
 
-### The temporary state (routing flag mode)
+#### The temporary state (routing flag mode)
 A "temporary state" can also be saved using the "save" keybind. This state
 is only accessible in routing flag mode and will be cleared once the scene
 changes/is restarted.
@@ -102,7 +112,7 @@ changes/is restarted.
 If you have a saved state and not a temporary state, the saved
 state will be used when restoring.
 
-### The separation of player and scene state
+#### The separation of player and scene state
 Player and scene states can be saved/restored separately.
 This provides lots of flexibility and depth.
 
