@@ -17,9 +17,7 @@ namespace FastReset.State {
         private Quaternion initialRotation;
         private Quaternion temporaryRotation;
 
-        public TrackedJoint(GameObject obj) : base(obj) {
-            jointRb = obj.GetComponent<Rigidbody>();
-        }
+        public TrackedJoint(GameObject obj) : base(obj) {}
 
         /**
          * <summary>
@@ -42,6 +40,8 @@ namespace FastReset.State {
          * </summary>
          */
         public override void SaveInitialState() {
+            jointRb = obj.GetComponent<Rigidbody>();
+
             initialRotation = obj.transform.rotation;
             LogDebug("Saved initial state");
         }

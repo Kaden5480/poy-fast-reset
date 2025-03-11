@@ -11,18 +11,16 @@ namespace FastReset.State {
      * </summary>
      */
     public class TrackedCrumblingHold : BaseTracked {
-        private CrumblingHoldRegular hold;
+        private CrumblingHoldRegular hold = null;
 
         // Initial and temporary states
-        private bool initialEnabled;
-        private bool temporaryEnabled;
+        private bool initialEnabled = false;
+        private bool temporaryEnabled = false;
 
-        private Vector3 initialScale;
-        private Vector3 temporaryScale;
+        private Vector3 initialScale = Vector3.zero;
+        private Vector3 temporaryScale = Vector3.zero;
 
-        public TrackedCrumblingHold(GameObject obj) : base(obj) {
-            hold = obj.GetComponent<CrumblingHoldRegular>();
-        }
+        public TrackedCrumblingHold(GameObject obj) : base(obj) {}
 
         /**
          * <summary>
@@ -46,6 +44,16 @@ namespace FastReset.State {
          * <param name="scale">Where to store the scale of the hold</param>
          */
         private void Save(ref bool enabled, ref Vector3 scale) {
+            LogDebug($"Enabled: {enabled}");
+            LogDebug($"Scale: {scale}");
+
+            if (hold == null) {
+                LogDebug("Hold is null");
+            }
+            else if (hold.meshesHolder == null) {
+                LogDebug("Hold meshes are null");
+            }
+
             enabled = hold.meshesHolder.activeSelf;
             scale = obj.transform.localScale;
         }
@@ -58,6 +66,8 @@ namespace FastReset.State {
          * </summary>
          */
         public override void SaveInitialState() {
+            hold = obj.GetComponent<CrumblingHoldRegular>();
+
             Save(ref initialEnabled, ref initialScale);
             LogDebug("Saved initial state");
         }

@@ -29,11 +29,7 @@ namespace FastReset.State {
         private List<Vector3> temporaryPositions = new List<Vector3>();
         private List<Quaternion> temporaryRotations = new List<Quaternion>();
 
-        public TrackedBrittleIce(GameObject obj) : base(obj) {
-            brittleIce = obj.GetComponent<BrittleIce>();
-            rigidBodies = obj.GetComponentsInChildren<Rigidbody>();
-            renderers = obj.GetComponentsInChildren<Renderer>();
-        }
+        public TrackedBrittleIce(GameObject obj) : base(obj) {}
 
         /**
          * <summary>
@@ -127,6 +123,10 @@ namespace FastReset.State {
          * </summary>
          */
         public override void SaveInitialState() {
+            brittleIce = obj.GetComponent<BrittleIce>();
+            rigidBodies = obj.GetComponentsInChildren<Rigidbody>();
+            renderers = obj.GetComponentsInChildren<Renderer>();
+
             Save(ref initialHp, initialMatStates, initialPositions, initialRotations);
             LogDebug("Saved initial state");
         }

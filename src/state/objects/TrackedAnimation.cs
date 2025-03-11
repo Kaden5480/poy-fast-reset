@@ -20,9 +20,7 @@ namespace FastReset.State {
         private List<float> initialTimes = new List<float>();
         private List<float> temporaryTimes = new List<float>();
 
-        public TrackedAnimation(GameObject obj) : base(obj) {
-            animation = obj.GetComponent<Animation>();
-        }
+        public TrackedAnimation(GameObject obj) : base(obj) {}
 
         /**
          * <summary>
@@ -59,6 +57,8 @@ namespace FastReset.State {
          * </summary>
          */
         public override void SaveInitialState() {
+            animation = obj.GetComponent<Animation>();
+
             Save(initialTimes);
             LogDebug("Saved initial state");
         }
