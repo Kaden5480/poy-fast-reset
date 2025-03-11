@@ -53,10 +53,6 @@ namespace FastReset {
                 "General", "profile", "Default",
                 "The current profile in use"
             );
-            config.resetWind = Config.Bind(
-                "General", "resetWind", false,
-                "Whether to reset the wind on wuthering crest"
-            );
             config.modifyPlayerState = Config.Bind(
                 "State", "modifyPlayerState", true,
                 "Whether to modify the player state when saving"
@@ -80,6 +76,10 @@ namespace FastReset {
             config.useInitialSceneState = Config.Bind(
                 "State", "useInitialSceneState", false,
                 "Whether to reset the scene's initial state instead"
+            );
+            config.resetWind = Config.Bind(
+                "State", "resetWind", false,
+                "Whether to reset the wind on wuthering crest"
             );
 
             // Apply early patches

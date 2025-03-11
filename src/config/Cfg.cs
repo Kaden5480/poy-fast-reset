@@ -22,9 +22,6 @@ namespace FastReset.Config {
         // The currently selected profile
         public ConfigEntry<string> profile;
 
-        // Whether to reset the wind on wuthering crest
-        public ConfigEntry<bool> resetWind;
-
         // Whether modifying the saved player/scene states is enabled
         public ConfigEntry<bool> modifyPlayerState;
         public ConfigEntry<bool> modifySceneState;
@@ -36,5 +33,8 @@ namespace FastReset.Config {
         // Whether to use the initial scene state when resetting
         public ConfigEntry<bool> useInitialPlayerState;
         public ConfigEntry<bool> useInitialSceneState;
+
+        // Whether to reset the wind on wuthering crest
+        public ConfigEntry<bool> resetWind;
     }
 }
