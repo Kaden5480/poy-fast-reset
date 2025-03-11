@@ -59,10 +59,6 @@ namespace FastReset.UI {
          * </summary>
          */
         private bool IsInMenu() {
-            if (InGameMenu.isCurrentlyNavigationMenu == true) {
-                return true;
-            }
-
             if (cache.inGameMenu == null) {
                 LogDebug("inGameMenu is null");
                 return false;
@@ -120,6 +116,7 @@ namespace FastReset.UI {
                 InGameMenu.isCurrentlyNavigationMenu = false;
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
+                InGameMenu.hasBeenInMenu = false;
             }
         }
 
@@ -305,7 +302,7 @@ namespace FastReset.UI {
             }
 
             if (GUILayout.Button("Close") == true) {
-                showUI = false;
+                Disable();
             }
 
             GUILayout.EndArea();
