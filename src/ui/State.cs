@@ -77,7 +77,7 @@ namespace FastReset.UI {
 
             foreach (Profile p in profiles) {
                 if (profile.Equals(p.name) == true) {
-                LogDebug("Tried adding already existing profile");
+                    LogDebug("Tried adding already existing profile");
                     return;
                 }
             }
