@@ -222,11 +222,20 @@ namespace FastReset.UI {
             GUILayout.Space(5);
 
             GUILayout.Label("When restoring:");
+            config.restorePlayerState.Value = GUILayout.Toggle(
+                config.restorePlayerState.Value, "Restore player state"
+            );
+            config.restoreSceneState.Value = GUILayout.Toggle(
+                config.restoreSceneState.Value, "Restore scene state"
+            );
             config.useInitialPlayerState.Value = GUILayout.Toggle(
                 config.useInitialPlayerState.Value, "Use initial player state"
             );
             config.useInitialSceneState.Value = GUILayout.Toggle(
                 config.useInitialSceneState.Value, "Use initial scene state"
+            );
+            config.resetWind.Value = GUILayout.Toggle(
+                config.resetWind.Value, "Reset wind"
             );
 
             GUILayout.EndVertical();

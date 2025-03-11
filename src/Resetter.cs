@@ -1,4 +1,7 @@
+using UnityEngine;
+
 using StateManager = FastReset.State.StateManager;
+using WindResetter = FastReset.Patches.WindResetter;
 
 namespace FastReset {
     /**
@@ -103,22 +106,25 @@ namespace FastReset {
          * <summary>
          * Saves the current state
          * </summary>
+         * <returns>Whether the state was saved</returns>
          */
-        public void SaveState() {
+        public bool SaveState() {
             if (CanUse() == false
                 || CanSave() == false
             ) {
                 LogDebug("Unable to save currently");
-                return;
+                return false;
             }
 
-            stateManager.SaveState();
+            return stateManager.SaveState();
         }
 
         /**
          * <summary>
-         * Restores the saved state
+         * Restores the saved state and resets wind
+         * when appropriate.
          * </summary>
+         * <returns>Whether a state was restored</returns>
          */
         public bool RestoreState() {
             if (CanUse() == false) {
@@ -126,8 +132,8 @@ namespace FastReset {
                 return false;
             }
 
-            stateManager.RestoreState();
-            return true;
+            // Reset the wind
+            return WindResetter.Reset() || stateManager.RestoreState();
         }
 
 #endregion
@@ -146,6 +152,9 @@ namespace FastReset {
                 return;
             }
 
+            // Create the wind resetter
+            WindResetter.Create();
+
             stateManager.SaveInitialState();
         }
 
@@ -156,6 +165,7 @@ namespace FastReset {
          * </summary>
          */
         public void SceneUnload() {
+            WindResetter.Destroy();
             stateManager.WipeState();
         }
 

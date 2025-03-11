@@ -12,6 +12,7 @@ namespace FastReset {
         // Audio clips for scene/player state saves/restores
         private AudioClip saveState = null;
         private AudioClip restoreState = null;
+        private AudioClip failureState = null;
 
         /**
          * <summary>
@@ -40,7 +41,7 @@ namespace FastReset {
          */
         public void Load() {
             // If the clips have already been found, don't search
-            if (restoreState != null && saveState != null) {
+            if (restoreState != null && saveState != null && failureState != null) {
                 return;
             }
 
@@ -53,7 +54,10 @@ namespace FastReset {
                 else if ("click".Equals(clip.name) == true) {
                     LogDebug($"Found restore state clip: {clip.name}");
                     restoreState = clip;
-
+                }
+                else if ("pickup2".Equals(clip.name) == true) {
+                    LogDebug($"Found failure state clip: {clip.name}");
+                    failureState = clip;
                 }
             }
 
@@ -102,6 +106,23 @@ namespace FastReset {
             LogDebug("Playing restore state clip");
             source.clip = restoreState;
             source.volume = 0.25f;
+            source.Play();
+        }
+
+        /**
+         * <summary>
+         * Plays the failure state sound effect.
+         * </summary>
+         */
+        public void PlayFailure() {
+            if (failureState == null) {
+                LogDebug("Failure state clip is null");
+                return;
+            }
+
+            LogDebug("Playing failure state clip");
+            source.clip = failureState;
+            source.volume = 0.4f;
             source.Play();
         }
     }

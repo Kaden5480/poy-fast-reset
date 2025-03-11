@@ -29,6 +29,10 @@ namespace FastReset.Config {
         public ConfigEntry<bool> modifyPlayerState;
         public ConfigEntry<bool> modifySceneState;
 
+        // Whether to restore the player or scene state when resetting
+        public ConfigEntry<bool> restorePlayerState;
+        public ConfigEntry<bool> restoreSceneState;
+
         // Whether to use the initial scene state when resetting
         public ConfigEntry<bool> useInitialPlayerState;
         public ConfigEntry<bool> useInitialSceneState;

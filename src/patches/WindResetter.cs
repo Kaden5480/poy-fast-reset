@@ -13,8 +13,72 @@ namespace FastReset.Patches {
      * </summary>
      */
     public class WindResetter : MonoBehaviour {
-        private PeakWind peakWind {
-            get => Plugin.instance.cache.peakWind;
+        private static Cfg config {
+            get => Plugin.instance.config;
+        }
+        private static Cache cache {
+            get => Plugin.instance.cache;
+        }
+        private static PeakWind peakWind {
+            get => cache.peakWind;
+        }
+
+        private static WindResetter instance = null;
+
+        /**
+         * <summary>
+         * Logs debug messages.
+         * </summary>
+         * <param name="message">The message to log</param>
+         */
+        private static void LogDebug(string message) {
+            Plugin.LogDebug($"[WindResetter] {message}");
+        }
+
+        /**
+         * <summary>
+         * Called when this object gets destroyed.
+         * </summary>
+         */
+        public void OnDestroy() {
+            instance = null;
+            LogDebug("Destroyed");
+        }
+
+        /**
+         * <summary>
+         * Sets up an instance of WindResetter.
+         * </summary>
+         */
+        public static void Create() {
+            if ("Peak_11_WutheringCrestNEW".Equals(cache.scene.name) == false) {
+                LogDebug("Not creating, not on wuthering crest");
+                return;
+            }
+
+            if (instance != null) {
+                LogDebug("Wind resetter already exists in current scene");
+                return;
+            }
+
+            GameObject obj = new GameObject("Fast Reset Wind Resetter");
+            instance = obj.AddComponent<WindResetter>();
+
+            LogDebug("Created wind resetter");
+        }
+
+        /**
+         * <summary>
+         * Destroys the current instance of WindResetter.
+         * </summary>
+         */
+        public static void Destroy() {
+            if (instance == null) {
+                LogDebug("Wind resetter already destroyed");
+                return;
+            }
+
+            Destroy(instance.gameObject);
         }
 
         /**
@@ -24,15 +88,17 @@ namespace FastReset.Patches {
          * </summary>
          */
         private IEnumerator ResetWind() {
-            Plugin.LogDebug("WindResetter: Peak wind found on map, stopping wind cycle");
+            LogDebug("Stopping wind cycle");
             peakWind.StopCoroutine("AddWindToHands");
+
             peakWind.harshWindSound.volume = 0f;
             peakWind.playerWindForce.force = peakWind.windVectorDirection;
+            float waitTime = peakWind.waitBeforeHarshWindMax;
 
-            Plugin.LogDebug($"WindResetter: Waiting for: {peakWind.waitBeforeHarshWindMax}s");
-            yield return new WaitForSeconds(peakWind.waitBeforeHarshWindMax);
+            LogDebug($"Waiting for: {waitTime}s");
+            yield return new WaitForSeconds(waitTime);
 
-            Plugin.LogDebug("WindResetter: Restarting wind cycle");
+            LogDebug("Restarting wind cycle");
             peakWind.StartCoroutine("AddWindToHands");
         }
 
@@ -40,17 +106,29 @@ namespace FastReset.Patches {
          * <summary>
          * Resets the wind if possible.
          * </summary>
+         * <returns>Whether the wind was reset</returns>
          */
-        public void Reset() {
+        public static bool Reset() {
             if (peakWind == null) {
-                Plugin.LogDebug("WindResetter: No peak wind on map, not resetting");
-                return;
+                LogDebug("No peak wind on map, not resetting");
+                return false;
+            }
+
+            if (instance == null) {
+                LogDebug("No instance found, not resetting");
+                return false;
+            }
+
+            if (config.resetWind.Value == false) {
+                LogDebug("Resetting wind disabled, not resetting");
+                return false;
             }
 
             // Stop running the old coroutine
             // before starting another
-            StopAllCoroutines();
-            StartCoroutine(ResetWind());
+            instance.StopAllCoroutines();
+            instance.StartCoroutine(instance.ResetWind());
+            return true;
         }
     }
 }

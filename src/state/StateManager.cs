@@ -58,18 +58,20 @@ namespace FastReset.State {
          * Saves a state for the given state type.
          * </summary>
          * <param name="state">The type of state to save for</param>
+         * <returns>Whether a state was saved</returns>
          */
-        private void Save(BaseState state, bool canModify) {
+        private bool Save(BaseState state, bool canModify) {
             if (canModify == false) {
-                return;
+                return false;
             }
 
             if (cache.routingFlag.currentlyUsingFlag == true) {
                 state.SaveTempState();
-                return;
+                return true;
             }
 
             state.SaveState();
+            return true;
         }
 
         /**
@@ -77,15 +79,24 @@ namespace FastReset.State {
          * Saves the current state of the scene.
          * This also determines the type of state to save.
          * </summary>
+         * <returns>Whether a state was saved</returns>
          */
-        public void SaveState() {
-            Save(player, config.modifyPlayerState.Value);
-            Save(scene, config.modifySceneState.Value);
+        public bool SaveState() {
+            bool saved = false;
+
+            if (Save(player, config.modifyPlayerState.Value) == true) {
+                saved = true;
+            }
+            if (Save(scene, config.modifySceneState.Value) == true) {
+                saved = true;
+            }
 
             // Only save if not in routing flag mode
             if (cache.routingFlag.currentlyUsingFlag == false) {
                 saveManager.Save();
             }
+
+            return saved;
         }
 
 #endregion
@@ -136,15 +147,38 @@ namespace FastReset.State {
          * Restores the state of the scene.
          * This also determines the type of state to restore.
          * </summary>
+         * <returns>Whether a state was restored</returns>
          */
-        public void RestoreState() {
-            if (Restore(player, config.useInitialPlayerState.Value) == true) {
-                LogDebug("Restored player state");
+        public bool RestoreState() {
+            bool restored = false;
+
+            bool restorePlayerState = config.restorePlayerState.Value;
+            bool restoreSceneState = config.restoreSceneState.Value;
+
+            // Enforce both in routing flag mode
+            if (restorePlayerState == false
+                && restoreSceneState == true
+                && cache.routingFlag.currentlyUsingFlag == false
+            ) {
+                LogError("Cannot restore only scene state in normal mode");
+                return false;
             }
 
-            if (Restore(scene, config.useInitialSceneState.Value) == true) {
-                LogDebug("Restored scene state");
+            if (restorePlayerState == true
+                && Restore(player, config.useInitialPlayerState.Value) == true
+            ) {
+                LogDebug("Restored player state");
+                restored = true;
             }
+
+            if (restoreSceneState == true
+                && Restore(scene, config.useInitialSceneState.Value) == true
+            ) {
+                LogDebug("Restored scene state");
+                restored = true;
+            }
+
+            return restored;
         }
 
 #endregion

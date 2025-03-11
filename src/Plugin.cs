@@ -65,6 +65,14 @@ namespace FastReset {
                 "State", "modifySceneState", true,
                 "Whether to modify the scene state when saving"
             );
+            config.restorePlayerState = Config.Bind(
+                "State", "restorePlayerState", true,
+                "Whether to restore the player state if it's available"
+            );
+            config.restoreSceneState = Config.Bind(
+                "State", "restoreSceneState", true,
+                "Whether to restore the scene state if it's available"
+            );
             config.useInitialPlayerState = Config.Bind(
                 "State", "useInitialPlayerState", false,
                 "Whether to reset to the player's spawn point instead"
@@ -106,16 +114,22 @@ namespace FastReset {
                     Plugin.LogDebug($"Plugin: {config.toggleModifier.Value} is down");
                     ui.Toggle();
                 }
-                else {
-                    resetter.SaveState();
+                else if (resetter.SaveState() == true) {
                     audio.PlaySave();
+                }
+                else {
+                    audio.PlayFailure();
                 }
             }
 
             if (Input.GetKeyDown(config.resetKeybind.Value) == true) {
                 Plugin.LogDebug($"Plugin: {config.resetKeybind.Value} is down");
-                resetter.RestoreState();
-                audio.PlayRestore();
+                if (resetter.RestoreState() == true) {
+                    audio.PlayRestore();
+                }
+                else {
+                    audio.PlayFailure();
+                }
             }
         }
 
@@ -138,6 +152,9 @@ namespace FastReset {
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
             // Make sure the cache is loaded first
             cache.FindObjects();
+
+            // Load audio
+            audio.Load();
 
             // Load the config for this scene
             saveManager.Load();
