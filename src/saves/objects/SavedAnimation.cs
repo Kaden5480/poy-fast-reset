@@ -20,6 +20,8 @@ namespace FastReset.Saves {
                 .Add(cborTimes);
         }
 
+        public SavedAnimation() {}
+
         public SavedAnimation(byte[] byteId) : base(byteId) {}
 
         public SavedAnimation(CBORObject cbor) : base(cbor[0].GetByteString()) {

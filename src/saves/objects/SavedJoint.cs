@@ -14,6 +14,8 @@ namespace FastReset.Saves {
                 .Add(SaveManager.QuatToBytes(rotation));
         }
 
+        public SavedJoint() {}
+
         public SavedJoint(byte[] byteId) : base(byteId) {}
 
         public SavedJoint(CBORObject cbor) : base(cbor[0].GetByteString()) {

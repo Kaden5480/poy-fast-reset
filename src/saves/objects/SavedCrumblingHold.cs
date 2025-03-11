@@ -16,6 +16,8 @@ namespace FastReset.Saves {
                 .Add(SaveManager.Vec3ToBytes(scale));
         }
 
+        public SavedCrumblingHold() {}
+
         public SavedCrumblingHold(byte[] byteId) : base(byteId) {}
 
         public SavedCrumblingHold(CBORObject cbor) : base(cbor[0].GetByteString()) {

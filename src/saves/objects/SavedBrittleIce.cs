@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using PeterO.Cbor;
 using UnityEngine;
 
@@ -36,6 +38,8 @@ namespace FastReset.Saves {
                 .Add(pos)
                 .Add(rot);
         }
+
+        public SavedBrittleIce() {}
 
         public SavedBrittleIce(byte[] byteId) : base(byteId) {}
 

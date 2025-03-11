@@ -70,7 +70,7 @@ namespace FastReset.State {
                 obj.SetActive(enabled);
 
                 // Enable/disable any colliders
-                Collider[] colliders = rb.gameObject.GetComponents<Collider>()
+                Collider[] colliders = rb.gameObject.GetComponents<Collider>();
                 foreach (Collider collider in colliders) {
                     collider.enabled = enabled;
                 }
@@ -95,7 +95,7 @@ namespace FastReset.State {
             List<Vector3> positions,
             List<Quaternion> rotations
         ) {
-            hp = brittleIce.iceHp;
+            hp = brittleIce.iceHP;
 
             // Only need to read the first renderer
             matStates.Clear();
