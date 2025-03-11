@@ -75,7 +75,7 @@ namespace FastReset {
             );
             config.useInitialSceneState = Config.Bind(
                 "State", "useInitialSceneState", false,
-                "Whether to reset the scene's initial state instead"
+                "Whether to restore the scene's initial state instead"
             );
             config.resetWind = Config.Bind(
                 "State", "resetWind", false,
