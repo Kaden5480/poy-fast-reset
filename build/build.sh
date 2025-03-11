@@ -11,14 +11,18 @@ BP_NAME="$MOD_NAME-$VERSION-BepInEx"
 BP_DIR="build/$BP_NAME"
 
 
-dotnet build -c Release-BepInEx
+dotnet build -c Release
 
 mkdir -p "$BP_DIR"/plugins
 
 # BepInEx
-cp bin/release-bepinex/net472/${MOD_NAME}.dll \
+cp bin/release/net472/${MOD_NAME}.dll \
     "$BP_DIR/plugins/"
-cp build/README-BepInEx.txt "$BP_DIR/README.txt"
+cp bin/release/net472/libs/CBOR.dll \
+    "$BP_DIR/plugins/"
+cp bin/release/net472/libs/Numbers.dll \
+    "$BP_DIR/plugins/"
+cp build/README.txt "$BP_DIR/README.txt"
 
 # Zip everything
 pushd "$BP_DIR"
