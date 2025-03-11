@@ -43,6 +43,7 @@ namespace FastReset.State {
          * </summary>
          */
         public override void SaveInitialState() {
+            jointRb = obj.GetComponent<Rigidbody>();
             initialRotation = obj.transform.rotation;
             LogDebug("Saved initial state");
         }

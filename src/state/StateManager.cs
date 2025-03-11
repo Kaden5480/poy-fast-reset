@@ -1,4 +1,5 @@
 using Cfg = FastReset.Config.Cfg;
+using SaveManager = FastReset.Saves.SaveManager;
 
 namespace FastReset.State {
     public class StateManager : Loggable {
@@ -14,17 +15,30 @@ namespace FastReset.State {
         private PlayerState player = new PlayerState();
         private SceneState scene = new SceneState();
 
+        // An instance of StateManager accessible statically
+        private static StateManager instance = null;
+
+        private SaveManager saveManager {
+            get => Plugin.instance.saveManager;
+        }
+
+        public StateManager() {
+            instance = this;
+        }
+
+#region State Information
+
         /**
          * <summary>
-         * Whether the temporary state should be used.
+         * What kinds of states are available.
          * </summary>
-         * <param name="state">The state to check</param>
-         * <returns>True if it should, false otherwise</returns>
          */
-        private bool UseTemporary(BaseState state) {
-            return cache.routingFlag.currentlyUsingFlag == true
-                && state.HasTempState() == true;
-        }
+        public static bool hasPlayerTemp { get => instance.player.HasTempState(); }
+        public static bool hasPlayerSaved { get => instance.player.HasSavedState(); }
+        public static bool hasSceneTemp { get => instance.scene.HasTempState(); }
+        public static bool hasSceneSaved { get => instance.scene.HasSavedState(); }
+
+#endregion
 
 #region Saving
 
@@ -46,7 +60,7 @@ namespace FastReset.State {
          * <param name="state">The type of state to save for</param>
          */
         private void Save(BaseState state) {
-            if (UseTemporary(state) == true) {
+            if (cache.routingFlag.currentlyUsingFlag == true) {
                 state.SaveTempState();
                 return;
             }
@@ -61,17 +75,20 @@ namespace FastReset.State {
          * </summary>
          */
         public void SaveState() {
-            // Player state
-            if (config.modifyPlayerState.Value == true) {
-                Save(player);
-                Plugin.LogDebug("Saved player state");
+            // Temporary
+            if (cache.routingFlag.currentlyUsingFlag == true) {
+                player.SaveTempState();
+                scene.SaveTempState();
+                LogDebug("Saved temporary state");
+                return;
             }
 
-            // Scene state
-            if (config.modifySceneState.Value == true) {
-                Save(scene);
-                Plugin.LogDebug("Saved scene state");
-            }
+            // Saved
+            player.SaveState();
+            scene.SaveState();
+            LogDebug("Saved state to data store");
+
+            saveManager.Save();
         }
 
 #endregion
@@ -80,23 +97,41 @@ namespace FastReset.State {
 
         /**
          * <summary>
+         * Whether the temporary state should be used.
+         * Specifically used for restoring states.
+         * </summary>
+         * <param name="state">The state to check</param>
+         * <returns>True if it should, false otherwise</returns>
+         */
+        private bool UseTemporary(BaseState state) {
+            return cache.routingFlag.currentlyUsingFlag == true
+                && state.HasTempState() == true;
+        }
+
+        /**
+         * <summary>
          * Restores a type of state for the given state.
          * </summary>
          * <param name="state">The type of state to restore a state for</param>
          */
-        private void Restore(BaseState state, bool useInitialState) {
+        private bool Restore(BaseState state, bool useInitialState) {
             // Initial
             if (useInitialState == true) {
                 state.RestoreInitialState();
+                return true;
             }
             // Temporary
             else if (UseTemporary(state) == true) {
                 state.RestoreTempState();
+                return true;
             }
             // Saved
             else if (state.HasSavedState() == true) {
                 state.RestoreState();
+                return true;
             }
+
+            return false;
         }
 
         /**
@@ -106,11 +141,13 @@ namespace FastReset.State {
          * </summary>
          */
         public void RestoreState() {
-            Restore(player, config.useInitialPlayerState.Value);
-            LogDebug("Restored player state");
+            if (Restore(player, config.useInitialPlayerState.Value) == true) {
+                LogDebug("Restored player state");
+            }
 
-            Restore(scene, config.useInitialSceneState.Value);
-            LogDebug("Restored scene state");
+            if (Restore(scene, config.useInitialSceneState.Value) == true) {
+                LogDebug("Restored scene state");
+            }
         }
 
 #endregion

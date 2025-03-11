@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,14 +19,15 @@ namespace FastReset.Saves {
      */
     public class SaveManager : Loggable {
         // The directory where the save data will be stored
-        private string configDir { get; } = Path.Combine(
+        public static string configDir { get; } = Path.Combine(
             BepInEx.Paths.ConfigPath, "com.github.Kaden5480.poy-fast-reset"
         );
 
         private const string stateFileName = "state.dat";
 
         // The path to the file containing state data
-        private string statePath = null;
+        private string stateDirPath = null;
+        private string stateFilePath = null;
 
         // The saved player state for the scene
         private SavedPlayer player = null;
@@ -64,8 +66,10 @@ namespace FastReset.Saves {
                     break;
                 default:
                     instance.LogError($"Trying to save unrecognised type: {obj.GetType()}");
-                    break;
+                    throw new Exception();
             }
+
+            hasSceneState = true;
         }
 
         /**
@@ -92,6 +96,7 @@ namespace FastReset.Saves {
          */
         public static void AddPlayer(SavedPlayer player) {
             instance.player = player;
+            hasPlayerState = true;
         }
 
         /**
@@ -183,6 +188,7 @@ namespace FastReset.Saves {
                     x = reader.ReadSingle();
                     y = reader.ReadSingle();
                     z = reader.ReadSingle();
+
                 }
             }
 
@@ -199,30 +205,43 @@ namespace FastReset.Saves {
          * </summary>
          */
         public void Save() {
+            // If there is no state path, do nothing
+            if (stateDirPath == null || stateFilePath == null) {
+                return;
+            }
+
+            // If there is no state to store, do nothing
+            if (hasPlayerState == false && hasSceneState == false) {
+                return;
+            }
+
             // Construct a CBOR object holding everything
             CBORObject root = CBORObject.NewMap();
 
             // Maps for each type
-            CBORObject jointMap = CBORObject.NewMap();
+            if (joints.Count > 0) {
+                CBORObject jointArray = CBORObject.NewArray();
 
-            // Add the components
-            foreach (SavedJoint joint in joints.Values) {
-                jointMap = jointMap.Add(joint.id, joint.ToCBOR());
+                foreach (SavedJoint joint in joints.Values) {
+                    jointArray = jointArray.Add(joint.ToCBOR());
+                }
+
+                root = root.Add("joints", jointArray);
             }
-
-            // Add to the root
-            root = root.Add("joints", jointMap);
 
             // Add the player if there is a state
             if (player != null) {
-                CBORObject playerMap = CBORObject.NewMap()
-                    .Add(player.ToCBOR());
-
-                root = root.Add("player", playerMap);
+                root = root.Add("player", player.ToCBOR());
             }
 
             // Save the object to a file
-            using (FileStream stream = new FileStream(statePath, FileMode.Create)) {
+            if (Directory.Exists(stateDirPath) == false) {
+                Directory.CreateDirectory(stateDirPath);
+            }
+
+            LogDebug($"Saving: {root.ToJSONString()}");
+
+            using (FileStream stream = new FileStream(stateFilePath, FileMode.Create)) {
                 root.WriteTo(stream);
             }
         }
@@ -239,6 +258,9 @@ namespace FastReset.Saves {
          */
         public void Load() {
             // Wipe any stored data
+            stateDirPath = null;
+            stateFilePath = null;
+
             hasPlayerState = false;
             hasSceneState = false;
             player = null;
@@ -249,13 +271,15 @@ namespace FastReset.Saves {
             string sceneName = Plugin.instance.cache.scene.name;
 
             // Where the data should be loaded from
-            statePath = Path.Combine(
-                configDir, profile, sceneName,
-                stateFileName
+            stateDirPath = Path.Combine(
+                configDir, profile, sceneName
+            );
+            stateFilePath = Path.Combine(
+                stateDirPath, stateFileName
             );
 
             // Check if the state file exists
-            if (File.Exists(statePath) == false) {
+            if (File.Exists(stateFilePath) == false) {
                 LogDebug("No data found for current profile and scene");
                 return;
             }
@@ -264,7 +288,7 @@ namespace FastReset.Saves {
 
             // Try loading the data
             CBORObject root = CBORObject.DecodeFromBytes(
-                File.ReadAllBytes(statePath)
+                File.ReadAllBytes(stateFilePath)
             );
 
             // Load each type
@@ -279,6 +303,18 @@ namespace FastReset.Saves {
                 }
                 hasSceneState = true;
             }
+        }
+
+        /**
+         * <summary>
+         * Reloads the state data.
+         * Typically used for profile changes.
+         * </summary>
+         */
+        public static void Reload() {
+            instance.LogDebug("Reloading data");
+            instance.Save();
+            instance.Load();
         }
 
 #endregion

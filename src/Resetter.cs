@@ -13,7 +13,7 @@ namespace FastReset {
         private Cache cache { get => Plugin.instance.cache; }
 
         // An object for managing the scene's state
-        public StateManager stateManager { get; } = new StateManager();
+        private StateManager stateManager { get; } = new StateManager();
 
         /**
          * <summary>
@@ -97,6 +97,8 @@ namespace FastReset {
             return true;
         }
 
+#region Player Controlled Saves/Restores
+
         /**
          * <summary>
          * Saves the current state
@@ -127,5 +129,36 @@ namespace FastReset {
             stateManager.RestoreState();
             return true;
         }
+
+#endregion
+
+#region Scene Loads/Unloads
+
+        /**
+         * <summary>
+         * Performs any required state updates on a scene load.
+         * Currently this is just loading the initial state.
+         * </summary>
+         */
+        public void SceneLoad() {
+            // Ignore scenes where fast reset is unavailable
+            if (CanUse() == false) {
+                return;
+            }
+
+            stateManager.SaveInitialState();
+        }
+
+        /**
+         * <summary>
+         * Performs any required state updates on a scene unload.
+         * Currently this is just wiping the state.
+         * </summary>
+         */
+        public void SceneUnload() {
+            stateManager.WipeState();
+        }
+
+#endregion
     }
 }

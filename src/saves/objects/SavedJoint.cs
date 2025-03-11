@@ -15,8 +15,8 @@ namespace FastReset.Saves {
         public SavedJoint(byte[] id) : base(id) {}
 
         public SavedJoint(CBORObject cbor) {
-            id = cbor["id"].EncodeToBytes();
-            rotation = SaveManager.BytesToQuat(cbor["rot"].EncodeToBytes());
+            id = cbor["id"].GetByteString();
+            rotation = SaveManager.BytesToQuat(cbor["rot"].GetByteString());
         }
     }
 }

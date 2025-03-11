@@ -22,6 +22,7 @@ namespace FastReset {
         public Patcher patcher { get; } = new Patcher();
         public Resetter resetter { get; } = new Resetter();
         public SaveManager saveManager { get; } = new SaveManager();
+        public UI.Window ui { get; } = new UI.Window();
 
         // Default keybinds
         private const KeyCode defaultSaveKeybind = KeyCode.F8;
@@ -97,11 +98,13 @@ namespace FastReset {
          * </summary>
          */
         public void Update() {
+            ui.Update();
+
             if (Input.GetKeyDown(config.saveKeybind.Value) == true) {
                 Plugin.LogDebug($"Plugin: {config.saveKeybind.Value} is down");
                 if (Input.GetKey(config.toggleModifier.Value) == true) {
                     Plugin.LogDebug($"Plugin: {config.toggleModifier.Value} is down");
-                    //ui.Toggle();
+                    ui.Toggle();
                 }
                 else {
                     resetter.SaveState();
@@ -120,7 +123,7 @@ namespace FastReset {
          * </summary>
          */
         public void OnGUI() {
-            //ui.Render();
+            ui.Render();
         }
 
         /**
@@ -138,7 +141,7 @@ namespace FastReset {
             saveManager.Load();
 
             // Save the initial state of the scene
-            resetter.stateManager.SaveInitialState();
+            resetter.SceneLoad();
         }
 
         /**
@@ -152,7 +155,7 @@ namespace FastReset {
             saveManager.Save();
 
             // Wipe the tracked state
-            resetter.stateManager.WipeState();
+            resetter.SceneUnload();
 
             // Wipe the cache last
             cache.Clear();

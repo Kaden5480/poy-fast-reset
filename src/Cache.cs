@@ -146,7 +146,7 @@ namespace FastReset {
          * </summary>
          */
         public void Clear() {
-            LogDebug("clearing cache");
+            LogDebug("Clearing cache");
 
             climbing = null;
             fallingEvent = null;

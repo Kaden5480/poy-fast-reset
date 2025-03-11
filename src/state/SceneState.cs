@@ -66,10 +66,10 @@ namespace FastReset.State {
 
             LogDebug("Saved initial state");
             LogDebug(
-                $"Tracking: {objs.Count} objects"
-                + $"Animations:      {animationCount}"
-                + $"Brittle ice:     {brittleIceCount}"
-                + $"Crumbling holds: {crumblingHoldCount}"
+                $"Tracking: {objs.Count} objects\n"
+                + $"Animations:      {animationCount}\n"
+                + $"Brittle ice:     {brittleIceCount}\n"
+                + $"Crumbling holds: {crumblingHoldCount}\n"
                 + $"Joints:          {jointCount}"
             );
         }

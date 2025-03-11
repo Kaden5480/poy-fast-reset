@@ -79,6 +79,8 @@ namespace FastReset.State {
             );
         }
 
+#region Initial
+
         /**
          * <summary>
          * Methods which are used for saving/restoring the
@@ -91,10 +93,15 @@ namespace FastReset.State {
             initialRotationY = rotationY;
             LogDebug("Saved initial state");
         }
+
         public void RestoreInitialState() {
             MoveTo(initialPosition, initialRotationX, initialRotationY);
             LogDebug("Restored initial state");
         }
+
+#endregion
+
+#region Temporary
 
         /**
          * <summary>
@@ -105,6 +112,7 @@ namespace FastReset.State {
         public bool HasTempState() {
             return hasTempState;
         }
+
         public void SaveTempState() {
             temporaryPosition = position;
             temporaryRotationX = rotationX;
@@ -112,10 +120,15 @@ namespace FastReset.State {
             hasTempState = true;
             LogDebug("Saved temporary state");
         }
+
         public void RestoreTempState() {
             MoveTo(temporaryPosition, temporaryRotationX, temporaryRotationY);
             LogDebug("Restored temporary state");
         }
+
+#endregion
+
+#region Saved
 
         /**
          * <summary>
@@ -126,6 +139,7 @@ namespace FastReset.State {
         public bool HasSavedState() {
             return SaveManager.GetPlayer() != null;
         }
+
         public void SaveState() {
             SavedPlayer player = SaveManager.GetPlayer();
 
@@ -142,6 +156,7 @@ namespace FastReset.State {
 
             LogDebug("Saved state to data store");
         }
+
         public void RestoreState() {
             SavedPlayer player = SaveManager.GetPlayer();
 
@@ -152,6 +167,10 @@ namespace FastReset.State {
             MoveTo(player.position, player.rotationX, player.rotationY);
             LogDebug("Restored state from data store");
         }
+
+#endregion
+
+#region Cleaning Up
 
         /**
          * <summary>
@@ -171,5 +190,8 @@ namespace FastReset.State {
             temporaryRotationX = Quaternion.identity;
             temporaryRotationY = 0f;
         }
+
+#endregion
+
     }
 }
