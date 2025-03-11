@@ -27,7 +27,9 @@ namespace FastReset.UI {
         private const float elementWidth = 100;
         private const float smallElementWidth = 50;
 
-        private string profileTextPadding = "";
+        private string profileTextPaddingLeft = "";
+        private string profileTextPaddingRight = "";
+        private const string availablePadding = "===============";
         private const string stateTextPadding = "=======";
 
         private bool allowingMovement = true;
@@ -159,6 +161,12 @@ namespace FastReset.UI {
          */
         public void RenderProfiles() {
             GUILayout.BeginHorizontal();
+            GUILayout.Space(13);
+            GUILayout.FlexibleSpace();
+
+            GUILayout.BeginVertical();
+
+            GUILayout.BeginHorizontal();
             state.newProfile = GUILayout.TextField(
                 state.newProfile
             );
@@ -168,7 +176,7 @@ namespace FastReset.UI {
             }
             GUILayout.EndHorizontal();
 
-            GUILayout.Label("== Available Profiles ==");
+            GUILayout.Label($"{availablePadding} Available Profiles {availablePadding}");
 
             for (int i = 0; i < state.profiles.Count; i++) {
                 Profile profile = state.profiles[i];
@@ -181,8 +189,12 @@ namespace FastReset.UI {
                 if (i < state.profiles.Count - 1) {
                     GUILayout.Space(padding / 2);
                 }
-
             }
+
+            GUILayout.EndVertical();
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
         }
 
         /**
@@ -272,7 +284,13 @@ namespace FastReset.UI {
             float y = centerY - height / 2;
 
             GUILayout.BeginArea(new Rect(x, y, width, height), GUI.skin.box);
-            GUILayout.Label($"{profileTextPadding} Current Profile: {state.currentProfile} {profileTextPadding}");
+
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.Label($"{profileTextPaddingLeft} Current Profile: {state.currentProfile} {profileTextPaddingRight}");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
 
             state.scrollPosition = GUILayout.BeginScrollView(
                 state.scrollPosition,
@@ -327,13 +345,24 @@ namespace FastReset.UI {
          * </summary>
          */
         public void Recalculate() {
-            int totalLength = 55;
+            int totalLength = 53;
+
             int textLength = 19 + state.currentProfile.Length;
             int paddingCount = (totalLength - textLength) / 2;
 
-            StringBuilder builder = new StringBuilder();
-            builder.Append('=', paddingCount);
-            profileTextPadding = builder.ToString();
+            StringBuilder leftBuilder = new StringBuilder();
+            leftBuilder.Append('=', paddingCount);
+
+            StringBuilder rightBuilder = new StringBuilder();
+            rightBuilder.Append('=', paddingCount);
+
+            if (((totalLength - textLength) & 1) != 0) {
+                rightBuilder.Append('=');
+            }
+
+            profileTextPaddingLeft = leftBuilder.ToString();
+            profileTextPaddingRight = rightBuilder.ToString();
+
         }
     }
 }
