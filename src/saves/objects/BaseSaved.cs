@@ -2,7 +2,7 @@ using PeterO.Cbor;
 
 namespace FastReset.Saves {
     public abstract class BaseSaved : Loggable {
-        public string id = null;
+        public byte[] id = null;
 
         /**
          * <summary>
@@ -24,8 +24,12 @@ namespace FastReset.Saves {
             LogError("Deserializing not implemented");
         }
 
-        public BaseSaved(string id) {
+        protected BaseSaved() {}
+
+        public BaseSaved(byte[] id) {
             this.id = id;
         }
+
+        public BaseSaved(CBORObject cbor) {}
     }
 }

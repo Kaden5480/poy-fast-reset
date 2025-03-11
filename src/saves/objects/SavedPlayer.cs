@@ -4,9 +4,9 @@ using UnityEngine;
 namespace FastReset.Saves {
     public class SavedPlayer {
         // The saved state
-        public Vector3 position;
-        public Quaternion rotationX;
-        public float rotationY;
+        public Vector3 position = Vector3.zero;
+        public Quaternion rotationX = Quaternion.identity;
+        public float rotationY = 0f;
 
         public CBORObject ToCBOR () {
             return CBORObject.NewMap()
@@ -15,7 +15,9 @@ namespace FastReset.Saves {
                 .Add("rotY", rotationY);
         }
 
-        public void FromCBOR(CBORObject cbor) {
+        public SavedPlayer() {}
+
+        public SavedPlayer(CBORObject cbor) {
             position = SaveManager.BytesToVec3(cbor["pos"].EncodeToBytes());
             rotationX = SaveManager.BytesToQuat(cbor["rotX"].EncodeToBytes());
             rotationY = cbor["rotY"].AsSingle();

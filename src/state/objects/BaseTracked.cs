@@ -12,7 +12,7 @@ namespace FastReset.State {
         // The ID of this object, a SHA1 digest based upon
         // the object's full path in the object hierarchy
         // and it's position upon loading the scene
-        protected string id { get; }
+        protected byte[] id { get; }
 
         /**
          * <summary>
@@ -75,17 +75,11 @@ namespace FastReset.State {
          * Used as the ID of the tracked object.
          * </summary>
          * <param name="id">The ID to compute the SHA1 digest of</param>
-         * <returns>The string of the SHA1 digest</returns>
+         * <returns>The SHA1 digest</returns>
          */
-        public string SHA1(string id) {
+        public byte[] SHA1(string id) {
             SHA1Managed sha1 = new SHA1Managed();
-            StringBuilder hash = new StringBuilder();
-
-            foreach (byte b in sha1.ComputeHash(Encoding.UTF8.GetBytes(id))) {
-                hash.Append(b.ToString("x2"));
-            }
-
-            return hash.ToString();
+            return sha1.ComputeHash(Encoding.UTF8.GetBytes(id));
         }
 
         /**

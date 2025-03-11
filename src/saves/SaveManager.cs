@@ -34,7 +34,7 @@ namespace FastReset.Saves {
         //private Dictionary<string, SavedAnimation> animations;
         //private Dictionary<string, SavedBrittleIce> brittleIces;
         //private Dictionary<string, SavedCrumblingHold> crumblingHolds;
-        private Dictionary<string, SavedJoint> joints = new Dictionary<string, SavedJoint>();
+        private Dictionary<byte[], SavedJoint> joints = new Dictionary<byte[], SavedJoint>();
 
         // What states exist for this scene
         public static bool hasPlayerState = false;
@@ -75,7 +75,7 @@ namespace FastReset.Saves {
          * <param name="id">The ID of the object to find</param>
          * <returns>The object if found, null otherwise</returns>
          */
-        public static SavedJoint GetJoint(string id) {
+        public static SavedJoint GetJoint(byte[] id) {
             instance.LogDebug($"Getting saved joint");
 
             if (instance.joints.ContainsKey(id) == true) {
@@ -229,27 +229,6 @@ namespace FastReset.Saves {
 
         /**
          * <summary>
-         * Loads objects of a specific type from the data store.
-         * </summary>
-         * <param name="section">The section of the data store to place the objects</param>
-         * <param name="map">The map to load into this section</param>
-         */
-        private void LoadObjects(
-            Dictionary<string, SavedJoint> section,
-            CBORObject map
-        ) {
-            foreach (KeyValuePair<CBORObject, CBORObject> entry in map.Entries) {
-                string id = entry.Key.AsString();
-
-                SavedJoint obj = new SavedJoint(id);
-                obj.FromCBOR(entry.Value);
-
-                section.Add(id, obj);
-            }
-        }
-
-        /**
-         * <summary>
          * Loads objects from the data store.
          *
          * This must be called whenever the scene/profile changes.
@@ -290,12 +269,14 @@ namespace FastReset.Saves {
 
             // Load each type
             if (root.ContainsKey("player") == true) {
-                player = new SavedPlayer();
-                player.FromCBOR(root["player"]);
+                player = new SavedPlayer(root["player"]);
                 hasPlayerState = true;
             }
             if (root.ContainsKey("joints") == true) {
-                LoadObjects(joints, root["joints"]);
+                foreach (KeyValuePair<CBORObject, CBORObject> entry in root["joints"].Entries) {
+                    SavedJoint joint = new SavedJoint(entry.Value);
+                    joints.Add(joint.id, joint);
+                }
                 hasSceneState = true;
             }
         }
