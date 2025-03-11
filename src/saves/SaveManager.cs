@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 
 using PeterO.Cbor;
@@ -166,15 +167,14 @@ namespace FastReset.Saves {
          */
         public static byte[] QuatToBytes(Quaternion quat) {
             using (MemoryStream stream = new MemoryStream()) {
-                using (BinaryWriter writer = new BinaryWriter(stream)) {
+            using (BinaryWriter writer = new BinaryWriter(stream)) {
                     writer.Write(quat.x);
                     writer.Write(quat.y);
                     writer.Write(quat.z);
                     writer.Write(quat.w);
 
                     return stream.ToArray();
-                }
-            }
+            }}
         }
 
         /**
@@ -188,13 +188,12 @@ namespace FastReset.Saves {
             float x, y, z, w;
 
             using (MemoryStream stream = new MemoryStream(bytes)) {
-                using (BinaryReader reader = new BinaryReader(stream)) {
-                    x = reader.ReadSingle();
-                    y = reader.ReadSingle();
-                    z = reader.ReadSingle();
-                    w = reader.ReadSingle();
-                }
-            }
+            using (BinaryReader reader = new BinaryReader(stream)) {
+                x = reader.ReadSingle();
+                y = reader.ReadSingle();
+                z = reader.ReadSingle();
+                w = reader.ReadSingle();
+            }}
 
             return new Quaternion(x, y, z, w);
         }
@@ -208,14 +207,13 @@ namespace FastReset.Saves {
          */
         public static byte[] Vec3ToBytes(Vector3 vec) {
             using (MemoryStream stream = new MemoryStream()) {
-                using (BinaryWriter writer = new BinaryWriter(stream)) {
-                    writer.Write(vec.x);
-                    writer.Write(vec.y);
-                    writer.Write(vec.z);
+            using (BinaryWriter writer = new BinaryWriter(stream)) {
+                writer.Write(vec.x);
+                writer.Write(vec.y);
+                writer.Write(vec.z);
 
-                    return stream.ToArray();
-                }
-            }
+                return stream.ToArray();
+            }}
         }
 
         /**
@@ -229,13 +227,12 @@ namespace FastReset.Saves {
             float x, y, z;
 
             using (MemoryStream stream = new MemoryStream(bytes)) {
-                using (BinaryReader reader = new BinaryReader(stream)) {
-                    x = reader.ReadSingle();
-                    y = reader.ReadSingle();
-                    z = reader.ReadSingle();
+            using (BinaryReader reader = new BinaryReader(stream)) {
+                x = reader.ReadSingle();
+                y = reader.ReadSingle();
+                z = reader.ReadSingle();
 
-                }
-            }
+            }}
 
             return new Vector3(x, y, z);
         }
@@ -346,9 +343,10 @@ namespace FastReset.Saves {
 
             LogDebug($"Saving: {root.ToJSONString()}");
 
-            using (FileStream stream = new FileStream(stateFilePath, FileMode.Create)) {
-                root.WriteTo(stream);
-            }
+            File.WriteAllBytes(
+                stateFilePath,
+                Compress(root.EncodeToBytes())
+            );
         }
 
         /**
@@ -396,7 +394,7 @@ namespace FastReset.Saves {
 
             // Try loading the data
             CBORObject root = CBORObject.DecodeFromBytes(
-                File.ReadAllBytes(stateFilePath)
+                Decompress(File.ReadAllBytes(stateFilePath))
             );
 
             // Load each type
@@ -423,6 +421,43 @@ namespace FastReset.Saves {
             instance.LogDebug("Reloading data");
             instance.Save();
             instance.Load();
+        }
+
+#endregion
+
+#region Compression
+
+        /**
+         * <summary>
+         * Compresses bytes using gzip.
+         * </summary>
+         * <param name="bytes">The bytes to compress</param>
+         * <returns>The compressed bytes</returns>
+         */
+        private byte[] Compress(byte[] bytes) {
+            using (MemoryStream stream = new MemoryStream()) {
+            using (GZipStream gzip = new GZipStream(stream, CompressionMode.Compress)) {
+                gzip.Write(bytes, 0, bytes.Length);
+                gzip.Close();
+
+                return stream.ToArray();
+            }}
+        }
+
+        /**
+         * <summary>
+         * Decompresses bytes using gzip.
+         * </summary>
+         * <param name="bytes">the bytes to decompress</param>
+         * <returns>the decompressed bytes</returns>
+         */
+        private byte[] Decompress(byte[] bytes) {
+            using (MemoryStream compressed = new MemoryStream(bytes)) {
+            using (GZipStream gzip = new GZipStream(compressed, CompressionMode.Decompress)) {
+            using (MemoryStream decompressed = new MemoryStream()) {
+                gzip.CopyTo(decompressed);
+                return decompressed.ToArray();
+            }}}
         }
 
 #endregion
