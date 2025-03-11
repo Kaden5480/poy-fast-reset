@@ -59,7 +59,11 @@ namespace FastReset.State {
          * </summary>
          * <param name="state">The type of state to save for</param>
          */
-        private void Save(BaseState state) {
+        private void Save(BaseState state, bool canModify) {
+            if (canModify == false) {
+                return;
+            }
+
             if (cache.routingFlag.currentlyUsingFlag == true) {
                 state.SaveTempState();
                 return;
@@ -75,20 +79,13 @@ namespace FastReset.State {
          * </summary>
          */
         public void SaveState() {
-            // Temporary
-            if (cache.routingFlag.currentlyUsingFlag == true) {
-                player.SaveTempState();
-                scene.SaveTempState();
-                LogDebug("Saved temporary state");
-                return;
+            Save(player, config.modifyPlayerState.Value);
+            Save(scene, config.modifySceneState.Value);
+
+            // Only save if not in routing flag mode
+            if (cache.routingFlag.currentlyUsingFlag == false) {
+                saveManager.Save();
             }
-
-            // Saved
-            player.SaveState();
-            scene.SaveState();
-            LogDebug("Saved state to data store");
-
-            saveManager.Save();
         }
 
 #endregion

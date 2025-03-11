@@ -106,7 +106,7 @@ namespace FastReset.State {
             // Compute the SHA1 digest
             id = SHA1(tempId);
 
-            LogDebug($"Tracking object {tempId} as {id}");
+            LogDebug($"Tracking object {tempId} as {System.BitConverter.ToString(id)}");
 
             // Make sure to save this object's initial state
             SaveInitialState();

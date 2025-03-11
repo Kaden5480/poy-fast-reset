@@ -212,18 +212,21 @@ namespace FastReset.UI {
             GUILayout.BeginVertical(GUILayout.Width(156));
             GUILayout.Space(4);
             GUILayout.Label("When saving:");
-            state.editPlayerState = GUILayout.Toggle(
-                state.editPlayerState, "Save player state"
+            config.modifyPlayerState.Value = GUILayout.Toggle(
+                config.modifyPlayerState.Value, "Save player state"
             );
-            state.editSceneState = GUILayout.Toggle(
-                state.editSceneState, "Save scene state"
+            config.modifySceneState.Value = GUILayout.Toggle(
+                config.modifySceneState.Value, "Save scene state"
             );
 
             GUILayout.Space(5);
 
             GUILayout.Label("When restoring:");
-            state.useInitialState = GUILayout.Toggle(
-                state.useInitialState, "Use initial state"
+            config.useInitialPlayerState.Value = GUILayout.Toggle(
+                config.useInitialPlayerState.Value, "Use initial player state"
+            );
+            config.useInitialSceneState.Value = GUILayout.Toggle(
+                config.useInitialSceneState.Value, "Use initial scene state"
             );
 
             GUILayout.EndVertical();

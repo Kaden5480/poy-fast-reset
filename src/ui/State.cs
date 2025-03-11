@@ -29,10 +29,6 @@ namespace FastReset.UI {
         // UI states
         public Vector2 scrollPosition = Vector2.zero;
 
-        public bool editPlayerState = true;
-        public bool editSceneState = true;
-        public bool useInitialState = false;
-
         public string newProfile = "";
         public Pane pane = Pane.Main;
 

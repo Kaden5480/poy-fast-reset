@@ -80,7 +80,7 @@ namespace FastReset.Saves {
          * <returns>The object if found, null otherwise</returns>
          */
         public static SavedJoint GetJoint(byte[] id) {
-            instance.LogDebug($"Getting saved joint");
+            instance.LogDebug($"Getting saved joint: {System.BitConverter.ToString(id)}");
 
             if (instance.joints.ContainsKey(id) == true) {
                 return instance.joints[id];
@@ -297,8 +297,9 @@ namespace FastReset.Saves {
                 hasPlayerState = true;
             }
             if (root.ContainsKey("joints") == true) {
-                foreach (KeyValuePair<CBORObject, CBORObject> entry in root["joints"].Entries) {
-                    SavedJoint joint = new SavedJoint(entry.Value);
+                CBORObject jointArray = root["joints"];
+                for (int i = 0; i < jointArray.Count; i++) {
+                    SavedJoint joint = new SavedJoint(jointArray[i]);
                     joints.Add(joint.id, joint);
                 }
                 hasSceneState = true;

@@ -20,12 +20,9 @@ namespace FastReset.Saves {
         public SavedPlayer() {}
 
         public SavedPlayer(CBORObject cbor) {
-            LogDebug($"Loading player from: {cbor.ToJSONString()}");
-
             position = SaveManager.BytesToVec3(cbor["pos"].GetByteString());
             rotationX = SaveManager.BytesToQuat(cbor["rotX"].GetByteString());
             rotationY = cbor["rotY"].AsSingle();
-
             LogDebug($"Loaded player: {position} | {rotationX} | {rotationY}");
         }
     }

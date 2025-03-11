@@ -17,6 +17,7 @@ namespace FastReset.Saves {
         public SavedJoint(CBORObject cbor) {
             id = cbor["id"].GetByteString();
             rotation = SaveManager.BytesToQuat(cbor["rot"].GetByteString());
+            LogDebug($"Loaded joint: {System.BitConverter.ToString(id)} | {rotation}");
         }
     }
 }
