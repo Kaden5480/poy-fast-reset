@@ -151,7 +151,7 @@ There are some catches when using Fast Reset that try to limit
 over-exploiting.
 
 These are:
-- You can only saved while standing at the base
+- You can only save while standing at the base
   of a peak. In routing flag mode, you can save anywhere you can stand.
 - Saving/restoring is disabled in yfyd/fs mode.
 - Saving/restoring is disabled while resting on a wall with crampons,
