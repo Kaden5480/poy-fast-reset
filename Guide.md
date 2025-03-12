@@ -133,7 +133,7 @@ Do read [Catches](#catches) as there are exceptions for restoring state.
 Profiles contain their own saved states. By default, the "Default" profile
 is used.
 
-To give an idea what a "Profile" means in Fast Reset, here is an example
+To give an idea what a "profile" means in Fast Reset, here is an example
 of saved data for some custom profiles:
 ```
 Pocketwatch%/
