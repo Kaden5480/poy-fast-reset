@@ -162,6 +162,7 @@ namespace FastReset.State {
 
             if (player == null) {
                 LogDebug("No saved player state to restore");
+                return;
             }
 
             MoveTo(player.position, player.rotationX, player.rotationY);
