@@ -4,6 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 
 using Cfg = FastReset.Config.Cfg;
+using WindUI = FastReset.UI.WindUI;
 
 namespace FastReset.Patches {
     /**
@@ -56,6 +57,9 @@ namespace FastReset.Patches {
                 return;
             }
 
+            // Create the UI
+            WindUI.Create();
+
             if (instance != null) {
                 LogDebug("Wind resetter already exists in current scene");
                 return;
@@ -73,6 +77,9 @@ namespace FastReset.Patches {
          * </summary>
          */
         public static void Destroy() {
+            // Destroy the UI
+            WindUI.Destroy();
+
             if (instance == null) {
                 LogDebug("Wind resetter already destroyed");
                 return;
@@ -91,6 +98,9 @@ namespace FastReset.Patches {
             LogDebug("Stopping wind cycle");
             peakWind.StopAllWindEvents();
 
+            // Show wind is disabled in the UI
+            WindUI.ShowEnabled(false);
+
             peakWind.harshWindSound.volume = 0f;
             peakWind.playerWindForce.force = Vector3.zero;
             float waitTime = peakWind.waitBeforeHarshWindMax;
@@ -101,6 +111,9 @@ namespace FastReset.Patches {
             LogDebug("Restarting wind cycle");
             AccessTools.Method(typeof(PeakWind), "StartWindMethod")
                 .Invoke(peakWind, new object[] {});
+
+            // Show wind is enabled in the UI
+            WindUI.ShowEnabled(true);
         }
 
         /**
