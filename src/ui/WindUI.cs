@@ -14,7 +14,7 @@ namespace FastReset.UI {
 
         // UI accessible anywhere
         public static GameObject ui {
-            get => instance.uiObj;
+            get => (instance == null) ? null : instance.uiObj;
         }
 
         // The root object holding the UI
