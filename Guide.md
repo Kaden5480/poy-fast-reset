@@ -28,9 +28,9 @@ If you want to learn more of the advanced features, refer to [Advanced Usage](#a
 # Audio Cues
 Fast Reset has 3 audio cues currently.
 
-A successful save will result in a "ping" sound.
-A successful restore will result in a "click" sound.
-Any failure will result in a "shake" sound.
+- A successful save will result in a "ping" sound.
+- A successful restore will result in a "click" sound.
+- Any failure will result in a "shake" sound.
 
 A failure sound could mean that there is no state to restore from,
 you have selected invalid options in the UI, you caught one of the [exceptions](#catches)
