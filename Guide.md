@@ -23,7 +23,7 @@ can learn more about this in [State Management](#state-management).
 Restoring a state will restore the state you saved with `F4`.
 
 This is all you should really need to know to take advantage of this mod.
-But if you want to learn more of the advanced features, continue reading the next section.
+If you want to learn more of the advanced features, refer to [Advanced Usage](#advanced-usage).
 
 # Audio Cues
 Fast Reset has 3 audio cues currently.
@@ -39,7 +39,7 @@ or (hopefully in rare cases) some kind of unexpected error occurred.
 # Advanced Usage
 
 ## The UI
-Fast Reset's UI can be accessed by default by pressing `Shift+F8`.
+Fast Reset's UI can be accessed by default by pressing `Left Shift`+`F8`.
 
 You can also close the UI with the same keybind, or by pressing the "Close" button.
 
@@ -68,8 +68,8 @@ saving the player and scene states separately.
 When using the "restore" keybind, you have the option
 of restoring the player and scene states separately.
 
-- `Restore player state` Only the player state will be restored.
-- `Restore scene state` Only the scene state will be restored.
+- `Restore player state` Whether the player state will be restored.
+- `Restore scene state` Whether the scene state will be restored.
 - `Use initial player state` The initial state of the player
   will be restored instead of your normal/temporary state.
 - `Use initial scene state` The initial state of the scene
@@ -130,6 +130,30 @@ For example:
 Do read [Catches](#catches) as there are exceptions for restoring state.
 
 ## Profiles
+Profiles contain their own saved states. By default, the "Default" profile
+is used.
+
+To give an idea what a "Profile" means in Fast Reset, here is an example
+of saved data for some custom profiles:
+```
+Pocketwatch%/
+├── Peak_19_OldLangr.dat
+├── Peak_6_OldGroveSkelf.dat
+└── Peak_3_OldMill.dat
+
+Pocketwatch% Pipe Only/
+├── Peak_LighthouseNew.dat
+└── Tind_1_WalkersPillar.dat
+```
+As you can see, each profile has its own saved states for each scene.
+Such as Pocketwatch% having saved states for Old Langr and Old Grove's Skelf,
+while Pocketwatch% Pipe Only has saved data for The Lighthouse.
+
+Whichever profile you have selected, Fast Reset will save/restore from
+the saved states available under the profile.
+
+Whenever you switch profiles, Fast Reset will use the selected profile's data instead.
+
 By selecting "Manage Profiles" at the bottom of the UI you will
 enter a different view where you can add/select/delete your profiles.
 
