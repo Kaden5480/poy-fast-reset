@@ -246,24 +246,23 @@ namespace FastReset.Saves {
 
         /**
          * <summary>
-         * Adds a section of the data store to a CBORObject
+         * Writes a section of the data store to a CBORObject
          * if it has any data.
          * </summary>
-         * <param name="root">The object to add to</param>
+         * <param name="root">The CBORObject to add to</param>
          * <param name="key">The key to store the data with</param>
-         * <param name="section">The section to add</param>
+         * <param name="section">The section to write</param>
          */
-        public void AddSection<T>(
+        public void WriteSection<T>(
             CBORObject root,
             string key,
             Dictionary<string, T> section
-        ) where T : BaseSaved{
+        ) where T : BaseSaved {
             if (section.Count < 1) {
                 return;
             }
 
             CBORObject array = CBORObject.NewArray();
-
             foreach (T item in section.Values) {
                 array.Add(item.ToCBOR());
             }
@@ -273,38 +272,43 @@ namespace FastReset.Saves {
 
         /**
          * <summary>
-         * Gets a section from a CBORObject
-         * and stores it in the appropriate section
-         * of the data store.
+         * Reads a section from a CBORObject and stores
+         * it in the appropriate section of the data store.
          * </summary>
-         * <param name="root">The object to get a section from</param>
-         * <param name="key">The name of the section</param>
+         * <param name="root">The CBORObject to read a section from</param>
+         * <param name="key">The name of the section to read</param>
          */
-        public void GetSection<T>(
+        public void ReadSection<T>(
             CBORObject root,
             string key
         ) where T : BaseSaved, new() {
             if (root.ContainsKey(key) == false) {
+                LogDebug($"Skipped reading section: {key}, no data found");
                 return;
             }
+
+            LogDebug($"Reading section: {key}");
 
             CBORObject array = root[key];
 
             for (int i = 0; i < array.Count; i++) {
+                CBORObject item = array[i];
+
                 if (typeof(T) == typeof(SavedAnimation)) {
-                    Add(new SavedAnimation(array[i]));
+                    Add(new SavedAnimation(item);
                 }
                 else if (typeof(T) == typeof(SavedBrittleIce)) {
-                    Add(new SavedBrittleIce(array[i]));
+                    Add(new SavedBrittleIce(item);
                 }
                 else if (typeof(T) == typeof(SavedCrumblingHold)) {
-                    Add(new SavedCrumblingHold(array[i]));
+                    Add(new SavedCrumblingHold(item);
                 }
                 else if (typeof(T) == typeof(SavedJoint)) {
-                    Add(new SavedJoint(array[i]));
+                    Add(new SavedJoint(item);
                 }
                 else {
                     LogError($"Unsupported type: {typeof(T)}");
+                    throw new Exception();
                 }
             }
         }
@@ -328,11 +332,11 @@ namespace FastReset.Saves {
             // Construct a CBOR object holding everything
             CBORObject root = CBORObject.NewMap();
 
-            // Add sections
-            AddSection<SavedAnimation>(root, "animations", animations);
-            AddSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
-            AddSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
-            AddSection<SavedJoint>(root, "joints", joints);
+            // Write sections to root CBOR object
+            WriteSection<SavedAnimation>(root, "animations", animations);
+            WriteSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
+            WriteSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
+            WriteSection<SavedJoint>(root, "joints", joints);
 
             // Add the player if there is a state
             if (player != null) {
@@ -405,10 +409,10 @@ namespace FastReset.Saves {
                 hasPlayerState = true;
             }
 
-            GetSection<SavedAnimation>(root, "animations");
-            GetSection<SavedBrittleIce>(root, "brittleIces");
-            GetSection<SavedCrumblingHold>(root, "crumblingHolds");
-            GetSection<SavedJoint>(root, "joints");
+            ReadSection<SavedAnimation>(root, "animations");
+            ReadSection<SavedBrittleIce>(root, "brittleIces");
+            ReadSection<SavedCrumblingHold>(root, "crumblingHolds");
+            ReadSection<SavedJoint>(root, "joints");
 
             LogDebug($"Loaded data: {root.ToJSONString()}");
         }
