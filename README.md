@@ -17,7 +17,7 @@ Please see [the guide](Guide.md) for more information.
     - [Dotnet](#dotnet-build)
     - [Visual Studio](#visual-studio-build)
     - [Custom game locations](#custom-game-locations)
-- [Credits]
+- [Credits](#credits)
 
 # Installing
 ## BepInEx
