@@ -20,7 +20,7 @@ This tracks information such as the rotation of the mill on Old Mill and the rot
 like Tutor's Tower and Seaside Tribune. There are more types of "things" which Fast Reset tracks, and you
 can learn more about this in [State Management](#state-management).
 
-Restoring a state will restore the state you saved with `F4`.
+Restoring a state will restore the state you saved with `F8`.
 
 This is all you should really need to know to take advantage of this mod.
 If you want to learn more of the advanced features, refer to [Advanced Usage](#advanced-usage).
