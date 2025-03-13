@@ -22,10 +22,7 @@ can learn more about this in [State Management](#state-management).
 
 Restoring a state will restore the state you saved with `F8`.
 
-This is all you should really need to know to take advantage of this mod.
-If you want to learn more of the advanced features, refer to [Advanced Usage](#advanced-usage).
-
-# Audio Cues
+## Audio Cues
 Fast Reset has 3 audio cues currently.
 
 - A successful save will result in a "ping" sound.
@@ -35,6 +32,10 @@ Fast Reset has 3 audio cues currently.
 A failure sound could mean that there is no state to restore from,
 you have selected invalid options in the UI, you caught one of the [exceptions](#catches)
 or (hopefully in rare cases) some kind of unexpected error occurred.
+
+<br>
+This is all you should really need to know to take advantage of this mod.
+If you want to learn more of the advanced features, continue to the next section.
 
 # Advanced Usage
 
