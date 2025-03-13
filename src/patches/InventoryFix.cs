@@ -9,17 +9,34 @@ namespace FastReset.Patches {
      */
     [HarmonyPatch(typeof(Inventory), "Update")]
     static class InventoryFix {
+        private class MenuState {
+            public bool didOverwrite { get; }
+            public bool restoreState { get; }
+
+            public MenuState(bool didOverwrite, bool restoreState) {
+                this.didOverwrite = didOverwrite;
+                this.restoreState = restoreState;
+            }
+        }
+
         private static UI.Window ui {
             get => Plugin.instance.ui;
         }
 
-        static void Prefix(Inventory __instance, ref bool __state) {
-            __state = InGameMenu.isCurrentlyNavigationMenu;
-            InGameMenu.isCurrentlyNavigationMenu = ui.showingUI;
+        static void Prefix(Inventory __instance, ref MenuState __state) {
+            if (ui.showingUI == true) {
+                __state = new MenuState(true, InGameMenu.isCurrentlyNavigationMenu);
+                InGameMenu.isCurrentlyNavigationMenu = true;
+            }
+            else {
+                __state = new MenuState(false, InGameMenu.isCurrentlyNavigationMenu);
+            }
         }
 
-        static void Postfix(bool __state) {
-            InGameMenu.isCurrentlyNavigationMenu = __state;
+        static void Postfix(MenuState __state) {
+            if (__state.didOverwrite == true) {
+                InGameMenu.isCurrentlyNavigationMenu = __state.restoreState;
+            }
         }
     }
 }
