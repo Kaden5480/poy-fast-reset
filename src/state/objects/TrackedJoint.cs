@@ -90,13 +90,9 @@ namespace FastReset.State {
          * </summary>
          */
         public override void SaveState() {
-            SavedJoint savedJoint = SaveManager.GetJoint(id);
-
             // Add a new joint to the data store
-            if (savedJoint == null) {
-                savedJoint = new SavedJoint(byteId);
-                SaveManager.Add(savedJoint);
-            }
+            SavedJoint savedJoint = new SavedJoint(byteId);
+            SaveManager.Add(savedJoint);
 
             // Update the rotation
             savedJoint.rotation = obj.transform.rotation;

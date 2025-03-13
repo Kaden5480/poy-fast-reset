@@ -147,6 +147,9 @@ namespace FastReset.State {
          * </summary>
          */
         public void SaveState() {
+            // Wipe scene data first
+            SaveManager.WipeScene();
+
             foreach (BaseTracked obj in objs) {
                 obj.SaveState();
             }

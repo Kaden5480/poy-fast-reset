@@ -175,13 +175,9 @@ namespace FastReset.State {
          * </summary>
          */
         public override void SaveState() {
-            SavedBrittleIce savedBrittleIce = SaveManager.GetBrittleIce(id);
-
             // Add a new brittle ice to the data store
-            if (savedBrittleIce == null) {
-                savedBrittleIce = new SavedBrittleIce(byteId);
-                SaveManager.Add(savedBrittleIce);
-            }
+            SavedBrittleIce savedBrittleIce = new SavedBrittleIce(byteId);
+            SaveManager.Add(savedBrittleIce);
 
             // Update the saved state
             Save(

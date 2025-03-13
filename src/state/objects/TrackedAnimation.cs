@@ -107,13 +107,9 @@ namespace FastReset.State {
          * </summary>
          */
         public override void SaveState() {
-            SavedAnimation savedAnimation = SaveManager.GetAnimation(id);
-
             // Add a new animation to the data store
-            if (savedAnimation == null) {
-                savedAnimation = new SavedAnimation(byteId);
-                SaveManager.Add(savedAnimation);
-            }
+            SavedAnimation savedAnimation = new SavedAnimation(byteId);
+            SaveManager.Add(savedAnimation);
 
             // Update the saved state
             Save(savedAnimation.times);

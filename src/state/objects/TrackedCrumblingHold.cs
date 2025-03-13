@@ -116,13 +116,9 @@ namespace FastReset.State {
          * </summary>
          */
         public override void SaveState() {
-            SavedCrumblingHold savedHold = SaveManager.GetCrumblingHold(id);
-
             // Add a new crumbling hold to the data store
-            if (savedHold == null) {
-                savedHold = new SavedCrumblingHold(byteId);
-                SaveManager.Add(savedHold);
-            }
+            SavedCrumblingHold savedHold = new SavedCrumblingHold(byteId);
+            SaveManager.Add(savedHold);
 
             // Update the saved state
             Save(ref savedHold.enabled, ref savedHold.scale);

@@ -273,15 +273,22 @@ namespace FastReset.Saves {
         /**
          * <summary>
          * Reads a section from a CBORObject and stores
-         * it in the appropriate section of the data store.
+         * it in the provided section of the data store.
+         *
+         * IMPORTANT: This also clears the provided section
+         * before reading any data, even if there is no data to read.
          * </summary>
          * <param name="root">The CBORObject to read a section from</param>
          * <param name="key">The name of the section to read</param>
+         * <param name="section">The section to store into</param>
          */
         public void ReadSection<T>(
             CBORObject root,
-            string key
+            string key,
+            Dictionary<string, T> section
         ) where T : BaseSaved, new() {
+            section.Clear();
+
             if (root.ContainsKey(key) == false) {
                 LogDebug($"Skipped reading section: {key}, no data found");
                 return;
@@ -289,27 +296,16 @@ namespace FastReset.Saves {
 
             LogDebug($"Reading section: {key}");
 
+            // Indicate a scene state exists
+            hasSceneState = true;
+
             CBORObject array = root[key];
 
             for (int i = 0; i < array.Count; i++) {
-                CBORObject item = array[i];
-
-                if (typeof(T) == typeof(SavedAnimation)) {
-                    Add(new SavedAnimation(item);
-                }
-                else if (typeof(T) == typeof(SavedBrittleIce)) {
-                    Add(new SavedBrittleIce(item);
-                }
-                else if (typeof(T) == typeof(SavedCrumblingHold)) {
-                    Add(new SavedCrumblingHold(item);
-                }
-                else if (typeof(T) == typeof(SavedJoint)) {
-                    Add(new SavedJoint(item);
-                }
-                else {
-                    LogError($"Unsupported type: {typeof(T)}");
-                    throw new Exception();
-                }
+                T item = new T();
+                item.FromCBOR(array[i]);
+                section.Add(item.id, item);
+                LogDebug($"Read object: {item.GetType()}({item.id})");
             }
         }
 
@@ -375,10 +371,6 @@ namespace FastReset.Saves {
 
             // Wiping these states is VERY important
             player = null;
-            animations.Clear();
-            brittleIces.Clear();
-            crumblingHolds.Clear();
-            joints.Clear();
 
             // Load data
             string profile = Plugin.instance.config.profile.Value;
@@ -409,10 +401,10 @@ namespace FastReset.Saves {
                 hasPlayerState = true;
             }
 
-            ReadSection<SavedAnimation>(root, "animations");
-            ReadSection<SavedBrittleIce>(root, "brittleIces");
-            ReadSection<SavedCrumblingHold>(root, "crumblingHolds");
-            ReadSection<SavedJoint>(root, "joints");
+            ReadSection<SavedAnimation>(root, "animations", animations);
+            ReadSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
+            ReadSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
+            ReadSection<SavedJoint>(root, "joints", joints);
 
             LogDebug($"Loaded data: {root.ToJSONString()}");
         }
@@ -477,6 +469,41 @@ namespace FastReset.Saves {
 
             return bytes;
         }
+
+#endregion
+
+#region Wiping Data
+
+    /**
+     * <summary>
+     * Wipes all scene data.
+     *
+     * IMPORTANT: This doesn't save anything, it just
+     * clears the data store.
+     * </summary>
+     */
+    public static void WipePlayer() {
+        instance.player = null;
+
+        instance.LogDebug("Wiped player data");
+    }
+
+    /**
+     * <summary>
+     * Wipes all player data.
+     *
+     * IMPORTANT: This doesn't save anything, it just
+     * clears the data store.
+     * </summary>
+     */
+    public static void WipeScene() {
+        instance.animations.Clear();
+        instance.brittleIces.Clear();
+        instance.crumblingHolds.Clear();
+        instance.joints.Clear();
+
+        instance.LogDebug("Wiped scene data");
+    }
 
 #endregion
 
