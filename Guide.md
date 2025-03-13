@@ -1,7 +1,6 @@
 # Fast Reset Guide
 # Contents
 - [Basic Usage](#basic-usage)
-- [Audio Cues](#audio-cues)
 - [Advanced Usage](#advanced-usage)
     - [The UI](#the-ui)
     - [State Management](#state-management)
