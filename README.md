@@ -17,6 +17,7 @@ Please see [the guide](Guide.md) for more information.
     - [Dotnet](#dotnet-build)
     - [Visual Studio](#visual-studio-build)
     - [Custom game locations](#custom-game-locations)
+- [Credits]
 
 # Installing
 ## BepInEx
@@ -64,3 +65,8 @@ Below gives an example where Peaks of Yore is installed on the F drive:
   </PropertyGroup>
 </Project>
 ```
+
+# Credits
+- [Elvonia](https://github.com/Elvonia) for help with figuring out camera rotations and submitting a PR
+- [Xearo](https://www.youtube.com/@xearo1331) for help with designing the UI and testing development builds
+- [Revan] for testing development builds
