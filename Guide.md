@@ -76,6 +76,8 @@ of restoring the player and scene states separately.
   will be restored instead of your normal/temporary state.
 - `Reset wind` On wuthering crest, reset the wind to use
   the maximum possible delay before starting up again.
+- `Reapply coffee` Integrates with [Fast Coffee](https://github.com/Kaden5480/poy-fast-coffee) to reapply
+  coffee when restoring player state.
 
 Do read [Catches](#catches) as there are exceptions for restoring state.
 
