@@ -485,6 +485,9 @@ namespace FastReset.Saves {
     public static void WipePlayer() {
         instance.player = null;
 
+        // Indicate no player data
+        hasPlayerState = false;
+
         instance.LogDebug("Wiped player data");
     }
 
@@ -501,6 +504,9 @@ namespace FastReset.Saves {
         instance.brittleIces.Clear();
         instance.crumblingHolds.Clear();
         instance.joints.Clear();
+
+        // Indicate no scene data
+        hasPlayerState = false;
 
         instance.LogDebug("Wiped scene data");
     }
