@@ -35,7 +35,7 @@ namespace FastReset {
 
             // Ensure the cache contains everything required
             if (cache.IsComplete() == false) {
-                LogError("Cache is incomplete, unable to use resetter");
+                LogDebug("Cache is incomplete, unable to use resetter");
                 return false;
             }
 
