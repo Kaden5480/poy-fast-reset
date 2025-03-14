@@ -121,22 +121,14 @@ namespace FastReset {
                     Plugin.LogDebug($"Plugin: {config.toggleModifier.Value} is down");
                     ui.Toggle();
                 }
-                else if (resetter.SaveState() == true) {
-                    audio.PlaySave();
-                }
                 else {
-                    audio.PlayFailure();
+                    resetter.SaveState();
                 }
             }
 
             if (Input.GetKeyDown(config.resetKeybind.Value) == true) {
                 Plugin.LogDebug($"Plugin: {config.resetKeybind.Value} is down");
-                if (resetter.RestoreState() == true) {
-                    audio.PlayRestore();
-                }
-                else {
-                    audio.PlayFailure();
-                }
+                resetter.RestoreState();
             }
         }
 

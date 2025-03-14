@@ -12,8 +12,9 @@ namespace FastReset {
      * </summary>
      */
     public class Resetter : Loggable {
-        // Shorthand for accessing cache
+        // Shorthand for accessing cache and audio
         private Cache cache { get => Plugin.instance.cache; }
+        private Audio audio { get => Plugin.instance.audio; }
 
         // An object for managing the scene's state
         private StateManager stateManager { get; } = new StateManager();
@@ -112,11 +113,18 @@ namespace FastReset {
             if (CanUse() == false
                 || CanSave() == false
             ) {
+                audio.PlayFailure();
                 LogDebug("Unable to save currently");
                 return false;
             }
 
-            return stateManager.SaveState();
+            if (stateManager.SaveState() == true) {
+                audio.PlaySave();
+                return true;
+            }
+
+            audio.PlayFailure();
+            return false;
         }
 
         /**
@@ -132,18 +140,17 @@ namespace FastReset {
                 return false;
             }
 
-            bool restored = false;
-
-            // Reset the wind
-            if (WindResetter.Reset() == true) {
-                restored = true;
+            // Catch failures
+            if (stateManager.RestoreState() == false) {
+                audio.PlayFailure();
+                return false;
             }
 
-            if (stateManager.RestoreState() == true) {
-                restored = true;
-            }
+            // Try resetting the wind
+            WindResetter.Reset();
+            audio.PlayRestore();
 
-            return restored;
+            return true;
         }
 
 #endregion
