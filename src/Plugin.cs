@@ -81,6 +81,10 @@ namespace FastReset {
                 "State", "resetWind", false,
                 "Whether to reset the wind on wuthering crest"
             );
+            config.reapplyCoffee = Config.Bind(
+                "State", "reapplyCoffee", false,
+                "Whether to reapply coffee when restoring player state"
+            );
 
             // Apply early patches
             patcher.PatchEarly();

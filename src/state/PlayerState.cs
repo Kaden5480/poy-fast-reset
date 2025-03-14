@@ -1,14 +1,23 @@
+using System;
+using System.Reflection;
+
+using HarmonyLib;
 using UnityEngine;
 
+using Cfg = FastReset.Config.Cfg;
 using PositionFix = FastReset.Patches.PositionFix;
 using SaveManager = FastReset.Saves.SaveManager;
 using SavedPlayer = FastReset.Saves.SavedPlayer;
 
 namespace FastReset.State {
     public class PlayerState : Loggable, BaseState {
-        // Shorthand for accessing the cache
+        // Shorthand for accessing the cache and config
         private Cache cache {
             get => Plugin.instance.cache;
+        }
+
+        private Cfg config {
+            get => Plugin.instance.config;
         }
 
         // Initial and temporary states
@@ -33,6 +42,33 @@ namespace FastReset.State {
         private float rotationY {
             get => cache.playerCamY.rotationY;
             set => cache.playerCamY.rotationY = value;
+        }
+
+        /**
+         * <summary>
+         * Reapplies coffee using Fast Coffee.
+         * </summary>
+         */
+        private void ReapplyCoffee() {
+            if (config.reapplyCoffee.Value == false) {
+                LogDebug("Reapplying coffee disabled, skipping");
+                return;
+            }
+
+            Type fastCoffee = AccessTools.TypeByName("FastCoffee.Coffee");
+            if (fastCoffee == null) {
+                LogDebug("Unable to resolve FastCoffee.Coffee, skipping");
+                return;
+            }
+
+            MethodInfo reapply = AccessTools.Method(fastCoffee, "Reapply");
+            if (reapply == null) {
+                LogDebug("Unable to resolve FastCoffee.Coffee.Reapply, skipping");
+                return;
+            }
+
+            reapply.Invoke(null, new object[] {});
+            LogDebug("Invoked fast coffee's reapply");
         }
 
         /**
@@ -72,6 +108,9 @@ namespace FastReset.State {
                 cache.routingFlag.distanceActivatorST.ForceCheck();
                 LogDebug("Force checked ST distance activator");
             }
+
+            // Reapply coffee by integrating with Fast Coffee
+            ReapplyCoffee();
 
             // Log actual values
             LogDebug(

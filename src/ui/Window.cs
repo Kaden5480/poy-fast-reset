@@ -21,7 +21,7 @@ namespace FastReset.UI {
 
         private State state { get; } = new State();
 
-        private const float height = 300;
+        private const float height = 320;
         private const float width = 386;
         private const float padding = 20;
         private const float elementWidth = 100;
@@ -248,6 +248,9 @@ namespace FastReset.UI {
             config.resetWind.Value = GUILayout.Toggle(
                 config.resetWind.Value, "Reset wind"
             );
+            config.reapplyCoffee.Value = GUILayout.Toggle(
+                config.reapplyCoffee.Value, "Reapply coffee"
+            );
 
             GUILayout.EndVertical();
 
@@ -257,7 +260,7 @@ namespace FastReset.UI {
             GUILayout.Label($"{stateTextPadding} Player State {stateTextPadding}");
             GUILayout.Label($"Normal: {IsAvailable(StateManager.hasPlayerSaved)}");
             GUILayout.Label($"Routing flag mode: {IsAvailable(StateManager.hasPlayerTemp)}");
-            GUILayout.Space(30);
+            GUILayout.Space(height / 10);
             GUILayout.Label($"{stateTextPadding} Scene State {stateTextPadding}");
             GUILayout.Label($"Normal: {IsAvailable(StateManager.hasSceneSaved)}");
             GUILayout.Label($"Routing flag mode: {IsAvailable(StateManager.hasSceneTemp)}");
