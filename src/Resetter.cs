@@ -136,6 +136,7 @@ namespace FastReset {
          */
         public bool RestoreState() {
             if (CanUse() == false) {
+                audio.PlayFailure();
                 LogDebug("Unable to restore currently");
                 return false;
             }
