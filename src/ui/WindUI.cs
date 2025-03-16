@@ -120,7 +120,7 @@ namespace FastReset.UI {
          */
         public static void Create() {
             if (instance != null) {
-                Plugin.LogDebug("[WindUI] instance already created");
+                Plugin.LogDebug($"[{typeof(WindUI)}] Instance already created");
                 return;
             }
 
@@ -134,14 +134,14 @@ namespace FastReset.UI {
          */
         public static void Destroy() {
             if (instance == null) {
-                Plugin.LogDebug("[WindUI] UI already destroyed");
+                Plugin.LogDebug($"[{typeof(WindUI)}] UI already destroyed");
                 return;
             }
 
             GameObject.Destroy(instance.uiObj);
             instance = null;
 
-            Plugin.LogDebug("[WindUI] Destroyed UI");
+            Plugin.LogDebug($"[{typeof(WindUI)}] Destroyed UI");
         }
 
         /**
@@ -152,7 +152,7 @@ namespace FastReset.UI {
          */
         public static void ShowEnabled(bool enabled) {
             if (instance == null) {
-                Plugin.LogDebug("[WindUI] No instance to enable/disable");
+                Plugin.LogDebug($"[{typeof(WindUI)}] No instance to enable/disable");
                 return;
             }
 
@@ -178,7 +178,7 @@ namespace FastReset.UI {
          */
         public static void UpdatePosition() {
             if (instance == null) {
-                Plugin.LogDebug("[WindUI] No instance to update position for");
+                Plugin.LogDebug($"[{typeof(WindUI)}] No instance to update position for");
                 return;
             }
 

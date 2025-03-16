@@ -33,7 +33,7 @@ namespace FastReset.Patches {
          * <param name="message">The message to log</param>
          */
         private static void LogDebug(string message) {
-            Plugin.LogDebug($"[WindResetter] {message}");
+            Plugin.LogDebug($"[{typeof(WindResetter)}] {message}");
         }
 
         /**
