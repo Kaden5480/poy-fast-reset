@@ -21,7 +21,7 @@ namespace FastReset.UI {
 
         private State state { get; } = new State();
 
-        private const float height = 320;
+        private const float height = 370;
         private const float width = 386;
         private const float padding = 20;
         private const float elementWidth = 100;
@@ -248,8 +248,13 @@ namespace FastReset.UI {
             config.resetWind.Value = GUILayout.Toggle(
                 config.resetWind.Value, "Reset wind"
             );
+
+            GUILayout.Label("Fast coffee:");
             config.reapplyCoffee.Value = GUILayout.Toggle(
                 config.reapplyCoffee.Value, "Reapply coffee"
+            );
+            config.slurpSound.Value = GUILayout.Toggle(
+                config.slurpSound.Value, "Slurp sound"
             );
 
             GUILayout.EndVertical();

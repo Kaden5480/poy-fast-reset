@@ -82,8 +82,12 @@ namespace FastReset {
                 "Whether to reset the wind on wuthering crest"
             );
             config.reapplyCoffee = Config.Bind(
-                "State", "reapplyCoffee", false,
+                "Fast Coffee", "reapplyCoffee", false,
                 "Whether to reapply coffee when restoring player state"
+            );
+            config.slurpSound = Config.Bind(
+                "Fast Coffee", "slurpSound", true,
+                "Whether to make the slurp sound when reapplying coffee"
             );
 
             // Apply early patches

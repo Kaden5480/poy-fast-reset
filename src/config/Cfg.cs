@@ -37,7 +37,8 @@ namespace FastReset.Config {
         // Whether to reset the wind on wuthering crest
         public ConfigEntry<bool> resetWind;
 
-        // Whether to reapply coffee when restoring player state
+        // Fast coffee integration
         public ConfigEntry<bool> reapplyCoffee;
+        public ConfigEntry<bool> slurpSound;
     }
 }

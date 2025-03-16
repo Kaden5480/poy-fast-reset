@@ -67,7 +67,7 @@ namespace FastReset.State {
                 return;
             }
 
-            reapply.Invoke(null, new object[] {});
+            reapply.Invoke(null, new object[] { config.slurpSound.Value });
             LogDebug("Invoked fast coffee's reapply");
         }
 
