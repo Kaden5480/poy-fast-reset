@@ -122,7 +122,7 @@ namespace FastReset {
             if (Input.GetKeyDown(config.saveKeybind.Value) == true) {
                 Plugin.LogDebug($"[{typeof(Plugin)}] {config.saveKeybind.Value} is down");
                 if (Input.GetKey(config.toggleModifier.Value) == true) {
-                    Plugin.LogDebug($"[{typeof(Plugin})] {config.toggleModifier.Value} is down");
+                    Plugin.LogDebug($"[{typeof(Plugin)}] {config.toggleModifier.Value} is down");
                     ui.Toggle();
                 }
                 else {
