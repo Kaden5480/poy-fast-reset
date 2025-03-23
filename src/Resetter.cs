@@ -85,20 +85,20 @@ namespace FastReset {
          * <returns>True if it is, false otherwise</returns>
          */
         private bool CanSave() {
-            // Player must be grounded
-            if (cache.playerMove.IsGrounded() == false) {
-                return false;
+            // If in routing flag mode, can always save
+            if (cache.routingFlag.currentlyUsingFlag == true) {
+                return true;
             }
 
             // If not in routing flag mode, the player
-            // must also be at the base of a peak
-            if (cache.routingFlag.currentlyUsingFlag == false
-                && cache.timeAttack.isInColliderActivationRange == false
+            // must be grounded at the base of a peak
+            if (cache.playerMove.IsGrounded() == true
+                && cache.timeAttack.isInColliderActivationRange == true
             ) {
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
 #region Player Controlled Saves/Restores

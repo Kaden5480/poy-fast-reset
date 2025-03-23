@@ -26,6 +26,7 @@ namespace FastReset.State {
         private float initialRotationY = 0f;
 
         private bool hasTempState = false;
+        private bool tempGrounded = false;
         private Vector3 temporaryPosition = Vector3.zero;
         private Quaternion temporaryRotationX = Quaternion.identity;
         private float temporaryRotationY = 0f;
@@ -157,11 +158,18 @@ namespace FastReset.State {
             temporaryRotationX = rotationX;
             temporaryRotationY = rotationY;
             hasTempState = true;
+            tempGrounded = cache.playerMove.IsGrounded();
             LogDebug("Saved temporary state");
         }
 
         public void RestoreTempState() {
             MoveTo(temporaryPosition, temporaryRotationX, temporaryRotationY);
+
+            // If the state was set when grounded, "attach" to the
+            // routing flag
+            // (attaching makes the player enter the "floating" state)
+            cache.routingFlag.usedFlagTeleport = !tempGrounded;
+
             LogDebug("Restored temporary state");
         }
 
@@ -223,6 +231,7 @@ namespace FastReset.State {
             initialRotationY = 0f;
 
             hasTempState = false;
+            tempGrounded = false;
             temporaryPosition = Vector3.zero;
             temporaryRotationX = Quaternion.identity;
             temporaryRotationY = 0f;
