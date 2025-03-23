@@ -165,8 +165,8 @@ namespace FastReset.State {
         public void RestoreTempState() {
             MoveTo(temporaryPosition, temporaryRotationX, temporaryRotationY);
 
-            // If the state was set when grounded, "attach" to the
-            // routing flag
+            // If the state was set when not grounded,
+            // "attach" to the routing flag
             // (attaching makes the player enter the "floating" state)
             cache.routingFlag.usedFlagTeleport = !tempGrounded;
 
