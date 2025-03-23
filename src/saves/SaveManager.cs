@@ -317,11 +317,13 @@ namespace FastReset.Saves {
         public void Save() {
             // If there is no state path, do nothing
             if (stateFilePath == null) {
+                LogDebug("No state file path, not saving");
                 return;
             }
 
             // If there is no state to store, do nothing
             if (hasPlayerState == false && hasSceneState == false) {
+                LogDebug("No player or scene state, not saving");
                 return;
             }
 
@@ -506,7 +508,7 @@ namespace FastReset.Saves {
         instance.joints.Clear();
 
         // Indicate no scene data
-        hasPlayerState = false;
+        hasSceneState = false;
 
         instance.LogDebug("Wiped scene data");
     }
