@@ -21,11 +21,16 @@ namespace FastReset {
 
         /**
          * <summary>
-         * Checks whether saving/restoring can be used.
+         * Checks whether saving/restoring can be
+         * used in the current scene.
+         *
+         * This is also used for early scene load checks
+         * to determine whether to create the wind resetter
+         * and save initial states.
          * </summary>
          * <returns>True if it can, false otherwise</returns>
          */
-        public bool CanUse() {
+        public bool CanUseInScene() {
             // Only allowed in normal mode
             if (GameManager.control.permaDeathEnabled == true
                 || GameManager.control.freesoloEnabled == true
@@ -37,6 +42,20 @@ namespace FastReset {
             // Ensure the cache contains everything required
             if (cache.IsComplete() == false) {
                 LogDebug("Cache is incomplete, unable to use resetter");
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * <summary>
+         * Checks whether saving/restoring can be used.
+         * </summary>
+         * <returns>True if it can, false otherwise</returns>
+         */
+        public bool CanUse() {
+            if (CanUseInScene() == false) {
                 return false;
             }
 
@@ -166,7 +185,7 @@ namespace FastReset {
          */
         public void SceneLoad() {
             // Ignore scenes where fast reset is unavailable
-            if (CanUse() == false) {
+            if (CanUseInScene() == false) {
                 return;
             }
 
