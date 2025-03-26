@@ -182,7 +182,7 @@ over-exploiting.
 
 These are:
 - You can only save while standing at the base
-  of a peak. In routing flag mode, you can save anywhere you can stand.
+  of a peak. In routing flag mode, you can save anywhere, even when not standing on the ground.
 - Saving/restoring is disabled in yfyd/fs mode.
 - Saving/restoring is disabled while resting on a wall with crampons,
   attached to a rope, or in the bivouac.
