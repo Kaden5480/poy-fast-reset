@@ -81,7 +81,11 @@ namespace FastReset.State {
                 waitUntilDetach.SetValue(brickHold, 0f);
 
                 start.Invoke(brickHold, new object[] {});
+                return;
             }
+
+            // Can't climb if disabled
+            brickHold.gameObject.tag = "Untagged";
         }
 
         /**
