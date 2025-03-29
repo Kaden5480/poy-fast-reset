@@ -22,12 +22,14 @@ namespace FastReset.State {
          */
         public void SaveInitialState() {
             int animationCount = 0;
+            int brickCount = 0;
             int brittleIceCount = 0;
             int crumblingHoldCount = 0;
             int jointCount = 0;
 
             foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
                 Animation animation = obj.GetComponent<Animation>();
+                BrickHold brickHold = obj.GetComponent<BrickHold>();
                 BrittleIce brittleIce = obj.GetComponent<BrittleIce>();
                 CrumblingHoldRegular crumblingHold = obj.GetComponent<CrumblingHoldRegular>();
                 ConfigurableJoint joint = obj.GetComponent<ConfigurableJoint>();
@@ -39,6 +41,13 @@ namespace FastReset.State {
                 ) {
                     objs.Add(new TrackedAnimation(obj));
                     animationCount++;
+                }
+
+                if (brickHold != null
+                    && brickHold.popoutInstantly == false
+                ) {
+                    objs.Add(new TrackedBrick(obj));
+                    brickCount++;
                 }
 
                 if (brittleIce != null
@@ -66,6 +75,7 @@ namespace FastReset.State {
             LogDebug(
                 $"Tracking: {objs.Count} objects\n"
                 + $"Animations:      {animationCount}\n"
+                + $"Bricks:          {brickCount}\n"
                 + $"Brittle ice:     {brittleIceCount}\n"
                 + $"Crumbling holds: {crumblingHoldCount}\n"
                 + $"Joints:          {jointCount}"

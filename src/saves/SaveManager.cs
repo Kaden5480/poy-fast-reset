@@ -38,6 +38,7 @@ namespace FastReset.Saves {
 
         // Dictionaries mapping IDs to saved objects
         private Dictionary<string, SavedAnimation> animations = new Dictionary<string, SavedAnimation>();
+        private Dictionary<string, SavedBrick> bricks = new Dictionary<string, SavedBrick>();
         private Dictionary<string, SavedBrittleIce> brittleIces = new Dictionary<string, SavedBrittleIce>();
         private Dictionary<string, SavedCrumblingHold> crumblingHolds = new Dictionary<string, SavedCrumblingHold>();
         private Dictionary<string, SavedJoint> joints = new Dictionary<string, SavedJoint>();
@@ -77,6 +78,9 @@ namespace FastReset.Saves {
             switch (obj) {
                 case SavedAnimation animation:
                     instance.animations[animation.id] = animation;
+                    break;
+                case SavedBrick brick:
+                    instance.bricks[brick.id] = brick;
                     break;
                 case SavedBrittleIce brittleIce:
                     instance.brittleIces[brittleIce.id] = brittleIce;
@@ -118,6 +122,14 @@ namespace FastReset.Saves {
         public static SavedAnimation GetAnimation(string id) {
             if (instance.animations.ContainsKey(id) == true) {
                 return instance.animations[id];
+            }
+
+            return null;
+        }
+
+        public static SavedBrick GetBrick(string id) {
+            if (instance.bricks.ContainsKey(id) == true) {
+                return instance.bricks[id];
             }
 
             return null;
@@ -332,6 +344,7 @@ namespace FastReset.Saves {
 
             // Write sections to root CBOR object
             WriteSection<SavedAnimation>(root, "animations", animations);
+            WriteSection<SavedBrick>(root, "bricks", bricks);
             WriteSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
             WriteSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
             WriteSection<SavedJoint>(root, "joints", joints);
@@ -404,6 +417,7 @@ namespace FastReset.Saves {
             }
 
             ReadSection<SavedAnimation>(root, "animations", animations);
+            ReadSection<SavedBrick>(root, "bricks", bricks);
             ReadSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
             ReadSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
             ReadSection<SavedJoint>(root, "joints", joints);
@@ -503,6 +517,7 @@ namespace FastReset.Saves {
      */
     public static void WipeScene() {
         instance.animations.Clear();
+        instance.bricks.Clear();
         instance.brittleIces.Clear();
         instance.crumblingHolds.Clear();
         instance.joints.Clear();
