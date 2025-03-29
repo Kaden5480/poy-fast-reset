@@ -286,9 +286,6 @@ namespace FastReset.Saves {
          * <summary>
          * Reads a section from a CBORObject and stores
          * it in the provided section of the data store.
-         *
-         * IMPORTANT: This also clears the provided section
-         * before reading any data, even if there is no data to read.
          * </summary>
          * <param name="root">The CBORObject to read a section from</param>
          * <param name="key">The name of the section to read</param>
@@ -299,8 +296,6 @@ namespace FastReset.Saves {
             string key,
             Dictionary<string, T> section
         ) where T : BaseSaved, new() {
-            section.Clear();
-
             if (root.ContainsKey(key) == false) {
                 LogDebug($"Skipped reading section: {key}, no data found");
                 return;
@@ -381,11 +376,9 @@ namespace FastReset.Saves {
             stateDirPath = null;
             stateFilePath = null;
 
-            hasPlayerState = false;
-            hasSceneState = false;
-
             // Wiping these states is VERY important
-            player = null;
+            WipePlayer();
+            WipeScene();
 
             // Load data
             string profile = Plugin.instance.config.profile.Value;
