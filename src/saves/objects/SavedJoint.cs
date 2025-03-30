@@ -14,7 +14,7 @@ namespace FastReset.Saves {
         public override CBORObject ToCBOR () {
             CBORObject cbor = CBORObject.NewArray()
                 .Add(byteId)
-                .Add(SaveManager.QuatToBytes(rotation));
+                .Add(Ext.QuatToBytes(rotation));
 
             LogDebug($"Serialized joint {id}: {cbor.ToJSONString()}");
             return cbor;
@@ -27,7 +27,7 @@ namespace FastReset.Saves {
          */
         public override void FromCBOR(CBORObject cbor) {
             UpdateID(cbor[0].GetByteString());
-            rotation = SaveManager.BytesToQuat(cbor[1].GetByteString());
+            rotation = cbor[1].AsQuaternion();
 
             LogDebug($"Deserialized joint {id}: rotation={rotation}");
         }

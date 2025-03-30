@@ -20,8 +20,8 @@ namespace FastReset.Saves {
                 .Add(byteId)
                 .Add(enabled)
                 .Add(kinematic)
-                .Add(SaveManager.Vec3ToBytes(position))
-                .Add(SaveManager.QuatToBytes(rotation))
+                .Add(Ext.Vec3ToBytes(position))
+                .Add(Ext.QuatToBytes(rotation))
                 .Add(duration);
 
             LogDebug(
@@ -41,8 +41,8 @@ namespace FastReset.Saves {
             UpdateID(cbor[0].GetByteString());
             enabled = cbor[1].AsBoolean();
             kinematic = cbor[2].AsBoolean();
-            position = SaveManager.BytesToVec3(cbor[3].GetByteString());
-            rotation = SaveManager.BytesToQuat(cbor[4].GetByteString());
+            position = cbor[3].AsVector3();
+            rotation = cbor[4].AsQuaternion();
             duration = cbor[5].AsSingle();
 
             LogDebug(

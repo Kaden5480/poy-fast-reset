@@ -16,7 +16,7 @@ namespace FastReset.Saves {
             CBORObject cbor = CBORObject.NewArray()
                 .Add(byteId)
                 .Add(enabled)
-                .Add(SaveManager.Vec3ToBytes(scale));
+                .Add(Ext.Vec3ToBytes(scale));
 
             LogDebug($"Serialized crumbling hold {id}: {cbor.ToJSONString()}");
             return cbor;
@@ -30,7 +30,7 @@ namespace FastReset.Saves {
         public override void FromCBOR(CBORObject cbor) {
             UpdateID(cbor[0].GetByteString());
             enabled = cbor[1].AsBoolean();
-            scale = SaveManager.BytesToVec3(cbor[2].GetByteString());
+            scale = cbor[2].AsVector3();
 
             LogDebug($"Deserialized crumbling hold {id}: enabled={enabled}, scale={scale}");
         }

@@ -27,13 +27,13 @@ namespace FastReset.Saves {
             // Positions
             CBORObject pos = CBORObject.NewArray();
             foreach (Vector3 position in positions) {
-                pos.Add(SaveManager.Vec3ToBytes(position));
+                pos.Add(Ext.Vec3ToBytes(position));
             }
 
             // Rotations
             CBORObject rot = CBORObject.NewArray();
             foreach (Quaternion rotation in rotations) {
-                rot.Add(SaveManager.QuatToBytes(rotation));
+                rot.Add(Ext.QuatToBytes(rotation));
             }
 
             CBORObject cbor = CBORObject.NewArray()
@@ -67,13 +67,13 @@ namespace FastReset.Saves {
             // Positions
             CBORObject pos = cbor[3];
             for (int i = 0; i < pos.Count; i++) {
-                positions.Add(SaveManager.BytesToVec3(pos[i].GetByteString()));
+                positions.Add(pos[i].AsVector3());
             }
 
             // Rotations
             CBORObject rot = cbor[4];
             for (int i = 0; i < rot.Count; i++) {
-                rotations.Add(SaveManager.BytesToQuat(rot[i].GetByteString()));
+                rotations.Add(rot[i].AsQuaternion());
             }
 
             LogDebug(

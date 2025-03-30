@@ -12,16 +12,16 @@ namespace FastReset.Saves {
             LogDebug($"Saving player: {position} | {rotationX} | {rotationY}");
 
             return CBORObject.NewArray()
-                .Add(SaveManager.Vec3ToBytes(position))
-                .Add(SaveManager.QuatToBytes(rotationX))
+                .Add(Ext.Vec3ToBytes(position))
+                .Add(Ext.QuatToBytes(rotationX))
                 .Add(rotationY);
         }
 
         public SavedPlayer() {}
 
         public SavedPlayer(CBORObject cbor) {
-            position = SaveManager.BytesToVec3(cbor[0].GetByteString());
-            rotationX = SaveManager.BytesToQuat(cbor[1].GetByteString());
+            position = cbor[0].AsVector3();
+            rotationX = cbor[1].AsQuaternion();
             rotationY = cbor[2].AsSingle();
 
             LogDebug($"Loaded player: {position} | {rotationX} | {rotationY}");
