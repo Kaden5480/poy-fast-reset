@@ -68,7 +68,7 @@ namespace FastReset.State {
 
             poppedOut.SetValue(brickHold, !enabled);
 
-            brickHold.transform.position = position;
+            brickHold.transform.position = PositionFix.OffsetToReal(position);
             brickHold.transform.rotation = rotation;
             brickHold.popoutDuration = duration;
 
@@ -106,7 +106,7 @@ namespace FastReset.State {
             ref float duration
         ) {
             enabled = !((bool) poppedOut.GetValue(brickHold));
-            position = brickHold.transform.position;
+            position = PositionFix.RealToOffset(brickHold.transform.position);
             rotation = brickHold.transform.rotation;
             duration = brickHold.popoutDuration;
             kinematic = rb.isKinematic;
