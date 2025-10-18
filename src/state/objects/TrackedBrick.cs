@@ -3,6 +3,7 @@ using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
 
+using PositionFix = FastReset.Patches.PositionFix;
 using SaveManager = FastReset.Saves.SaveManager;
 using SavedBrick = FastReset.Saves.SavedBrick;
 
