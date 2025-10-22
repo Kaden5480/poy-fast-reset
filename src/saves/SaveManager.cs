@@ -217,23 +217,28 @@ namespace FastReset.Saves {
             string key,
             Dictionary<string, T> section
         ) where T : BaseSaved, new() {
-            if (root.ContainsKey(key) == false) {
-                LogDebug($"Skipped reading section: {key}, no data found");
-                return;
+            try {
+                if (root.ContainsKey(key) == false) {
+                    LogDebug($"Skipped reading section: {key}, no data found");
+                    return;
+                }
+
+                LogDebug($"Reading section: {key}");
+
+                CBORObject array = root[key];
+
+                for (int i = 0; i < array.Count; i++) {
+                    T item = new T();
+                    item.FromCBOR(array[i]);
+                    section.Add(item.id, item);
+                    LogDebug($"Read object: {item.GetType()}({item.id})");
+                }
+
+                // Indicate a scene state exists
+                hasSceneState = true;
             }
-
-            LogDebug($"Reading section: {key}");
-
-            // Indicate a scene state exists
-            hasSceneState = true;
-
-            CBORObject array = root[key];
-
-            for (int i = 0; i < array.Count; i++) {
-                T item = new T();
-                item.FromCBOR(array[i]);
-                section.Add(item.id, item);
-                LogDebug($"Read object: {item.GetType()}({item.id})");
+            catch (Exception e) {
+                LogDebug($"Exception occurred while reading section \"{key}\": {e}");
             }
         }
 
@@ -337,18 +342,11 @@ namespace FastReset.Saves {
             }
 
             // Load scene data
-            try {
-                ReadSection<SavedAnimation>(root, "animations", animations);
-                ReadSection<SavedBrick>(root, "bricks", bricks);
-                ReadSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
-                ReadSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
-                ReadSection<SavedJoint>(root, "joints", joints);
-
-            }
-            catch (Exception e) {
-                WipeScene();
-                LogDebug($"Exception occurred while loading scene data: {e}");
-            }
+            ReadSection<SavedAnimation>(root, "animations", animations);
+            ReadSection<SavedBrick>(root, "bricks", bricks);
+            ReadSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
+            ReadSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
+            ReadSection<SavedJoint>(root, "joints", joints);
 
             LogDebug($"Loaded data: {root.ToJSONString()}");
         }
