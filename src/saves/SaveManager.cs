@@ -324,17 +324,31 @@ namespace FastReset.Saves {
                 Decompress(File.ReadAllBytes(stateFilePath))
             );
 
-            // Load each type
-            if (root.ContainsKey("player") == true) {
-                player = new SavedPlayer(root["player"]);
-                hasPlayerState = true;
+            // Load player data
+            try {
+                if (root.ContainsKey("player") == true) {
+                    player = new SavedPlayer(root["player"]);
+                    hasPlayerState = true;
+                }
+            }
+            catch (Exception e) {
+                WipePlayer();
+                LogDebug($"Exception occurred while loading player data: {e}");
             }
 
-            ReadSection<SavedAnimation>(root, "animations", animations);
-            ReadSection<SavedBrick>(root, "bricks", bricks);
-            ReadSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
-            ReadSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
-            ReadSection<SavedJoint>(root, "joints", joints);
+            // Load scene data
+            try {
+                ReadSection<SavedAnimation>(root, "animations", animations);
+                ReadSection<SavedBrick>(root, "bricks", bricks);
+                ReadSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
+                ReadSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
+                ReadSection<SavedJoint>(root, "joints", joints);
+
+            }
+            catch (Exception e) {
+                WipeScene();
+                LogDebug($"Exception occurred while loading scene data: {e}");
+            }
 
             LogDebug($"Loaded data: {root.ToJSONString()}");
         }
