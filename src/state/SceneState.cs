@@ -64,6 +64,7 @@ namespace FastReset.State {
 
                 if (joint != null && (
                     obj.name.StartsWith("TrainingBeam") == true
+                    || obj.name.StartsWith("vine_joint") == true
                     || obj.name.StartsWith("wheelJoint") == true
                 )) {
                     objs.Add(new TrackedJoint(obj));

@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using PositionFix = FastReset.Patches.PositionFix;
 using SaveManager = FastReset.Saves.SaveManager;
 using SavedJoint = FastReset.Saves.SavedJoint;
 
@@ -14,7 +15,10 @@ namespace FastReset.State {
         private Rigidbody jointRb = null;
 
         // Initial and temporary states
+        private Vector3 initialPosition;
         private Quaternion initialRotation;
+
+        private Vector3 temporaryPosition;
         private Quaternion temporaryRotation;
 
         public TrackedJoint(GameObject obj) : base(obj) {}
@@ -23,13 +27,27 @@ namespace FastReset.State {
          * <summary>
          * A method to simplify restoring different kinds of states.
          * </summary>
+         * <param name="position">The position to restore</param>
          * <param name="rotation">The rotation to restore</param>
          */
-        private void Restore(Quaternion rotation) {
+        private void Restore(Vector3 position, Quaternion rotation) {
+            obj.transform.position = PositionFix.OffsetToReal(position);
+            obj.transform.rotation = rotation;
+
             jointRb.angularVelocity = Vector3.zero;
             jointRb.velocity = Vector3.zero;
+        }
 
-            obj.transform.rotation = rotation;
+        /**
+         * <summary>
+         * A method to simplify saving different kinds of states.
+         * </summary>
+         * <param name="position">The position to save to</param>
+         * <param name="rotation">The rotation to save to</param>
+         */
+        private void Save(ref Vector3 position, ref Quaternion rotation) {
+            position = PositionFix.RealToOffset(obj.transform.position);
+            rotation = obj.transform.rotation;
         }
 
 #region Initial
@@ -42,7 +60,7 @@ namespace FastReset.State {
         public override void SaveInitialState() {
             jointRb = obj.GetComponent<Rigidbody>();
 
-            initialRotation = obj.transform.rotation;
+            Save(ref initialPosition, ref initialRotation);
             LogDebug("Saved initial state");
         }
 
@@ -52,7 +70,7 @@ namespace FastReset.State {
          * </summary>
          */
         public override void RestoreInitialState() {
-            Restore(initialRotation);
+            Restore(initialPosition, initialRotation);
             LogDebug("Restored initial state");
         }
 
@@ -66,7 +84,7 @@ namespace FastReset.State {
          * </summary>
          */
         public override void SaveTempState() {
-            temporaryRotation = obj.transform.rotation;
+            Save(ref temporaryPosition, ref temporaryRotation);
             LogDebug("Saved temporary state");
         }
 
@@ -76,7 +94,7 @@ namespace FastReset.State {
          * </summary>
          */
         public override void RestoreTempState() {
-            Restore(temporaryRotation);
+            Restore(temporaryPosition, temporaryRotation);
             LogDebug("Restored temporary state");
         }
 
@@ -94,8 +112,8 @@ namespace FastReset.State {
             SavedJoint savedJoint = new SavedJoint(byteId);
             SaveManager.Add(savedJoint);
 
-            // Update the rotation
-            savedJoint.rotation = obj.transform.rotation;
+            // Update the position and rotation
+            Save(ref savedJoint.position, ref savedJoint.rotation);
             LogDebug("Updated state in data store");
         }
 
@@ -112,7 +130,7 @@ namespace FastReset.State {
                 return;
             }
 
-            Restore(savedJoint.rotation);
+            Restore(savedJoint.position, savedJoint.rotation);
             LogDebug("Restored state from data store");
         }
 

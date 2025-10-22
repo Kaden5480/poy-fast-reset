@@ -4,6 +4,7 @@ using UnityEngine;
 namespace FastReset.Saves {
     public class SavedJoint : BaseSaved {
         // The saved state
+        public Vector3 position = Vector3.zero;
         public Quaternion rotation = Quaternion.identity;
 
         /**
@@ -14,6 +15,7 @@ namespace FastReset.Saves {
         public override CBORObject ToCBOR () {
             CBORObject cbor = CBORObject.NewArray()
                 .Add(byteId)
+                .Add(Ext.Vec3ToBytes(position))
                 .Add(Ext.QuatToBytes(rotation));
 
             LogDebug($"Serialized joint {id}: {cbor.ToJSONString()}");
@@ -27,7 +29,8 @@ namespace FastReset.Saves {
          */
         public override void FromCBOR(CBORObject cbor) {
             UpdateID(cbor[0].GetByteString());
-            rotation = cbor[1].AsQuaternion();
+            position = cbor[1].AsVector3();
+            rotation = cbor[2].AsQuaternion();
 
             LogDebug($"Deserialized joint {id}: rotation={rotation}");
         }
