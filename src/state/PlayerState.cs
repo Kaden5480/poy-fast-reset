@@ -26,6 +26,11 @@ namespace FastReset.State {
         private Quaternion initialRotationX = Quaternion.identity;
         private float initialRotationY = 0f;
 
+        // Whether the player is grounded
+        private bool grounded {
+            get => cache.playerMove.IsGrounded();
+        }
+
         // The player's current position and rotation
         private Vector3 position {
             get => PositionFix.RealToOffset(cache.playerTransform.position);
@@ -75,8 +80,9 @@ namespace FastReset.State {
          * <param name="position">The position to move to (relative to the LeavePeakScene object)</param>
          * <param name="rotationX">The rotation to apply to camX</param>
          * <param name="rotationY">The rotation to apply to camY</param>
+         * <param name="grounded">Whether the player is grounded in this location</param>
          */
-        private void MoveTo(Vector3 position, Quaternion rotationX, float rotationY) {
+        private void MoveTo(Vector3 position, Quaternion rotationX, float rotationY, bool grounded) {
             // Release grip
             cache.climbing.ReleaseLHand(false);
             cache.climbing.ReleaseRHand(false);
@@ -91,7 +97,7 @@ namespace FastReset.State {
             cache.fallingEvent.fellToDeath = false;
 
             // Detach from the routing flag
-            cache.routingFlag.usedFlagTeleport = false;
+            cache.routingFlag.usedFlagTeleport = !grounded;
 
             // Update the player's position and rotation
             this.position = position;
@@ -130,7 +136,7 @@ namespace FastReset.State {
         }
 
         public void RestoreInitialState() {
-            MoveTo(initialPosition, initialRotationX, initialRotationY);
+            MoveTo(initialPosition, initialRotationX, initialRotationY, true);
             LogDebug("Restored initial state");
         }
 
@@ -157,6 +163,7 @@ namespace FastReset.State {
             player.position = position;
             player.rotationX = rotationX;
             player.rotationY = rotationY;
+            player.grounded = grounded;
 
             save.WipePlayer();
             save.AddPlayer(player);
@@ -172,7 +179,7 @@ namespace FastReset.State {
                 return;
             }
 
-            MoveTo(player.position, player.rotationX, player.rotationY);
+            MoveTo(player.position, player.rotationX, player.rotationY, player.grounded);
             LogDebug("Restored state from data store");
         }
 
