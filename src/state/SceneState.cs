@@ -104,7 +104,7 @@ namespace FastReset.State {
          * </summary>
          */
         public bool HasSavedState() {
-            return SaveManager.hasSceneState;
+            return SaveManager.HasSceneState();
         }
 
         /**
@@ -113,11 +113,13 @@ namespace FastReset.State {
          * </summary>
          */
         public void SaveState() {
+            SaveData save = SaveManager.GetSave(true);
+
             // Wipe scene data first
-            SaveManager.WipeScene();
+            save.WipeScene();
 
             foreach (BaseTracked obj in objs) {
-                obj.SaveState();
+                obj.SaveState(save);
             }
 
             LogDebug("Saved state to data store");
@@ -129,8 +131,9 @@ namespace FastReset.State {
          * </summary>
          */
         public void RestoreState() {
+            SaveData save = SaveManager.GetSave();
             foreach (BaseTracked obj in objs) {
-                obj.RestoreState();
+                obj.RestoreState(save);
             }
 
             LogDebug("Restored state from data store");

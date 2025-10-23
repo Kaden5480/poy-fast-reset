@@ -37,6 +37,9 @@ namespace FastReset.Saves {
         private string stateFilePath = null;
 
         // The different save data for this scene
+        private bool useNormalState = true;
+        private int routingStateIndex = 0;
+
         private SaveData normalState = null;
         private List<SaveData> routingStates = new List<SaveData>();
 
@@ -54,6 +57,109 @@ namespace FastReset.Saves {
          */
         public static string BytesToString(byte[] bytes) {
             return BitConverter.ToString(bytes).Replace("-", "").ToLower();
+        }
+
+#endregion
+
+#region Managing Current State
+
+        /**
+         * <summary>
+         * Gets the save data for the current state.
+         * </summary>
+         * <param name="create">Whether to create the save data if it doesn't exist</param>
+         */
+        public static SaveData GetSave(bool create = false) {
+            SaveData save = null;
+
+            if (instance.useNormalState == true) {
+                save = instance.normalState;
+            }
+            else if (instance.routingStateIndex >= 0
+                || instance.routingStateIndex < instance.routingStates.Count
+            ) {
+                save = instance.routingStates[instance.routingStateIndex];
+            }
+
+            // If save data exists, return it
+            if (save != null) {
+                return save;
+            }
+
+            // If not creating, just return anyway
+            if (create == false) {
+                return save;
+            }
+
+            // Otherwise, make the save
+            save = new SaveData();
+
+            if (instance.userNormalState == true) {
+                instance.normalState = save;
+            }
+            else {
+                instance.routingStates.Add(save);
+                instance.routingStateIndex = instance.routingStates.Count - 1;
+            }
+
+            return save;
+        }
+
+#endregion
+
+#region Checking States
+
+        /**
+         * <summary>
+         * Checks whether player state exists for the current state.
+         * </summary>
+         * <returns>True if it does, false otherwise</returns>
+         */
+        public static bool HasPlayerState() {
+            SaveData state = GetSave();
+            if (state == null) {
+                return false;
+            }
+
+            return state.hasPlayerState;
+        }
+
+        /**
+         * <summary>
+         * Checks whether scene state exists for the current state.
+         * </summary>
+         * <returns>True if it does, false otherwise</returns>
+         */
+        public static bool HasSceneState() {
+            SaveData state = GetSave();
+            if (state == null) {
+                return false;
+            }
+
+            return state.hasSceneState;
+        }
+
+#endregion
+
+#region Switching States
+
+        /**
+         * <summary>
+         * Switches to using the normal state.
+         * </summary>
+         */
+        public static void UseNormal() {
+            instance.useNormalState = true;
+        }
+
+        /**
+         * <summary>
+         * Switches to using a specific routing flage state.
+         * </summary>
+         */
+        public static void UseRouting(int index) {
+            instance.useNormalState = false;
+            instance.routingStateIndex = index;
         }
 
 #endregion

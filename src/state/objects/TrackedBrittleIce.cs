@@ -144,11 +144,12 @@ namespace FastReset.State {
          * <summary>
          * Saves the current state to the data store.
          * </summary>
+         * <param name="save">The save data to save to</param>
          */
-        public override void SaveState() {
+        public override void SaveState(SaveData save) {
             // Add a new brittle ice to the data store
             SavedBrittleIce savedBrittleIce = new SavedBrittleIce(byteId);
-            SaveManager.Add(savedBrittleIce);
+            save.Add(savedBrittleIce);
 
             // Update the saved state
             Save(
@@ -164,9 +165,10 @@ namespace FastReset.State {
          * <summary>
          * Restores the state stored in the data store.
          * </summary>
+         * <param name="save">The save data to restore from</param>
          */
-        public override void RestoreState() {
-            SavedBrittleIce savedBrittleIce = SaveManager.GetBrittleIce(id);
+        public override void RestoreState(SaveData save) {
+            SavedBrittleIce savedBrittleIce = save.GetBrittleIce(id);
 
             if (savedBrittleIce == null) {
                 LogDebug("No saved state to restore");

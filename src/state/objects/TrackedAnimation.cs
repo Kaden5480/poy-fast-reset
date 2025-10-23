@@ -80,11 +80,12 @@ namespace FastReset.State {
          * <summary>
          * Saves the current state to the data store.
          * </summary>
+         * <param name="save">The save data to save to</param>
          */
-        public override void SaveState() {
+        public override void SaveState(SaveData save) {
             // Add a new animation to the data store
             SavedAnimation savedAnimation = new SavedAnimation(byteId);
-            SaveManager.Add(savedAnimation);
+            save.Add(savedAnimation);
 
             // Update the saved state
             Save(savedAnimation.times);
@@ -95,9 +96,10 @@ namespace FastReset.State {
          * <summary>
          * Restores the state stored in the data store.
          * </summary>
+         * <param name="save">The save data to restore from</param>
          */
-        public override void RestoreState() {
-            SavedAnimation savedAnimation = SaveManager.GetAnimation(id);
+        public override void RestoreState(SaveData save) {
+            SavedAnimation savedAnimation = save.GetAnimation(id);
 
             if (savedAnimation == null) {
                 LogDebug("No saved state to restore");

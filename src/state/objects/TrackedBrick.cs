@@ -161,11 +161,12 @@ namespace FastReset.State {
          * <summary>
          * Saves the current state to the data store.
          * </summary>
+         * <param name="save">The save data to save to</param>
          */
-        public override void SaveState() {
+        public override void SaveState(SaveData save) {
             // Add a new brick to the data store
             SavedBrick savedBrick = new SavedBrick(byteId);
-            SaveManager.Add(savedBrick);
+            save.Add(savedBrick);
 
             Save(
                 ref savedBrick.enabled, ref savedBrick.kinematic,
@@ -180,9 +181,10 @@ namespace FastReset.State {
          * <summary>
          * Restores the state stored in the data store.
          * </summary>
+         * <param name="save">The save data to restore from</param>
          */
-        public override void RestoreState() {
-            SavedBrick savedBrick = SaveManager.GetBrick(id);
+        public override void RestoreState(SaveData save) {
+            SavedBrick savedBrick = save.GetBrick(id);
 
             if (savedBrick == null) {
                 LogDebug("No saved state to restore");

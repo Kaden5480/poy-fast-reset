@@ -79,11 +79,12 @@ namespace FastReset.State {
          * <summary>
          * Saves the current state to the data store.
          * </summary>
+         * <param name="save">The save data to save to</param>
          */
-        public override void SaveState() {
+        public override void SaveState(SaveData save) {
             // Add a new joint to the data store
             SavedJoint savedJoint = new SavedJoint(byteId);
-            SaveManager.Add(savedJoint);
+            save.Add(savedJoint);
 
             // Update the position and rotation
             Save(ref savedJoint.position, ref savedJoint.rotation);
@@ -94,9 +95,10 @@ namespace FastReset.State {
          * <summary>
          * Restores the state stored in the data store.
          * </summary>
+         * <param name="save">The save data to restore from</param>
          */
-        public override void RestoreState() {
-            SavedJoint savedJoint = SaveManager.GetJoint(id);
+        public override void RestoreState(SaveData save) {
+            SavedJoint savedJoint = save.GetJoint(id);
 
             if (savedJoint == null) {
                 LogDebug("No saved state to restore");

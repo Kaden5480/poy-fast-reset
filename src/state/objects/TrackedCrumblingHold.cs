@@ -87,11 +87,12 @@ namespace FastReset.State {
          * <summary>
          * Saves the current state to the data store.
          * </summary>
+         * <param name="save">The save data to save to</param>
          */
-        public override void SaveState() {
+        public override void SaveState(SaveData save) {
             // Add a new crumbling hold to the data store
             SavedCrumblingHold savedHold = new SavedCrumblingHold(byteId);
-            SaveManager.Add(savedHold);
+            save.Add(savedHold);
 
             // Update the saved state
             Save(ref savedHold.enabled, ref savedHold.scale);
@@ -102,9 +103,10 @@ namespace FastReset.State {
          * <summary>
          * Restores the state stored in the data store.
          * </summary>
+         * <param name="save">The save data to restore from</param>
          */
-        public override void RestoreState() {
-            SavedCrumblingHold savedHold = SaveManager.GetCrumblingHold(id);
+        public override void RestoreState(SaveData save) {
+            SavedCrumblingHold savedHold = save.GetCrumblingHold(id);
 
             if (savedHold == null) {
                 LogDebug("No saved state to restore");

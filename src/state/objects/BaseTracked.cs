@@ -53,10 +53,10 @@ namespace FastReset.State {
          * state from fast reset's data store.
          * </summary>
          */
-        public virtual void SaveState() {
+        public virtual void SaveState(SaveData save) {
             LogError("SaveState not implemented");
         }
-        public virtual void RestoreState() {
+        public virtual void RestoreState(SaveData save) {
             LogError("RestoreState not implemented");
         }
 

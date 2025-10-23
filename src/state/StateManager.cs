@@ -63,11 +63,6 @@ namespace FastReset.State {
                 return false;
             }
 
-            if (cache.routingFlag.currentlyUsingFlag == true) {
-                state.SaveTempState();
-                return true;
-            }
-
             state.SaveState();
             return true;
         }

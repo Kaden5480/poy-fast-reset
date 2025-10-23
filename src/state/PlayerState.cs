@@ -144,10 +144,12 @@ namespace FastReset.State {
          * </summary>
          */
         public bool HasSavedState() {
-            return SaveManager.GetPlayer() != null;
+            return SaveManager.HasPlayerState();
         }
 
         public void SaveState() {
+            SaveData save = SaveManager.GetSave(true);
+
             SavedPlayer player = new SavedPlayer();
 
             // Update the saved state
@@ -155,14 +157,14 @@ namespace FastReset.State {
             player.rotationX = rotationX;
             player.rotationY = rotationY;
 
-            SaveManager.WipePlayer();
-            SaveManager.AddPlayer(player);
+            save.WipePlayer();
+            save.AddPlayer(player);
 
             LogDebug("Added new player state to data store");
         }
 
         public void RestoreState() {
-            SavedPlayer player = SaveManager.GetPlayer();
+            SavedPlayer player = SaveManager.GetSave().GetPlayer();
 
             if (player == null) {
                 LogDebug("No saved player state to restore");
