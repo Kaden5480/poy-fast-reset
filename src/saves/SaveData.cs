@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+
+using PeterO.Cbor;
+
 namespace FastReset.Saves {
     /**
      * <summary>
@@ -16,8 +21,8 @@ namespace FastReset.Saves {
         private Dictionary<string, SavedJoint> joints = new Dictionary<string, SavedJoint>();
 
         // What states exist for this scene
-        public static bool hasPlayerState { get; private set; } = false;
-        public static bool hasSceneState  { get; private set; } = false;
+        public bool hasPlayerState { get; private set; } = false;
+        public bool hasSceneState  { get; private set; } = false;
 
 #region Adding
 

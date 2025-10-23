@@ -94,7 +94,7 @@ namespace FastReset.Saves {
             // Otherwise, make the save
             save = new SaveData();
 
-            if (instance.userNormalState == true) {
+            if (instance.useNormalState == true) {
                 instance.normalState = save;
             }
             else {
@@ -201,13 +201,13 @@ namespace FastReset.Saves {
             }
 
             if (routingStates.Count > 0) {
-                CBORObject routingStates = CBORObject.NewArray();
+                CBORObject states = CBORObject.NewArray();
 
                 foreach (SaveData data in routingStates) {
-                    routingStates.Add(data.ToCBOR());
+                    states.Add(data.ToCBOR());
                 }
 
-                allStates.Add("routing", routingStates);
+                allStates.Add("routing", states);
                 LogDebug("Storing routing states");
             }
 
@@ -278,11 +278,13 @@ namespace FastReset.Saves {
             }
 
             if (states.ContainsKey("routing") == true) {
-                foreach (CBORObject state in states["routing"]) {
+                for (int i = 0; i < states["routing"].Count; i++) {
                     SaveData data = new SaveData();
-                    data.FromCBOR(state);
-                    routingStates.Add(data)
+                    data.FromCBOR(states["routing"][i]);
+                    routingStates.Add(data);
+
                 }
+
                 LogDebug("Loaded routing states");
             }
         }

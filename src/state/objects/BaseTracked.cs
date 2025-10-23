@@ -3,6 +3,7 @@ using System.Text;
 
 using UnityEngine;
 
+using SaveData = FastReset.Saves.SaveData;
 using SaveManager = FastReset.Saves.SaveManager;
 
 namespace FastReset.State {

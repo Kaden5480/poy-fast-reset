@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using SaveData = FastReset.Saves.SaveData;
 using SaveManager = FastReset.Saves.SaveManager;
 using SavedAnimation = FastReset.Saves.SavedAnimation;
 

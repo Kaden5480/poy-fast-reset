@@ -4,6 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 
 using PositionFix = FastReset.Patches.PositionFix;
+using SaveData = FastReset.Saves.SaveData;
 using SaveManager = FastReset.Saves.SaveManager;
 using SavedBrick = FastReset.Saves.SavedBrick;
 
