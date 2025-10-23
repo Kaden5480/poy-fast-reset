@@ -20,146 +20,29 @@ namespace FastReset.Saves {
      * </summary>
      */
     public class SaveManager : Loggable {
-        // The directory where the save data will be stored
-        public static string configDir { get; } = Path.Combine(
-            BepInEx.Paths.ConfigPath, "com.github.Kaden5480.poy-fast-reset"
-        );
+        // An instance of SaveManager accessible statically
+        private static SaveManager instance = null;
 
         // If a state takes up more than this many
         // bytes, use compression
         private const int byteCompressionLimit = 256;
 
+        // The directory where the save data will be stored
+        public static string configDir { get; } = Path.Combine(
+            BepInEx.Paths.ConfigPath, "com.github.Kaden5480.poy-fast-reset"
+        );
+
         // The path to the file containing state data
         private string stateDirPath = null;
         private string stateFilePath = null;
 
-        // The saved player state for the scene
-        private SavedPlayer player = null;
-
-        // Dictionaries mapping IDs to saved objects
-        private Dictionary<string, SavedAnimation> animations = new Dictionary<string, SavedAnimation>();
-        private Dictionary<string, SavedBrick> bricks = new Dictionary<string, SavedBrick>();
-        private Dictionary<string, SavedBrittleIce> brittleIces = new Dictionary<string, SavedBrittleIce>();
-        private Dictionary<string, SavedCrumblingHold> crumblingHolds = new Dictionary<string, SavedCrumblingHold>();
-        private Dictionary<string, SavedJoint> joints = new Dictionary<string, SavedJoint>();
-
-        // What states exist for this scene
-        public static bool hasPlayerState = false;
-        public static bool hasSceneState = false;
-
-        // An instance of SaveManager accessible statically
-        private static SaveManager instance = null;
+        // The different save data for this scene
+        private SaveData normalState = null;
+        private List<SaveData> routingStates = new List<SaveData>();
 
         public SaveManager() {
             instance = this;
         }
-
-#region Adding
-
-        /**
-         * <summary>
-         * Adds the player state to the data store.
-         * </summary>
-         */
-        public static void AddPlayer(SavedPlayer player) {
-            instance.player = player;
-            hasPlayerState = true;
-        }
-
-        /**
-         * <summary>
-         * Adds an object to the data store.
-         * </summary>
-         * <param name="obj">The BaseSaved to add</param>
-         */
-        public static void Add(BaseSaved obj) {
-            instance.LogDebug($"Adding {obj.GetType()}: {obj.id}");
-
-            switch (obj) {
-                case SavedAnimation animation:
-                    instance.animations[animation.id] = animation;
-                    break;
-                case SavedBrick brick:
-                    instance.bricks[brick.id] = brick;
-                    break;
-                case SavedBrittleIce brittleIce:
-                    instance.brittleIces[brittleIce.id] = brittleIce;
-                    break;
-                case SavedCrumblingHold crumblingHold:
-                    instance.crumblingHolds[crumblingHold.id] = crumblingHold;
-                    break;
-                case SavedJoint joint:
-                    instance.joints[joint.id] = joint;
-                    break;
-                default:
-                    instance.LogError($"Trying to save unrecognised type: {obj.GetType()}");
-                    throw new Exception();
-            }
-
-            hasSceneState = true;
-        }
-
-#endregion
-
-#region Getting
-
-        /**
-         * <summary>
-         * Gets the player state from the data store.
-         * </summary>
-         */
-        public static SavedPlayer GetPlayer() {
-            return instance.player;
-        }
-
-        /**
-         * <summary>
-         * Gets objects from the data store.
-         * </summary>
-         * <param name="id">The ID of the object to find</param>
-         * <returns>The object if found, null otherwise</returns>
-         */
-        public static SavedAnimation GetAnimation(string id) {
-            if (instance.animations.ContainsKey(id) == true) {
-                return instance.animations[id];
-            }
-
-            return null;
-        }
-
-        public static SavedBrick GetBrick(string id) {
-            if (instance.bricks.ContainsKey(id) == true) {
-                return instance.bricks[id];
-            }
-
-            return null;
-        }
-
-        public static SavedBrittleIce GetBrittleIce(string id) {
-            if (instance.brittleIces.ContainsKey(id) == true) {
-                return instance.brittleIces[id];
-            }
-
-            return null;
-        }
-
-        public static SavedCrumblingHold GetCrumblingHold(string id) {
-            if (instance.crumblingHolds.ContainsKey(id) == true) {
-                return instance.crumblingHolds[id];
-            }
-
-            return null;
-        }
-
-        public static SavedJoint GetJoint(string id) {
-            if (instance.joints.ContainsKey(id) == true) {
-                return instance.joints[id];
-            }
-
-            return null;
-        }
-
-#endregion
 
 #region Serializing/Deserializing Types
 
@@ -179,72 +62,7 @@ namespace FastReset.Saves {
 
         /**
          * <summary>
-         * Writes a section of the data store to a CBORObject
-         * if it has any data.
-         * </summary>
-         * <param name="root">The CBORObject to add to</param>
-         * <param name="key">The key to store the data with</param>
-         * <param name="section">The section to write</param>
-         */
-        public void WriteSection<T>(
-            CBORObject root,
-            string key,
-            Dictionary<string, T> section
-        ) where T : BaseSaved {
-            if (section.Count < 1) {
-                return;
-            }
-
-            CBORObject array = CBORObject.NewArray();
-            foreach (T item in section.Values) {
-                array.Add(item.ToCBOR());
-            }
-
-            root.Add(key, array);
-        }
-
-        /**
-         * <summary>
-         * Reads a section from a CBORObject and stores
-         * it in the provided section of the data store.
-         * </summary>
-         * <param name="root">The CBORObject to read a section from</param>
-         * <param name="key">The name of the section to read</param>
-         * <param name="section">The section to store into</param>
-         */
-        public void ReadSection<T>(
-            CBORObject root,
-            string key,
-            Dictionary<string, T> section
-        ) where T : BaseSaved, new() {
-            try {
-                if (root.ContainsKey(key) == false) {
-                    LogDebug($"Skipped reading section: {key}, no data found");
-                    return;
-                }
-
-                LogDebug($"Reading section: {key}");
-
-                CBORObject array = root[key];
-
-                for (int i = 0; i < array.Count; i++) {
-                    T item = new T();
-                    item.FromCBOR(array[i]);
-                    section.Add(item.id, item);
-                    LogDebug($"Read object: {item.GetType()}({item.id})");
-                }
-
-                // Indicate a scene state exists
-                hasSceneState = true;
-            }
-            catch (Exception e) {
-                LogDebug($"Exception occurred while reading section \"{key}\": {e}");
-            }
-        }
-
-        /**
-         * <summary>
-         * Saves the currently stored objects to the data store.
+         * Saves the currently stored save data to the data store.
          * </summary>
          */
         public void Save() {
@@ -255,30 +73,40 @@ namespace FastReset.Saves {
             }
 
             // If there is no state to store, do nothing
-            if (hasPlayerState == false && hasSceneState == false) {
-                LogDebug("No player or scene state, not saving");
+            if (normalState == null && routingStates.Count < 1) {
+                LogDebug("No save data, not saving");
                 return;
             }
 
             // Construct a CBOR object holding everything
             CBORObject root = CBORObject.NewMap();
 
-            // Write sections to root CBOR object
-            WriteSection<SavedAnimation>(root, "animations", animations);
-            WriteSection<SavedBrick>(root, "bricks", bricks);
-            WriteSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
-            WriteSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
-            WriteSection<SavedJoint>(root, "joints", joints);
-
-            // Add the player if there is a state
-            if (player != null) {
-                root.Add("player", player.ToCBOR());
-            }
-
             // Save the object to a file
             if (Directory.Exists(stateDirPath) == false) {
                 Directory.CreateDirectory(stateDirPath);
             }
+
+            CBORObject allStates = CBORObject.NewMap();
+
+            // Serialize the data
+            if (normalState != null) {
+                allStates.Add("normal", normalState.ToCBOR());
+                LogDebug("Storing normal state");
+            }
+
+            if (routingStates.Count > 0) {
+                CBORObject routingStates = CBORObject.NewArray();
+
+                foreach (SaveData data in routingStates) {
+                    routingStates.Add(data.ToCBOR());
+                }
+
+                allStates.Add("routing", routingStates);
+                LogDebug("Storing routing states");
+            }
+
+            // Add all save data to the root object
+            root.Add("states", allStates);
 
             byte[] bytes = root.EncodeToBytes();
 
@@ -303,8 +131,8 @@ namespace FastReset.Saves {
             stateFilePath = null;
 
             // Wiping these states is VERY important
-            WipePlayer();
-            WipeScene();
+            normalState = null;
+            routingStates.Clear();
 
             // Load data
             string profile = Plugin.instance.config.profile.Value;
@@ -329,26 +157,28 @@ namespace FastReset.Saves {
                 Decompress(File.ReadAllBytes(stateFilePath))
             );
 
-            // Load player data
-            try {
-                if (root.ContainsKey("player") == true) {
-                    player = new SavedPlayer(root["player"]);
-                    hasPlayerState = true;
+            // Check for different states
+            if (root.ContainsKey("states") == false) {
+                LogDebug("No save states found, skipping");
+                return;
+            }
+
+            CBORObject states = root["states"];
+
+            if (states.ContainsKey("normal") == true) {
+                normalState = new SaveData();
+                normalState.FromCBOR(states["normal"]);
+                LogDebug("Loaded normal state");
+            }
+
+            if (states.ContainsKey("routing") == true) {
+                foreach (CBORObject state in states["routing"]) {
+                    SaveData data = new SaveData();
+                    data.FromCBOR(state);
+                    routingStates.Add(data)
                 }
+                LogDebug("Loaded routing states");
             }
-            catch (Exception e) {
-                WipePlayer();
-                LogDebug($"Exception occurred while loading player data: {e}");
-            }
-
-            // Load scene data
-            ReadSection<SavedAnimation>(root, "animations", animations);
-            ReadSection<SavedBrick>(root, "bricks", bricks);
-            ReadSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
-            ReadSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
-            ReadSection<SavedJoint>(root, "joints", joints);
-
-            LogDebug($"Loaded data: {root.ToJSONString()}");
         }
 
         /**
@@ -411,48 +241,6 @@ namespace FastReset.Saves {
 
             return bytes;
         }
-
-#endregion
-
-#region Wiping Data
-
-    /**
-     * <summary>
-     * Wipes all scene data.
-     *
-     * IMPORTANT: This doesn't save anything, it just
-     * clears the data store.
-     * </summary>
-     */
-    public static void WipePlayer() {
-        instance.player = null;
-
-        // Indicate no player data
-        hasPlayerState = false;
-
-        instance.LogDebug("Wiped player data");
-    }
-
-    /**
-     * <summary>
-     * Wipes all player data.
-     *
-     * IMPORTANT: This doesn't save anything, it just
-     * clears the data store.
-     * </summary>
-     */
-    public static void WipeScene() {
-        instance.animations.Clear();
-        instance.bricks.Clear();
-        instance.brittleIces.Clear();
-        instance.crumblingHolds.Clear();
-        instance.joints.Clear();
-
-        // Indicate no scene data
-        hasSceneState = false;
-
-        instance.LogDebug("Wiped scene data");
-    }
 
 #endregion
 

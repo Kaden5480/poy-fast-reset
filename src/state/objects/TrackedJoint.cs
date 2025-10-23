@@ -14,12 +14,9 @@ namespace FastReset.State {
     public class TrackedJoint : BaseTracked {
         private Rigidbody jointRb = null;
 
-        // Initial and temporary states
+        // Initial state
         private Vector3 initialPosition;
         private Quaternion initialRotation;
-
-        private Vector3 temporaryPosition;
-        private Quaternion temporaryRotation;
 
         public TrackedJoint(GameObject obj) : base(obj) {}
 
@@ -72,30 +69,6 @@ namespace FastReset.State {
         public override void RestoreInitialState() {
             Restore(initialPosition, initialRotation);
             LogDebug("Restored initial state");
-        }
-
-#endregion
-
-#region Temporary
-
-        /**
-         * <summary>
-         * Saves the current state temporarily (routing flag mode).
-         * </summary>
-         */
-        public override void SaveTempState() {
-            Save(ref temporaryPosition, ref temporaryRotation);
-            LogDebug("Saved temporary state");
-        }
-
-        /**
-         * <summary>
-         * Restores the routing flag mode state.
-         * </summary>
-         */
-        public override void RestoreTempState() {
-            Restore(temporaryPosition, temporaryRotation);
-            LogDebug("Restored temporary state");
         }
 
 #endregion

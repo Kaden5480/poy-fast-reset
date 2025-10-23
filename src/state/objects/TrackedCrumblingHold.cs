@@ -13,12 +13,9 @@ namespace FastReset.State {
     public class TrackedCrumblingHold : BaseTracked {
         private CrumblingHoldRegular hold = null;
 
-        // Initial and temporary states
+        // Initial state
         private bool initialEnabled = false;
-        private bool temporaryEnabled = false;
-
         private Vector3 initialScale = Vector3.zero;
-        private Vector3 temporaryScale = Vector3.zero;
 
         public TrackedCrumblingHold(GameObject obj) : base(obj) {}
 
@@ -80,30 +77,6 @@ namespace FastReset.State {
         public override void RestoreInitialState() {
             Restore(initialEnabled, initialScale);
             LogDebug("Restored initial state");
-        }
-
-#endregion
-
-#region Temporary
-
-        /**
-         * <summary>
-         * Saves the current state temporarily (routing flag mode).
-         * </summary>
-         */
-        public override void SaveTempState() {
-            Save(ref temporaryEnabled, ref temporaryScale);
-            LogDebug("Saved temporary state");
-        }
-
-        /**
-         * <summary>
-         * Restores the routing flag mode state.
-         * </summary>
-         */
-        public override void RestoreTempState() {
-            Restore(temporaryEnabled, temporaryScale);
-            LogDebug("Restored temporary state");
         }
 
 #endregion

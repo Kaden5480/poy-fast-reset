@@ -264,11 +264,9 @@ namespace FastReset.UI {
 
             GUILayout.Label($"{stateTextPadding} Player State {stateTextPadding}");
             GUILayout.Label($"Normal: {IsAvailable(StateManager.hasPlayerSaved)}");
-            GUILayout.Label($"Routing flag mode: {IsAvailable(StateManager.hasPlayerTemp)}");
             GUILayout.Space(height / 10);
             GUILayout.Label($"{stateTextPadding} Scene State {stateTextPadding}");
             GUILayout.Label($"Normal: {IsAvailable(StateManager.hasSceneSaved)}");
-            GUILayout.Label($"Routing flag mode: {IsAvailable(StateManager.hasSceneTemp)}");
 
             GUILayout.EndVertical();
 

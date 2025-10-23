@@ -18,16 +18,11 @@ namespace FastReset.State {
         private Rigidbody[] rigidBodies;
         private Renderer[] renderers;
 
-        // Initial and temporary states
+        // Initial state
         private int initialHp = 0;
         private List<float> initialMatStates = new List<float>();
         private List<Vector3> initialPositions = new List<Vector3>();
         private List<Quaternion> initialRotations = new List<Quaternion>();
-
-        private int temporaryHp = 0;
-        private List<float> temporaryMatStates = new List<float>();
-        private List<Vector3> temporaryPositions = new List<Vector3>();
-        private List<Quaternion> temporaryRotations = new List<Quaternion>();
 
         public TrackedBrittleIce(GameObject obj) : base(obj) {}
 
@@ -139,30 +134,6 @@ namespace FastReset.State {
         public override void RestoreInitialState() {
             Restore(initialHp, initialMatStates, initialPositions, initialRotations);
             LogDebug("Restored initial state");
-        }
-
-#endregion
-
-#region Temporary
-
-        /**
-         * <summary>
-         * Saves the current state temporarily (routing flag mode).
-         * </summary>
-         */
-        public override void SaveTempState() {
-            Save(ref temporaryHp, temporaryMatStates, temporaryPositions, temporaryRotations);
-            LogDebug("Saved temporary state");
-        }
-
-        /**
-         * <summary>
-         * Restores the routing flag mode state.
-         * </summary>
-         */
-        public override void RestoreTempState() {
-            Restore(temporaryHp, temporaryMatStates, temporaryPositions, temporaryRotations);
-            LogDebug("Restored temporary state");
         }
 
 #endregion

@@ -33,9 +33,7 @@ namespace FastReset.State {
          * What kinds of states are available.
          * </summary>
          */
-        public static bool hasPlayerTemp { get => instance.player.HasTempState(); }
         public static bool hasPlayerSaved { get => instance.player.HasSavedState(); }
-        public static bool hasSceneTemp { get => instance.scene.HasTempState(); }
         public static bool hasSceneSaved { get => instance.scene.HasSavedState(); }
 
 #endregion
@@ -105,19 +103,6 @@ namespace FastReset.State {
 
         /**
          * <summary>
-         * Whether the temporary state should be used.
-         * Specifically used for restoring states.
-         * </summary>
-         * <param name="state">The state to check</param>
-         * <returns>True if it should, false otherwise</returns>
-         */
-        private bool UseTemporary(BaseState state) {
-            return cache.routingFlag.currentlyUsingFlag == true
-                && state.HasTempState() == true;
-        }
-
-        /**
-         * <summary>
          * Restores a type of state for the given state.
          * </summary>
          * <param name="state">The type of state to restore a state for</param>
@@ -126,11 +111,6 @@ namespace FastReset.State {
             // Initial
             if (useInitialState == true) {
                 state.RestoreInitialState();
-                return true;
-            }
-            // Temporary
-            else if (UseTemporary(state) == true) {
-                state.RestoreTempState();
                 return true;
             }
             // Saved

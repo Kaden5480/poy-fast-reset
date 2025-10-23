@@ -7,9 +7,6 @@ using SaveManager = FastReset.Saves.SaveManager;
 
 namespace FastReset.State {
     public class SceneState : Loggable, BaseState {
-        // Indicates whether a temporary state has been stored
-        private bool hasTempState = false;
-
         // The objects which are being tracked
         private List<BaseTracked> objs = new List<BaseTracked>();
 
@@ -98,48 +95,6 @@ namespace FastReset.State {
 
 #endregion
 
-#region Temporary
-
-        /**
-         * <summary>
-         * Checks whether a temporary state is available
-         * for the current scene.
-         * </summary>
-         */
-        public bool HasTempState() {
-            return hasTempState;
-        }
-
-        /**
-         * <summary>
-         * Saves the state of the scene temporarily.
-         * </summary>
-         */
-        public void SaveTempState() {
-            foreach (BaseTracked obj in objs) {
-                obj.SaveTempState();
-            }
-
-            hasTempState = true;
-            LogDebug("Saved temporary state");
-        }
-
-        /**
-         * <summary>
-         * Restores the temporary state
-         * for the current scene.
-         * </summary>
-         */
-        public void RestoreTempState() {
-            foreach (BaseTracked obj in objs) {
-                obj.RestoreTempState();
-            }
-
-            LogDebug("Restored temporary state");
-        }
-
-#endregion
-
 #region Saved
 
         /**
@@ -192,9 +147,7 @@ namespace FastReset.State {
          * </summary>
          */
         public void WipeState() {
-            hasTempState = false;
             objs.Clear();
-
             LogDebug("Wiped state");
         }
 

@@ -19,33 +19,6 @@ namespace FastReset.State {
 
 #endregion
 
-#region Temporary
-
-        /**
-         * <summary>
-         * Checks whether a temporary state is available
-         * for the current scene.
-         * </summary>
-         */
-        bool HasTempState();
-
-        /**
-         * <summary>
-         * Saves the state of the scene temporarily.
-         * </summary>
-         */
-        void SaveTempState();
-
-        /**
-         * <summary>
-         * Restores the temporary state
-         * for the current scene.
-         * </summary>
-         */
-        void RestoreTempState();
-
-#endregion
-
 #region Saved
 
         /**

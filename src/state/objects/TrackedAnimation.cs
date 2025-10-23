@@ -15,10 +15,9 @@ namespace FastReset.State {
     public class TrackedAnimation : BaseTracked {
         private Animation animation = null;
 
-        // Initial and temporary states
+        // Initial state
         // All times are normalized
         private List<float> initialTimes = new List<float>();
-        private List<float> temporaryTimes = new List<float>();
 
         public TrackedAnimation(GameObject obj) : base(obj) {}
 
@@ -71,30 +70,6 @@ namespace FastReset.State {
         public override void RestoreInitialState() {
             Restore(initialTimes);
             LogDebug("Restored initial state");
-        }
-
-#endregion
-
-#region Temporary
-
-        /**
-         * <summary>
-         * Saves the current state temporarily (routing flag mode).
-         * </summary>
-         */
-        public override void SaveTempState() {
-            Save(temporaryTimes);
-            LogDebug("Saved temporary state");
-        }
-
-        /**
-         * <summary>
-         * Restores the routing flag mode state.
-         * </summary>
-         */
-        public override void RestoreTempState() {
-            Restore(temporaryTimes);
-            LogDebug("Restored temporary state");
         }
 
 #endregion

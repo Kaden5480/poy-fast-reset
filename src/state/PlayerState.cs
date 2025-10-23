@@ -25,12 +25,6 @@ namespace FastReset.State {
         private Quaternion initialRotationX = Quaternion.identity;
         private float initialRotationY = 0f;
 
-        private bool hasTempState = false;
-        private bool tempGrounded = false;
-        private Vector3 temporaryPosition = Vector3.zero;
-        private Quaternion temporaryRotationX = Quaternion.identity;
-        private float temporaryRotationY = 0f;
-
         // The player's current position and rotation
         private Vector3 position {
             get => PositionFix.RealToOffset(cache.playerTransform.position);
@@ -141,40 +135,6 @@ namespace FastReset.State {
 
 #endregion
 
-#region Temporary
-
-        /**
-         * <summary>
-         * Methods which are used for saving/restoring the
-         * state of the player in routing flag mode
-         * </summary>
-         */
-        public bool HasTempState() {
-            return hasTempState;
-        }
-
-        public void SaveTempState() {
-            temporaryPosition = position;
-            temporaryRotationX = rotationX;
-            temporaryRotationY = rotationY;
-            hasTempState = true;
-            tempGrounded = cache.playerMove.IsGrounded();
-            LogDebug("Saved temporary state");
-        }
-
-        public void RestoreTempState() {
-            MoveTo(temporaryPosition, temporaryRotationX, temporaryRotationY);
-
-            // If the state was set when not grounded,
-            // "attach" to the routing flag
-            // (attaching makes the player enter the "floating" state)
-            cache.routingFlag.usedFlagTeleport = !tempGrounded;
-
-            LogDebug("Restored temporary state");
-        }
-
-#endregion
-
 #region Saved
 
         /**
@@ -229,12 +189,6 @@ namespace FastReset.State {
             initialPosition = Vector3.zero;
             initialRotationX = Quaternion.identity;
             initialRotationY = 0f;
-
-            hasTempState = false;
-            tempGrounded = false;
-            temporaryPosition = Vector3.zero;
-            temporaryRotationX = Quaternion.identity;
-            temporaryRotationY = 0f;
         }
 
 #endregion

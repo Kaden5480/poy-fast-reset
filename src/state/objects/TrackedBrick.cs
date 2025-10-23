@@ -40,12 +40,6 @@ namespace FastReset.State {
         private Quaternion initialRotation = Quaternion.identity;
         private float initialDuration = 0f;
 
-        private bool temporaryEnabled = false;
-        private bool temporaryKinematic = false;
-        private Vector3 temporaryPosition = Vector3.zero;
-        private Quaternion temporaryRotation = Quaternion.identity;
-        private float temporaryDuration = 0f;
-
         public TrackedBrick(GameObject obj) : base(obj) {}
 
         /**
@@ -157,38 +151,6 @@ namespace FastReset.State {
                 initialDuration
             );
             LogDebug("Restored initial state");
-        }
-
-#endregion
-
-#region Temporary
-
-        /**
-         * <summary>
-         * Saves the current state temporarily (routing flag mode).
-         * </summary>
-         */
-        public override void SaveTempState() {
-            Save(
-                ref temporaryEnabled, ref temporaryKinematic,
-                ref temporaryPosition, ref temporaryRotation,
-                ref temporaryDuration
-            );
-            LogDebug("Saved temporary state");
-        }
-
-        /**
-         * <summary>
-         * Restores the routing flag mode state.
-         * </summary>
-         */
-        public override void RestoreTempState() {
-            Restore(
-                temporaryEnabled, temporaryKinematic,
-                temporaryPosition, temporaryRotation,
-                temporaryDuration
-            );
-            LogDebug("Restored temporary state");
         }
 
 #endregion

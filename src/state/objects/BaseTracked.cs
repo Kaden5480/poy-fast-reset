@@ -49,20 +49,6 @@ namespace FastReset.State {
 
         /**
          * <summary>
-         * Methods which are used for saving/restoring the
-         * state of this object which was saved in
-         * routing flag mode.
-         * </summary>
-         */
-        public virtual void SaveTempState() {
-            LogError("SaveTempState not implemented");
-        }
-        public virtual void RestoreTempState() {
-            LogError("RestoreTempState not implemented");
-        }
-
-        /**
-         * <summary>
          * Methods which are used for saving/restoring
          * state from fast reset's data store.
          * </summary>
