@@ -76,7 +76,7 @@ namespace FastReset.Saves {
                 save = instance.normalState;
             }
             else if (instance.routingStateIndex >= 0
-                || instance.routingStateIndex < instance.routingStates.Count
+                && instance.routingStateIndex < instance.routingStates.Count
             ) {
                 save = instance.routingStates[instance.routingStateIndex];
             }
@@ -150,6 +150,7 @@ namespace FastReset.Saves {
          */
         public static void UseNormal() {
             instance.useNormalState = true;
+            instance.LogDebug("Using normal state");
         }
 
         /**
@@ -160,6 +161,7 @@ namespace FastReset.Saves {
         public static void UseRouting(int index) {
             instance.useNormalState = false;
             instance.routingStateIndex = index;
+            instance.LogDebug($"Using routing flag state {index}");
         }
 
 #endregion

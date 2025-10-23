@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using SaveManager = FastReset.Saves.SaveManager;
 using StateManager = FastReset.State.StateManager;
 using WindResetter = FastReset.Patches.WindResetter;
 
@@ -137,6 +138,14 @@ namespace FastReset {
                 return false;
             }
 
+            // Make sure the right save is being used
+            if (cache.routingFlag.currentlyUsingFlag == true) {
+                SaveManager.UseRouting(0);
+            }
+            else {
+                SaveManager.UseNormal();
+            }
+
             if (stateManager.SaveState() == true) {
                 audio.PlaySave();
                 return true;
@@ -158,6 +167,21 @@ namespace FastReset {
                 audio.PlayFailure();
                 LogDebug("Unable to restore currently");
                 return false;
+            }
+
+            // Make sure the right save is being used
+            if (cache.routingFlag.currentlyUsingFlag == true) {
+                SaveManager.UseRouting(0);
+            }
+
+            // Load the normal save in normal mode, or alternatively:
+            // if the routing flag save failed to load when in routing flag mode,
+            // try using the normal one instead
+            if (
+                cache.routingFlag.currentlyUsingFlag == false
+                || SaveManager.GetSave() == null
+            ) {
+                SaveManager.UseNormal();
             }
 
             // Catch failures
