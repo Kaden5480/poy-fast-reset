@@ -86,14 +86,6 @@ namespace FastReset {
                 return false;
             }
 
-            // On ST, the distance activator is required
-            if (cache.routingFlag.isSolemnTempest == true
-                && cache.routingFlag.distanceActivatorST == null
-            ) {
-                LogDebug("Missing distance activator on ST, unable to use resetter");
-                return false;
-            }
-
             return true;
         }
 

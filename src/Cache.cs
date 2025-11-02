@@ -19,6 +19,7 @@ namespace FastReset {
         public InGameMenu inGameMenu;
         public Inventory inventory;
         public LeavePeakScene leavePeakScene;
+        public LevelEditorManager levelEditorManager;
         public PeakSummited peakSummited;
         public PlayerManager playerManager;
         public PlayerMove playerMove;
@@ -106,6 +107,7 @@ namespace FastReset {
             inGameMenu = GameObject.FindObjectOfType<InGameMenu>();
             inventory = GameObject.FindObjectOfType<Inventory>();
             leavePeakScene = GameObject.FindObjectOfType<LeavePeakScene>();
+            levelEditorManager = GameObject.FindObjectOfType<LevelEditorManager>();
             peakSummited = GameObject.FindObjectOfType<PeakSummited>();
             peakWind = GameObject.FindObjectOfType<PeakWind>();
             playerManager = GameObject.FindObjectOfType<PlayerManager>();
@@ -154,6 +156,7 @@ namespace FastReset {
             inGameMenu = null;
             inventory = null;
             leavePeakScene = null;
+            levelEditorManager = null;
             peakSummited = null;
             playerManager = null;
             playerMove = null;

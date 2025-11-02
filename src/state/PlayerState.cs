@@ -105,7 +105,7 @@ namespace FastReset.State {
 
             cache.playerCamX.PlayerGrabbed();
 
-            if (cache.routingFlag.isSolemnTempest == true) {
+            if (cache.routingFlag.distanceActivatorST != null) {
                 cache.routingFlag.distanceActivatorST.ForceCheck();
                 LogDebug("Force checked ST distance activator");
             }

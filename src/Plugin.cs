@@ -94,7 +94,6 @@ namespace FastReset {
             patcher.PatchEarly();
 
             // Track scene changes
-            SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
 
             // Load profiles
@@ -107,7 +106,6 @@ namespace FastReset {
          * </summary>
          */
         public void OnDestroy() {
-            SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
         }
 
@@ -118,6 +116,13 @@ namespace FastReset {
          */
         public void Update() {
             ui.Update();
+
+            // If a level is being edited, ignore keyboard inputs
+            if (cache.levelEditorManager != null
+                && cache.levelEditorManager.orbitCamActive == true
+            ) {
+                return;
+            }
 
             if (Input.GetKeyDown(config.saveKeybind.Value) == true) {
                 Plugin.LogDebug($"[{typeof(Plugin)}] {config.saveKeybind.Value} is down");
@@ -152,7 +157,7 @@ namespace FastReset {
          * <param name="scene">The scene which loaded</param>
          * <param name="mode">The mode the scene loaded with</param>
          */
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        public void OnSceneLoaded(Scene scene) {
             // Make sure the cache is loaded first
             cache.FindObjects();
 

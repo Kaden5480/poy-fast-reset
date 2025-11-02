@@ -21,8 +21,9 @@ namespace FastReset.Saves {
      */
     public class SaveManager : Loggable {
         // The directory where the save data will be stored
+        public static string configDirName = "com.github.Kaden5480.poy-fast-reset";
         public static string configDir { get; } = Path.Combine(
-            BepInEx.Paths.ConfigPath, "com.github.Kaden5480.poy-fast-reset"
+            BepInEx.Paths.ConfigPath, configDirName
         );
 
         // If a state takes up more than this many
@@ -53,6 +54,23 @@ namespace FastReset.Saves {
         public SaveManager() {
             instance = this;
         }
+
+#region Parsing Paths
+
+        /**
+         * <summary>
+         * Analyzes a path to determine whether it's a workshop path or a local path.
+         * Used for determining the type of custom level currently loaded.
+         * </summary>
+         * <param name="path">The path to check</param>
+         * <returns>True if it's a workshop path, false otherwise</returns>
+         */
+        public bool IsWorkshopLevel(string path) {
+            path = path.Replace("\\", "/");
+            return path.Contains("Steam/steamapps/workshop/content");
+        }
+
+#endregion
 
 #region Adding
 
@@ -307,16 +325,48 @@ namespace FastReset.Saves {
             WipeScene();
 
             // Load data
+            Scene scene = Plugin.instance.cache.scene;
             string profile = Plugin.instance.config.profile.Value;
-            string sceneName = Plugin.instance.cache.scene.name;
 
-            // Where the data should be loaded from
+
+            // If custom level, use different paths
             stateDirPath = Path.Combine(
                 configDir, profile
             );
-            stateFilePath = Path.Combine(
-                stateDirPath, $"{sceneName}.dat"
-            );
+
+            if (scene.buildIndex == 69) {
+                string path = CustomLevelManager.control.desiredFolderPath;
+                string compendiumName = CustomLevelManager.control.compendiumName;
+                string peakName = CustomLevelManager.control.peakName;
+
+                // Determine if workshop or local
+                if (IsWorkshopLevel(path)) {
+                    // Base path will be the workshop ID
+                    stateDirPath = Path.Combine(
+                        stateDirPath, "custom-levels", "workshop",
+                        Path.GetFileName(path), compendiumName
+                    );
+                    LogDebug("Workshop custom level being loaded");
+                }
+                else {
+                    stateDirPath = Path.Combine(
+                        stateDirPath, "custom-levels", "local",
+                        compendiumName
+                    );
+                    LogDebug("Local custom level being loaded");
+                }
+
+                stateFilePath = Path.Combine(
+                    stateDirPath, $"{peakName}.dat"
+                );
+            }
+            else {
+                stateFilePath = Path.Combine(
+                    stateDirPath, $"{scene.name}.dat"
+                );
+            }
+
+            LogDebug($"Looking for data in {stateFilePath}");
 
             // Check if the state file exists
             if (File.Exists(stateFilePath) == false) {
