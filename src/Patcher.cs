@@ -15,8 +15,7 @@ namespace FastReset {
          * </summary>
          */
         public void PatchEarly() {
-            //Harmony.CreateAndPatchAll(typeof(Patches.KeepBricksDisable));
-            //Harmony.CreateAndPatchAll(typeof(Patches.KeepBricksTrigger));
+            Harmony.CreateAndPatchAll(typeof(Patches.KeepBricksDisable));
             Harmony.CreateAndPatchAll(typeof(Patches.InventoryFix));
             Harmony.CreateAndPatchAll(typeof(Patches.ResetPositionEnter));
             Harmony.CreateAndPatchAll(typeof(Patches.ResetPositionStay));

@@ -39,12 +39,14 @@ namespace FastReset.State {
         private Vector3 initialPosition = Vector3.zero;
         private Quaternion initialRotation = Quaternion.identity;
         private float initialDuration = 0f;
+        private string initialTag = "";
 
         private bool temporaryEnabled = false;
         private bool temporaryKinematic = false;
         private Vector3 temporaryPosition = Vector3.zero;
         private Quaternion temporaryRotation = Quaternion.identity;
         private float temporaryDuration = 0f;
+        private string temporaryTag = "";
 
         public TrackedBrick(GameObject obj) : base(obj) {}
 
@@ -63,7 +65,8 @@ namespace FastReset.State {
             bool kinematic,
             Vector3 position,
             Quaternion rotation,
-            float duration
+            float duration,
+            string tag
         ) {
             brickHold.StopAllCoroutines();
 
@@ -82,11 +85,10 @@ namespace FastReset.State {
                 waitUntilDetach.SetValue(brickHold, 0f);
 
                 start.Invoke(brickHold, new object[] {});
-                return;
             }
 
             // Can't climb if disabled
-            brickHold.gameObject.tag = "Untagged";
+            brickHold.gameObject.tag = tag;
         }
 
         /**
@@ -104,13 +106,15 @@ namespace FastReset.State {
             ref bool kinematic,
             ref Vector3 position,
             ref Quaternion rotation,
-            ref float duration
+            ref float duration,
+            ref string tag
         ) {
             enabled = !((bool) poppedOut.GetValue(brickHold));
             position = PositionFix.RealToOffset(brickHold.transform.position);
             rotation = brickHold.transform.rotation;
             duration = brickHold.popoutDuration;
             kinematic = rb.isKinematic;
+            tag = brickHold.gameObject.tag;
         }
 
 #region Initial
@@ -140,7 +144,7 @@ namespace FastReset.State {
             Save(
                 ref initialEnabled, ref initialKinematic,
                 ref initialPosition, ref initialRotation,
-                ref initialDuration
+                ref initialDuration, ref initialTag
             );
             LogDebug("Saved initial state");
         }
@@ -154,7 +158,7 @@ namespace FastReset.State {
             Restore(
                 initialEnabled, initialKinematic,
                 initialPosition, initialRotation,
-                initialDuration
+                initialDuration, initialTag
             );
             LogDebug("Restored initial state");
         }
@@ -172,7 +176,7 @@ namespace FastReset.State {
             Save(
                 ref temporaryEnabled, ref temporaryKinematic,
                 ref temporaryPosition, ref temporaryRotation,
-                ref temporaryDuration
+                ref temporaryDuration, ref temporaryTag
             );
             LogDebug("Saved temporary state");
         }
@@ -186,7 +190,7 @@ namespace FastReset.State {
             Restore(
                 temporaryEnabled, temporaryKinematic,
                 temporaryPosition, temporaryRotation,
-                temporaryDuration
+                temporaryDuration, temporaryTag
             );
             LogDebug("Restored temporary state");
         }
@@ -208,7 +212,7 @@ namespace FastReset.State {
             Save(
                 ref savedBrick.enabled, ref savedBrick.kinematic,
                 ref savedBrick.position, ref savedBrick.rotation,
-                ref savedBrick.duration
+                ref savedBrick.duration, ref savedBrick.tag
             );
 
             LogDebug("Updated state in data store");
@@ -230,7 +234,7 @@ namespace FastReset.State {
             Restore(
                 savedBrick.enabled, savedBrick.kinematic,
                 savedBrick.position, savedBrick.rotation,
-                savedBrick.duration
+                savedBrick.duration, savedBrick.tag
             );
 
             LogDebug("Restored state from data store");

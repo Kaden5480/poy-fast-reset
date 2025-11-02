@@ -9,6 +9,7 @@ namespace FastReset.Saves {
         public Vector3 position;
         public Quaternion rotation;
         public float duration;
+        public string tag;
 
         /**
          * <summary>
@@ -22,12 +23,13 @@ namespace FastReset.Saves {
                 .Add(kinematic)
                 .Add(Ext.Vec3ToBytes(position))
                 .Add(Ext.QuatToBytes(rotation))
-                .Add(duration);
+                .Add(duration)
+                .Add(tag);
 
             LogDebug(
                 $"Serialized brick {id}: enabled={enabled}, "
                 + $"kinematic={kinematic}, position={position}, "
-                + $"rotation={rotation}, duration={duration}"
+                + $"rotation={rotation}, duration={duration}, tag={tag}"
             );
             return cbor;
         }
@@ -44,11 +46,12 @@ namespace FastReset.Saves {
             position = cbor[3].AsVector3();
             rotation = cbor[4].AsQuaternion();
             duration = cbor[5].AsSingle();
+            tag = cbor[6].AsString();
 
             LogDebug(
                 $"Serialized brick {id}: enabled={enabled}, "
                 + $"kinematic={kinematic}, position={position}, "
-                + $"rotation={rotation}, duration={duration}"
+                + $"rotation={rotation}, duration={duration}, tag={tag}"
             );
         }
 

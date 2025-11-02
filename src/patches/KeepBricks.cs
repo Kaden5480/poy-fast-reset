@@ -44,36 +44,4 @@ namespace FastReset.Patches {
             if (col != null)        { col.enabled = false;        }
         }
     }
-
-    /**
-     * <summary>
-     * Prevent deletion upon entering terrain.
-     * </summary>
-     */
-    [HarmonyPatch(typeof(BrickHold), "OnTriggerEnter")]
-    static class KeepBricksTrigger {
-        static bool Prefix(BrickHold __instance, Collider other) {
-            if ("AlpTerrain".Equals(other.name) == false
-                && "Terrain".Equals(other.name) == false
-            ) {
-                return true;
-            }
-
-            AudioSource brickSound = (AudioSource) AccessTools.Field(
-                typeof(BrickHold), "brickSound"
-            ).GetValue(__instance);
-            Rigidbody rb = (Rigidbody) AccessTools.Field(
-                typeof(BrickHold), "rb"
-            ).GetValue(__instance);
-            Collider col = (Collider) AccessTools.Field(
-                typeof(BrickHold), "col"
-            ).GetValue(__instance);
-
-            if (brickSound != null) { brickSound.enabled = false; }
-            if (rb != null)         { rb.isKinematic = true;      }
-            if (col != null)        { col.enabled = false;        }
-
-            return false;
-        }
-    }
 }
