@@ -158,6 +158,16 @@ namespace FastReset {
          * <param name="mode">The mode the scene loaded with</param>
          */
         public void OnSceneLoaded(Scene scene) {
+            // Not permitted in cabin scenes
+            int buildIndex = scene.buildIndex;
+            if (buildIndex == 37
+                || buildIndex == 67
+                || buildIndex == 68
+            ) {
+                LogDebug("In a cabin, unable to use");
+                return;
+            }
+
             // Make sure the cache is loaded first
             cache.FindObjects();
 
