@@ -101,12 +101,16 @@ namespace FastReset {
             LogDebug("Caching objects in scene");
             scene = SceneManager.GetActiveScene();
 
+            LeavePeakScene[] bags = Resources.FindObjectsOfTypeAll<LeavePeakScene>();
+            if (bags.Length > 0) {
+                leavePeakScene = bags[0];
+            }
+
             climbing = GameObject.FindObjectOfType<Climbing>();
             fallingEvent = GameObject.FindObjectOfType<FallingEvent>();
             iceAxes = GameObject.FindObjectOfType<IceAxe>();
             inGameMenu = GameObject.FindObjectOfType<InGameMenu>();
             inventory = GameObject.FindObjectOfType<Inventory>();
-            leavePeakScene = GameObject.FindObjectOfType<LeavePeakScene>();
             levelEditorManager = GameObject.FindObjectOfType<LevelEditorManager>();
             peakSummited = GameObject.FindObjectOfType<PeakSummited>();
             peakWind = GameObject.FindObjectOfType<PeakWind>();
