@@ -96,7 +96,7 @@ These are currently:
 - Crumbling holds
 - Wheels/beams on maps such as Tutor's Tower and Seaside Tribune
 - The state of crampons and pickaxes in custom levels
-- Custom collectibles and tool pickups
+- Collectibles and tool pickups in custom levels
 
 ### States
 In Fast Reset, there are many ways of managing player and scene states.
