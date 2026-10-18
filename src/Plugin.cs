@@ -3,9 +3,9 @@ using System.Collections;
 
 using BepInEx;
 using PeterO.Cbor;
+using UILib.Patches;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 
 using Cfg = FastReset.Config.Cfg;
 using SaveManager = FastReset.Saves.SaveManager;
@@ -93,20 +93,43 @@ namespace FastReset {
             // Apply early patches
             patcher.PatchEarly();
 
-            // Track scene changes
-            SceneManager.sceneUnloaded += OnSceneUnloaded;
+            SceneLoads.AddLoadListener((Scene scene) => {
+                // Not permitted in cabin scenes
+                int buildIndex = scene.buildIndex;
+                if (buildIndex == 37
+                    || buildIndex == 67
+                    || buildIndex == 68
+                ) {
+                    LogDebug("In a cabin, unable to use");
+                    return;
+                }
 
-            // Load profiles
-            ui.LoadProfiles();
-        }
+                // Make sure the cache is loaded first
+                cache.FindObjects();
 
-        /**
-         * <summary>
-         * Executes when the plugin is destroyed.
-         * </summary>
-         */
-        public void OnDestroy() {
-            SceneManager.sceneUnloaded -= OnSceneUnloaded;
+                // Load audio
+                audio.Load();
+
+                // Load the config for this scene
+                saveManager.Load();
+
+                // Save the initial state of the scene
+                resetter.SceneLoad();
+
+                // Load profiles
+                ui.LoadProfiles();
+            });
+
+            SceneLoads.AddUnloadListener(delegate {
+                // Save state to the disk
+                saveManager.Save();
+
+                // Wipe the tracked state
+                resetter.SceneUnload();
+
+                // Wipe the cache last
+                cache.Clear();
+            });
         }
 
         /**
@@ -148,54 +171,6 @@ namespace FastReset {
          */
         public void OnGUI() {
             ui.Render();
-        }
-
-        /**
-         * <summary>
-         * Executes when a scene is loaded.
-         * </summary>
-         * <param name="scene">The scene which loaded</param>
-         * <param name="mode">The mode the scene loaded with</param>
-         */
-        public void OnSceneLoaded(Scene scene) {
-            // Not permitted in cabin scenes
-            int buildIndex = scene.buildIndex;
-            if (buildIndex == 37
-                || buildIndex == 67
-                || buildIndex == 68
-            ) {
-                LogDebug("In a cabin, unable to use");
-                return;
-            }
-
-            // Make sure the cache is loaded first
-            cache.FindObjects();
-
-            // Load audio
-            audio.Load();
-
-            // Load the config for this scene
-            saveManager.Load();
-
-            // Save the initial state of the scene
-            resetter.SceneLoad();
-        }
-
-        /**
-         * <summary>
-         * Executes when a scene is unloaded.
-         * </summary>
-         * <param name="scene">The scene which unloaded</param>
-         */
-        private void OnSceneUnloaded(Scene scene) {
-            // Save state to the disk
-            saveManager.Save();
-
-            // Wipe the tracked state
-            resetter.SceneUnload();
-
-            // Wipe the cache last
-            cache.Clear();
         }
 
         /**

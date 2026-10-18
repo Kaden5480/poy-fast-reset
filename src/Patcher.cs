@@ -20,7 +20,6 @@ namespace FastReset {
             Harmony.CreateAndPatchAll(typeof(Patches.ResetPositionEnter));
             Harmony.CreateAndPatchAll(typeof(Patches.ResetPositionStay));
             Harmony.CreateAndPatchAll(typeof(Patches.TimeAttackWindUI));
-            Harmony.CreateAndPatchAll(typeof(Patches.SceneLoad));
             LogDebug("Applied early patches");
         }
     }
