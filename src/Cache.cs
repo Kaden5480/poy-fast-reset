@@ -26,6 +26,7 @@ namespace FastReset {
         public RopeAnchor ropeAnchor;
         public RoutingFlag routingFlag;
         public TimeAttack timeAttack;
+        public LevelEditor_ToolManager leToolManager;
         public bool timerLocked {
             get => GetField<TimeAttack, bool>(timeAttack, "timerLocked");
         }
@@ -144,6 +145,8 @@ namespace FastReset {
                     playerCamY = cameraLook;
                 }
             }
+
+            leToolManager = GameObject.FindObjectOfType<LevelEditor_ToolManager>();
         }
 
         /**
@@ -167,6 +170,7 @@ namespace FastReset {
             ropeAnchor = null;
             routingFlag = null;
             timeAttack = null;
+            leToolManager = null;
 
             playerRb = null;
             playerCamX = null;
