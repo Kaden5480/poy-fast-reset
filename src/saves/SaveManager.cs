@@ -44,7 +44,6 @@ namespace FastReset.Saves {
         private Dictionary<string, SavedCrumblingHold> crumblingHolds = new Dictionary<string, SavedCrumblingHold>();
         private Dictionary<string, SavedJoint> joints = new Dictionary<string, SavedJoint>();
         private Dictionary<string, SavedCustomCollectible> customCollectibles = new Dictionary<string, SavedCustomCollectible>();
-        private Dictionary<string, SavedCustomLoseToolZone> customLoseToolZones = new Dictionary<string, SavedCustomLoseToolZone>();
         private Dictionary<string, SavedCustomPickup> customPickups = new Dictionary<string, SavedCustomPickup>();
 
         private SavedCustomTools customTools = null;
@@ -113,9 +112,6 @@ namespace FastReset.Saves {
                     break;
                 case SavedCustomCollectible collectible:
                     instance.customCollectibles[collectible.id] = collectible;
-                    break;
-                case SavedCustomLoseToolZone zone:
-                    instance.customLoseToolZones[zone.id] = zone;
                     break;
                 case SavedCustomPickup pickup:
                     instance.customPickups[pickup.id] = pickup;
@@ -189,14 +185,6 @@ namespace FastReset.Saves {
         public static SavedCustomCollectible GetCustomCollectible(string id) {
             if (instance.customCollectibles.ContainsKey(id) == true) {
                 return instance.customCollectibles[id];
-            }
-
-            return null;
-        }
-
-        public static SavedCustomLoseToolZone GetCustomLoseToolZone(string id) {
-            if (instance.customLoseToolZones.ContainsKey(id) == true) {
-                return instance.customLoseToolZones[id];
             }
 
             return null;
@@ -333,7 +321,6 @@ namespace FastReset.Saves {
             WriteSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
             WriteSection<SavedJoint>(root, "joints", joints);
             WriteSection<SavedCustomCollectible>(root, "customCollectibles", customCollectibles);
-            WriteSection<SavedCustomLoseToolZone>(root, "customLoseToolZones", customLoseToolZones);
             WriteSection<SavedCustomPickup>(root, "customPickups", customPickups);
 
             // Add the player if there is a state
@@ -450,7 +437,6 @@ namespace FastReset.Saves {
             ReadSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
             ReadSection<SavedJoint>(root, "joints", joints);
             ReadSection<SavedCustomCollectible>(root, "customCollectibles", customCollectibles);
-            ReadSection<SavedCustomLoseToolZone>(root, "customLoseToolZones", customLoseToolZones);
             ReadSection<SavedCustomPickup>(root, "customPickups", customPickups);
 
             if (root.ContainsKey("customTools") == true) {
@@ -559,7 +545,6 @@ namespace FastReset.Saves {
         instance.crumblingHolds.Clear();
         instance.joints.Clear();
         instance.customCollectibles.Clear();
-        instance.customLoseToolZones.Clear();
         instance.customPickups.Clear();
         instance.customTools = null;
 
