@@ -26,6 +26,9 @@ namespace FastReset.State {
             int brittleIceCount = 0;
             int crumblingHoldCount = 0;
             int jointCount = 0;
+            int collectibleCount = 0;
+            int loseToolZoneCount = 0;
+            int pickupCount = 0;
 
             foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
                 Animation animation = obj.GetComponent<Animation>();
@@ -33,6 +36,9 @@ namespace FastReset.State {
                 BrittleIce brittleIce = obj.GetComponent<BrittleIce>();
                 CrumblingHoldRegular crumblingHold = obj.GetComponent<CrumblingHoldRegular>();
                 ConfigurableJoint joint = obj.GetComponent<ConfigurableJoint>();
+                E_QuestCollectible collectible = obj.GetComponent<E_QuestCollectible>();
+                E_LoseToolZone loseToolZone = obj.GetComponent<E_LoseToolZone>();
+                E_Collectible pickup = obj.GetComponent<E_Collectible>();
 
                 // Currently only track the animation of the mill on Old Mill
                 if (animation != null
@@ -70,6 +76,27 @@ namespace FastReset.State {
                     objs.Add(new TrackedJoint(obj));
                     jointCount++;
                 }
+
+                if (collectible != null) {
+                    objs.Add(new TrackedCustomCollectible(obj));
+                    collectibleCount++;
+                }
+
+                if (loseToolZone != null) {
+                    objs.Add(new TrackedCustomLoseToolZone(obj));
+                    loseToolZoneCount++;
+                }
+
+                if (pickup != null) {
+                    objs.Add(new TrackedCustomPickup(obj));
+                    pickupCount++;
+                }
+            }
+
+            if (Plugin.instance.cache.leToolManager != null) {
+                objs.Add(new TrackedCustomTools(
+                    Plugin.instance.cache.leToolManager.gameObject
+                ));
             }
 
             LogDebug("Saved initial state");
@@ -79,7 +106,10 @@ namespace FastReset.State {
                 + $"Bricks:          {brickCount}\n"
                 + $"Brittle ice:     {brittleIceCount}\n"
                 + $"Crumbling holds: {crumblingHoldCount}\n"
-                + $"Joints:          {jointCount}"
+                + $"Joints:          {jointCount}\n"
+                + $"Collectibles:    {collectibleCount}\n"
+                + $"Lose tool zones: {loseToolZoneCount}\n"
+                + $"Pickups:         {pickupCount}"
             );
         }
 

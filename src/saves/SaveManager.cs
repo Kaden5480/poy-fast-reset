@@ -43,6 +43,11 @@ namespace FastReset.Saves {
         private Dictionary<string, SavedBrittleIce> brittleIces = new Dictionary<string, SavedBrittleIce>();
         private Dictionary<string, SavedCrumblingHold> crumblingHolds = new Dictionary<string, SavedCrumblingHold>();
         private Dictionary<string, SavedJoint> joints = new Dictionary<string, SavedJoint>();
+        private Dictionary<string, SavedCustomCollectible> customCollectibles = new Dictionary<string, SavedCustomCollectible>();
+        private Dictionary<string, SavedCustomLoseToolZone> customLoseToolZones = new Dictionary<string, SavedCustomLoseToolZone>();
+        private Dictionary<string, SavedCustomPickup> customPickups = new Dictionary<string, SavedCustomPickup>();
+
+        private SavedCustomTools customTools = null;
 
         // What states exist for this scene
         public static bool hasPlayerState = false;
@@ -106,6 +111,18 @@ namespace FastReset.Saves {
                 case SavedCrumblingHold crumblingHold:
                     instance.crumblingHolds[crumblingHold.id] = crumblingHold;
                     break;
+                case SavedCustomCollectible collectible:
+                    instance.customCollectibles[collectible.id] = collectible;
+                    break;
+                case SavedCustomLoseToolZone zone:
+                    instance.customLoseToolZones[zone.id] = zone;
+                    break;
+                case SavedCustomPickup pickup:
+                    instance.customPickups[pickup.id] = pickup;
+                    break;
+                case SavedCustomTools tools:
+                    instance.customTools = tools;
+                    break;
                 case SavedJoint joint:
                     instance.joints[joint.id] = joint;
                     break;
@@ -167,6 +184,34 @@ namespace FastReset.Saves {
             }
 
             return null;
+        }
+
+        public static SavedCustomCollectible GetCustomCollectible(string id) {
+            if (instance.customCollectibles.ContainsKey(id) == true) {
+                return instance.customCollectibles[id];
+            }
+
+            return null;
+        }
+
+        public static SavedCustomLoseToolZone GetCustomLoseToolZone(string id) {
+            if (instance.customLoseToolZones.ContainsKey(id) == true) {
+                return instance.customLoseToolZones[id];
+            }
+
+            return null;
+        }
+
+        public static SavedCustomPickup GetCustomPickup(string id) {
+            if (instance.customPickups.ContainsKey(id) == true) {
+                return instance.customPickups[id];
+            }
+
+            return null;
+        }
+
+        public static SavedCustomTools GetCustomTools() {
+            return instance.customTools;
         }
 
         public static SavedJoint GetJoint(string id) {
@@ -287,10 +332,17 @@ namespace FastReset.Saves {
             WriteSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
             WriteSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
             WriteSection<SavedJoint>(root, "joints", joints);
+            WriteSection<SavedCustomCollectible>(root, "customCollectibles", customCollectibles);
+            WriteSection<SavedCustomLoseToolZone>(root, "customLoseToolZones", customLoseToolZones);
+            WriteSection<SavedCustomPickup>(root, "customPickups", customPickups);
 
             // Add the player if there is a state
             if (player != null) {
                 root.Add("player", player.ToCBOR());
+            }
+
+            if (customTools != null) {
+                root.Add("customTools", customTools.ToCBOR());
             }
 
             // Save the object to a file
@@ -397,6 +449,15 @@ namespace FastReset.Saves {
             ReadSection<SavedBrittleIce>(root, "brittleIces", brittleIces);
             ReadSection<SavedCrumblingHold>(root, "crumblingHolds", crumblingHolds);
             ReadSection<SavedJoint>(root, "joints", joints);
+            ReadSection<SavedCustomCollectible>(root, "customCollectibles", customCollectibles);
+            ReadSection<SavedCustomLoseToolZone>(root, "customLoseToolZones", customLoseToolZones);
+            ReadSection<SavedCustomPickup>(root, "customPickups", customPickups);
+
+            if (root.ContainsKey("customTools") == true) {
+                customTools = new SavedCustomTools();
+                customTools.FromCBOR(root["customTools"]);
+                hasSceneState = true;
+            }
 
             LogDebug($"Loaded data: {root.ToJSONString()}");
         }
@@ -497,6 +558,10 @@ namespace FastReset.Saves {
         instance.brittleIces.Clear();
         instance.crumblingHolds.Clear();
         instance.joints.Clear();
+        instance.customCollectibles.Clear();
+        instance.customLoseToolZones.Clear();
+        instance.customPickups.Clear();
+        instance.customTools = null;
 
         // Indicate no scene data
         hasSceneState = false;
