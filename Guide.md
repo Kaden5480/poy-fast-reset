@@ -92,9 +92,11 @@ Fast reset tracks a variety of objects for the scene state.
 These are currently:
 - The state of the mill on Old Mill
 - The multi-hit brittle ice on ST
-- Bricks which slowly slide out such as on The Lighthouse and Almáttr Dam.
+- Bricks which slowly slide out such as on The Lighthouse and Almáttr Dam
 - Crumbling holds
-- Wheels/beams on maps such as Tutor's Tower and Seaside Tribune.
+- Wheels/beams on maps such as Tutor's Tower and Seaside Tribune
+- The state of crampons and pickaxes in custom levels
+- Custom collectibles and tool pickups
 
 ### States
 In Fast Reset, there are many ways of managing player and scene states.
