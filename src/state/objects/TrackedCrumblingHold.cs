@@ -6,7 +6,7 @@ using SavedCrumblingHold = FastReset.Saves.SavedCrumblingHold;
 namespace FastReset.State {
     /**
      * <summary>
-     * An crumbling hold which is tracked so it can
+     * A crumbling hold which is tracked so it can
      * be saved/restored.
      * </summary>
      */
