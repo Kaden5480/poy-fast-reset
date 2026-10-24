@@ -11,6 +11,10 @@ using Cfg = FastReset.Config.Cfg;
 using SaveManager = FastReset.Saves.SaveManager;
 
 namespace FastReset {
+    [BepInDependency(
+        "com.github.Kaden5480.poy-fast-coffee",
+        BepInDependency.DependencyFlags.SoftDependency
+    )]
     [BepInPlugin("com.github.Kaden5480.poy-fast-reset", "Fast Reset", PluginInfo.PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin {
         // An instance of this object accessible statically

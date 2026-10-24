@@ -45,6 +45,15 @@ namespace FastReset.State {
             set => cache.playerCamY.rotationY = value;
         }
 
+        private MethodInfo reapplyCoffeeInfo;
+
+        internal PlayerState() {
+            reapplyCoffeeInfo = AccessTools.Method(
+                typeof(FastCoffee.Coffee),
+                nameof(FastCoffee.Coffee.Reapply)
+            );
+        }
+
         /**
          * <summary>
          * Reapplies coffee using Fast Coffee.
@@ -56,19 +65,12 @@ namespace FastReset.State {
                 return;
             }
 
-            Type fastCoffee = AccessTools.TypeByName("FastCoffee.Coffee");
-            if (fastCoffee == null) {
-                LogDebug("Unable to resolve FastCoffee.Coffee, skipping");
-                return;
-            }
-
-            MethodInfo reapply = AccessTools.Method(fastCoffee, "Reapply");
-            if (reapply == null) {
+            if (reapplyCoffeeInfo == null) {
                 LogDebug("Unable to resolve FastCoffee.Coffee.Reapply, skipping");
                 return;
             }
 
-            reapply.Invoke(null, new object[] { config.slurpSound.Value });
+            reapplyCoffeeInfo.Invoke(null, new object[] { config.slurpSound.Value });
             LogDebug("Invoked fast coffee's reapply");
         }
 

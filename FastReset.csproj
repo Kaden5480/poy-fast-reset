@@ -4,7 +4,7 @@
     <Platform>Any CPU</Platform>
     <AssemblyName>FastReset</AssemblyName>
     <Description>A Peaks of Yore mod which quickly teleports you to the start of a level</Description>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
     <RootNamespace>$(AssemblyName)</RootNamespace>
     <Configurations>Debug;Release</Configurations>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
@@ -54,6 +54,9 @@
     <Reference Include="UnityEngine.UI.dll">
       <HintPath>$(GameLibPath)/UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="FastCoffee.dll">
+      <HintPath>$(PluginOutputPath)/FastCoffee.dll</HintPath>
+    </Reference>
     <Reference Include="UILib.dll">
       <HintPath>$(PluginOutputPath)/UILib.dll</HintPath>
     </Reference>
@@ -81,7 +84,7 @@
     BeforeTargets="BeforeCompile">
     <WriteLinesToFile
       File="$(IntermediateOutputPath)/PluginInfo.cs"
-      Lines="public static class PluginInfo { public const string PLUGIN_VERSION=&quot;$(Version)&quot;%3B }"
+      Lines="namespace $(RootNamespace) { internal static class PluginInfo { internal const string PLUGIN_VERSION=&quot;$(Version)&quot;%3B } }"
       Overwrite="true"/>
     <ItemGroup>
       <Compile Include="$(IntermediateOutputPath)/PluginInfo.cs"/>
